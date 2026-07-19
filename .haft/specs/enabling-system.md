@@ -55,7 +55,7 @@ status: active
 valid_until: 2027-01-18
 depends_on: [ES.enabling.architecture.001]
 supersedes: []
-terms: [stake, ship-ready, voice-lock, publish-checklist]
+terms: [stake, ship-ready, voice-lock]
 target_refs: [TS.environment-change.001]
 evidence_required: []
 ```
@@ -66,8 +66,7 @@ evidence_required: []
 | Draft edit (engagement/substance) | editorial engine core | author flags a problem ("this opening is weak") or asks to "write it" | edited passage preserves author POV (no rewrite of stated thesis) |
 | `sources.md` | platform adapter layer (research) | author explicitly opts in ("I need sources") | sources added; thesis/body text diff is empty outside the opt-in pass |
 | Voice-lock pass | editorial engine core | author says "it sounds like AI," and only after packaging | pass runs strictly after packaging, never before |
-| Ship-ready body | editorial engine core, full pass | author says "write it" | body assembled without surfacing phase names to the author |
-| Publish checklist (+ cover) | platform adapter layer | author says "I'm ready to post" + names a platform | checklist scoped to the named platform; no post/publish action taken |
+| Ship-ready body | editorial engine core, full pass | author says "write it" (produces it) or "I'm ready to post" (finalizes it) | body assembled without surfacing phase names to the author; finalization triggers no checklist or cover generation (out of current scope, dec-20260718-e9f5b5e6) |
 
 This is a project-local work-methods spec, distinct from `.haft/workflow.md` (which governs how *haft governance itself* is worked, not how Pysar's editorial passes are worked).
 
@@ -85,7 +84,7 @@ status: active
 valid_until: 2027-01-18
 depends_on: [ES.enabling.architecture.001]
 supersedes: []
-terms: [editorial-engine, harness-surface, publish-checklist]
+terms: [editorial-engine, harness-surface]
 target_refs:
   - ES.effect.law-definition
   - ES.effect.admissibility-gate

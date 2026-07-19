@@ -2,13 +2,13 @@
 
 # Target System Spec
 
-## TS.environment-change.001 Author leaves with a ship-ready body and a platform-scoped publish checklist
+## TS.environment-change.001 Author leaves with a ship-ready body
 
 ```yaml spec-section
 id: TS.environment-change.001
 spec: target-system
 kind: target.environment
-title: Author leaves with a ship-ready body and a platform-scoped publish checklist
+title: Author leaves with a ship-ready body
 statement_type: definition
 claim_layer: object
 owner: human
@@ -16,12 +16,12 @@ status: active
 valid_until: 2027-01-18
 depends_on: []
 supersedes: []
-terms: [author-surface, harness-surface, stake, voice-lock, ship-ready, publish-checklist]
+terms: [author-surface, harness-surface, stake, voice-lock, ship-ready]
 target_refs: []
 evidence_required: []
 ```
 
-Before Pysar runs, an author with an idea or a rough draft has no shaped piece, no named diagnosis of what's wrong with what they have, and no platform-specific path to publishing. After Pysar runs, that same author has: (1) a stake, outline, and angles scaffolded from their own words when starting from a bare idea; (2) a draft that keeps their POV while the correct editorial pass (engagement, substance, or voice-lock) has been applied; (3) sourced material added only when they opted into research, without their thesis being overwritten; and (4) a ship-ready body plus a publish checklist (and cover, if required) scoped to the platform they named. The observable flip: an author who could not turn a take into a published piece on their own now can, without ever having to learn or use pipeline/phase vocabulary (intake, staff-edit, sharpen, SEO optimize) to get there.
+Before Pysar runs, an author with an idea or a rough draft has no shaped piece and no named diagnosis of what's wrong with what they have. After Pysar runs, that same author has: (1) a stake, outline, and angles scaffolded from their own words when starting from a bare idea; (2) a draft that keeps their POV while the correct editorial pass (engagement, substance, or voice-lock) has been applied; (3) sourced material added only when they opted into research, without their thesis being overwritten; and (4) a ship-ready body they trust, finalized on their own explicit signal. The observable flip: an author who could not turn a take into a piece they trust on their own now can, without ever having to learn or use pipeline/phase vocabulary (intake, staff-edit, sharpen, SEO optimize) to get there. Platform-specific publish checklists and cover generation are explicitly out of current scope (dec-20260718-e9f5b5e6) -- Pysar's promise ends at a ship-ready body, not a publishing pipeline.
 
 ### Use case: Shape a raw idea into a piece
 
@@ -44,12 +44,12 @@ Before Pysar runs, an author with an idea or a rough draft has no shaped piece, 
 **Why it matters:** Default input is the author's idea or draft, not web research. Research fills gaps the author opts into — it never replaces or overrides their take.
 **Acceptance signal:** Triggering research adds a sourcing artifact; the author's thesis/body text is unchanged by the pass unless the author separately asks for a rewrite.
 
-### Use case: Go from idea to ship-ready body plus platform publish checklist
+### Use case: Go from idea to a finalized ship-ready body
 
-**Who:** An author ready to take a piece all the way to something postable on a specific platform.
-**What they do:** Says "Write it" for a full pass (idea → draft → editorial passes → ship-ready), then "I'm ready to post" to get a publish checklist (and a cover, if the target platform requires one).
-**Why it matters:** This is the core promise — "Bring your take. Pysar helps you ship it." The outcome is a body the author trusts plus a checklist scoped to where they're actually publishing.
-**Acceptance signal:** "Write it" ends in a ship-ready body without exposing internal phase names; "I'm ready to post" yields a checklist (and cover, if required) scoped to the stated target platform.
+**Who:** An author ready to take a piece all the way to something they trust and consider done.
+**What they do:** Says "Write it" for a full pass (idea → draft → editorial passes → ship-ready), then "I'm ready to post" to explicitly finalize the piece as ship-ready.
+**Why it matters:** This is the core promise — "Bring your take. Pysar helps you ship it." The outcome is a body the author trusts, finalized on their own explicit signal. Platform-specific publish checklists and cover generation are out of current scope (dec-20260718-e9f5b5e6).
+**Acceptance signal:** "Write it" ends in a ship-ready body without exposing internal phase names; "I'm ready to post" finalizes that body as ship-ready without triggering any checklist or cover generation.
 
 ## TS.target.role.001 Pysar plays an author-directed editorial engine, not an autonomous publisher
 
@@ -86,7 +86,7 @@ status: active
 valid_until: 2027-01-18
 depends_on: [TS.target.role.001]
 supersedes: []
-terms: [author-surface, harness-surface, ship-ready, publish-checklist]
+terms: [author-surface, harness-surface, ship-ready, author-identity]
 target_refs:
   - TS.boundary.law-definition
   - TS.boundary.admissibility-gate
@@ -99,9 +99,9 @@ CHR-10 Boundary Norm Square, the four perspectives named in `target_refs`:
 
 - **TS.boundary.law-definition** — Pysar is an editorial engine that shapes an author's own idea or draft into a ship-ready piece; it is not a CMS, not a publishing platform, and not a research/citation generator by default.
 - **TS.boundary.admissibility-gate** — a Pysar session is admissible only when acting on an author-supplied idea or draft; Pysar does not originate a piece's stake on its own, and a research pass is admissible only after the author explicitly opts in.
-- **TS.boundary.deontics-duty** — Pysar has a duty to preserve the author's POV through every editorial pass and to never publish or post on the author's behalf; the author has the corresponding duty to explicitly signal readiness ("I'm ready to post") before a publish checklist is produced.
-- **TS.boundary.evidence-carrier** — the boundary holds when every ship-ready body traces back to author-supplied input (idea or draft), `sources.md` exists only on sessions where research was opted into, and no platform post/publish action occurs without an explicit author signal.
+- **TS.boundary.deontics-duty** — Pysar has a duty to preserve the author's POV through every editorial pass and to never publish or post on the author's behalf; the author has the corresponding duty to explicitly signal readiness ("I'm ready to post") before a piece is finalized as ship-ready.
+- **TS.boundary.evidence-carrier** — the boundary holds when every ship-ready body traces back to author-supplied input (idea or draft), `sources.md` exists only on sessions where research was opted into, and no platform post/publish action occurs -- Pysar never posts on the author's behalf, and as of dec-20260718-e9f5b5e6 does not generate a platform-specific checklist either.
 
-**In scope:** idea-to-stake/outline/angles scaffolding; draft intake preserving POV; routing vague complaints ("this opening is weak," "it sounds like AI") to the correct edit pass; opt-in research that adds sourcing without rewriting thesis; full idea→draft→edit→ship-ready pass; platform-scoped publish checklist (+ cover when required).
+**In scope:** idea-to-stake/outline/angles scaffolding; draft intake preserving POV; routing vague complaints ("this opening is weak," "it sounds like AI") to the correct edit pass; opt-in research that adds sourcing without rewriting thesis; full idea→draft→edit→ship-ready pass, finalized on explicit author signal.
 
-**Out of scope:** originating a piece's thesis without author input; web research by default (opt-in only); actually posting/publishing to a platform (Pysar produces the checklist, not the post); forcing intake/staff-edit/sharpen/SEO-optimize vocabulary onto the author surface.
+**Out of scope:** originating a piece's thesis without author input; web research by default (opt-in only); actually posting/publishing to a platform (Pysar never posts on the author's behalf); platform-scoped publish checklist and cover generation (dec-20260718-e9f5b5e6 -- excluded from current scope, not pre-drawn as a future extension point); forcing intake/staff-edit/sharpen/SEO-optimize vocabulary onto the author surface; a cross-project multi-author or author-registry model (dec-20260718-e84221af -- each initialized project/piece is the sole unit of authorial voice; a distinct voice means a distinct `pysar init`, not a role assignment within one project).
