@@ -145,6 +145,8 @@ func (s *Server) saveTemplate(args json.RawMessage, kind onboarding.ProfileKind)
 	slug := strings.TrimSpace(in.Slug)
 	if slug == "" {
 		slug = onboarding.Slug(in.Name)
+	} else {
+		slug = onboarding.Slug(slug)
 	}
 	path := filepath.Join(dir, slug+".md")
 	if err := os.WriteFile(path, []byte(wrapped), 0o644); err != nil {

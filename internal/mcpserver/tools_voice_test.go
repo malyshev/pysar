@@ -365,3 +365,40 @@ func TestSaveVoiceTemplateRenameUpdatesInPlace(t *testing.T) {
 		t.Fatalf("expected the file to reflect the new name only, got: %q", content)
 	}
 }
+
+// TestSaveVoiceTemplateSanitizesExplicitSlug guards against a path-traversal
+// slug (e.g. "../../etc/evil") escaping ~/.pysar/templates/voice/ via a
+// caller-supplied slug -- the auto-derived slug already went through
+// onboarding.Slug; the explicit-slug branch must too.
+func TestSaveVoiceTemplateSanitizesExplicitSlug(t *testing.T) {
+	home := t.TempDir()
+	s := New("pysar", "0.0.0-test", t.TempDir(), home, nil, &bytes.Buffer{})
+
+	goldens := []map[string]string{
+		{"label": "a", "text": "one"}, {"label": "b", "text": "two"}, {"label": "c", "text": "three"},
+	}
+	save := toolCallLine(t, 1, "save_voice_template", map[string]interface{}{
+		"name": "Escape Attempt", "slug": "../../../../tmp/pysar-escape-test", "tone": "measured",
+		"formality": "neutral", "sentence_length": "varied", "register": "plain", "goldens": goldens,
+	})
+	runLines(t, s, save)
+
+	if _, err := os.Stat(filepath.Join(os.TempDir(), "pysar-escape-test.md")); err == nil {
+		t.Fatalf("slug escaped the templates directory onto disk at %s", filepath.Join(os.TempDir(), "pysar-escape-test.md"))
+	}
+
+	templateDir := filepath.Join(home, ".pysar", "templates", "voice")
+	entries, err := os.ReadDir(templateDir)
+	if err != nil {
+		t.Fatalf("read template dir: %v", err)
+	}
+	var mdFiles []string
+	for _, e := range entries {
+		if strings.HasSuffix(e.Name(), ".md") {
+			mdFiles = append(mdFiles, e.Name())
+		}
+	}
+	if len(mdFiles) != 1 {
+		t.Fatalf("expected the sanitized slug to land inside the templates dir as one file, got: %v", mdFiles)
+	}
+}

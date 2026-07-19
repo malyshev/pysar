@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"strings"
 )
 
 const protocolVersion = "2024-11-05"
@@ -109,24 +110,30 @@ func (s *Server) register(t tool, h toolHandler) {
 }
 
 // Run reads newline-delimited JSON-RPC requests until EOF or a read error.
+// Uses bufio.Reader rather than bufio.Scanner deliberately: Scanner enforces
+// a fixed max token size and gives up on the whole stream (ErrTooLong) the
+// moment one line exceeds it, killing every subsequent request too. Reader
+// has no such per-line ceiling, so one oversized request can't take down
+// the server for the rest of the session.
 func (s *Server) Run() error {
-	scanner := bufio.NewScanner(s.in)
-	scanner.Buffer(make([]byte, 1<<20), 1<<20)
-
-	for scanner.Scan() {
-		line := scanner.Bytes()
-		if len(line) == 0 {
-			continue
+	reader := bufio.NewReader(s.in)
+	for {
+		line, err := reader.ReadString('\n')
+		if trimmed := strings.TrimSpace(line); trimmed != "" {
+			var req jsonrpcRequest
+			if jsonErr := json.Unmarshal([]byte(trimmed), &req); jsonErr != nil {
+				s.sendError(nil, -32700, "Parse error")
+			} else {
+				s.handle(req)
+			}
 		}
-
-		var req jsonrpcRequest
-		if err := json.Unmarshal(line, &req); err != nil {
-			s.sendError(nil, -32700, "Parse error")
-			continue
+		if err != nil {
+			if err == io.EOF {
+				return nil
+			}
+			return err
 		}
-		s.handle(req)
 	}
-	return scanner.Err()
 }
 
 func (s *Server) handle(req jsonrpcRequest) {
@@ -185,6 +192,17 @@ func (s *Server) sendError(id interface{}, code int, message string) {
 func (s *Server) send(resp jsonrpcResponse) {
 	data, err := json.Marshal(resp)
 	if err != nil {
+		// resp itself didn't marshal (e.g. a tool handler returned something
+		// unmarshalable in Result) -- fall back to a hand-built error so the
+		// caller waiting on this id gets a response instead of hanging.
+		// resp.ID was itself decoded from valid client JSON, so marshaling
+		// just the ID is safe; guard it anyway rather than risk a second
+		// silent failure.
+		idData, idErr := json.Marshal(resp.ID)
+		if idErr != nil {
+			idData = []byte("null")
+		}
+		fmt.Fprintf(s.out, `{"jsonrpc":"2.0","id":%s,"error":{"code":-32603,"message":"internal error: failed to encode response"}}`+"\n", idData)
 		return
 	}
 	fmt.Fprintf(s.out, "%s\n", data)

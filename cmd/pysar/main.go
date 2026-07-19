@@ -261,9 +261,6 @@ func scaffoldClaude(dir string, force bool) error {
 	if len(refreshed) > 0 {
 		fmt.Println("pysar init: refreshed agentic skills to the current version (--force)")
 	}
-	if len(ambiguous) > 0 && !force {
-		fmt.Println("pysar init: some agentic skills look customized or from an unrecognized version -- left untouched; rerun with --force to overwrite them")
-	}
 	if len(templatesInstalled) > 0 {
 		fmt.Println("pysar init: installed built-in templates (shared across all pysar projects on this machine)")
 	}
@@ -273,8 +270,18 @@ func scaffoldClaude(dir string, force bool) error {
 	if len(templatesRefreshed) > 0 {
 		fmt.Println("pysar init: refreshed built-in templates to the current version (--force)")
 	}
-	if len(templatesAmbiguous) > 0 && !force {
-		fmt.Println("pysar init: some built-in templates look customized or from an unrecognized version -- left untouched; rerun with --force to overwrite them")
+	// Skills and templates share one "rerun with --force" nudge: printing it
+	// once when either (or both) look customized says everything the other
+	// copy would have, so a run with both ambiguous never repeats itself.
+	if !force {
+		switch {
+		case len(ambiguous) > 0 && len(templatesAmbiguous) > 0:
+			fmt.Println("pysar init: some agentic skills and built-in templates look customized or from an unrecognized version -- left untouched; rerun with --force to overwrite them")
+		case len(ambiguous) > 0:
+			fmt.Println("pysar init: some agentic skills look customized or from an unrecognized version -- left untouched; rerun with --force to overwrite them")
+		case len(templatesAmbiguous) > 0:
+			fmt.Println("pysar init: some built-in templates look customized or from an unrecognized version -- left untouched; rerun with --force to overwrite them")
+		}
 	}
 	// Deliberately silent, without --force, when a project-local file (CLAUDE.md,
 	// .claude/settings.json, .mcp.json) differs from what pysar would write: with
@@ -299,6 +306,14 @@ type skillManifest struct {
 	Files map[string]string `json:"files"`
 }
 
+// loadSkillManifest treats a missing OR corrupt manifest the same way: start
+// from empty. The manifest is a cache pysar itself owns to detect which
+// shipped files an author has customized -- losing it just means every
+// skill file is (safely) treated as needing a fresh write on this run, not a
+// permanent failure. A hard error here would otherwise brick every future
+// `pysar init` for an operator whose manifest was left truncated by an
+// interrupted write, with no way to recover short of finding and deleting it
+// by hand.
 func loadSkillManifest(path string) (skillManifest, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -309,7 +324,7 @@ func loadSkillManifest(path string) (skillManifest, error) {
 	}
 	var m skillManifest
 	if err := json.Unmarshal(data, &m); err != nil {
-		return skillManifest{}, err
+		return skillManifest{Files: map[string]string{}}, nil
 	}
 	if m.Files == nil {
 		m.Files = map[string]string{}
@@ -317,12 +332,34 @@ func loadSkillManifest(path string) (skillManifest, error) {
 	return m, nil
 }
 
+// saveSkillManifest writes via temp-file-then-rename so a process killed
+// mid-write (crash, OOM, ctrl-C) leaves either the old manifest or the new
+// one intact on disk, never a truncated file in between.
 func saveSkillManifest(path string, m skillManifest) error {
 	data, err := json.MarshalIndent(m, "", "  ")
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(path, append(data, '\n'), 0o644)
+	data = append(data, '\n')
+
+	tmp, err := os.CreateTemp(filepath.Dir(path), filepath.Base(path)+".tmp-*")
+	if err != nil {
+		return err
+	}
+	tmpPath := tmp.Name()
+	defer os.Remove(tmpPath) // no-op once the rename below succeeds
+
+	if _, err := tmp.Write(data); err != nil {
+		tmp.Close()
+		return err
+	}
+	if err := tmp.Close(); err != nil {
+		return err
+	}
+	if err := os.Chmod(tmpPath, 0o644); err != nil {
+		return err
+	}
+	return os.Rename(tmpPath, path)
 }
 
 func hashContent(content []byte) string {

@@ -61,6 +61,20 @@ func TestWrapTemplatePreservesUnusualNames(t *testing.T) {
 	}
 }
 
+func TestWrapTemplateRejectsEmptyName(t *testing.T) {
+	profile := completeProfile()
+	rendered, err := Render(profile)
+	if err != nil {
+		t.Fatalf("render profile: %v", err)
+	}
+
+	for _, name := range []string{"", "   "} {
+		if _, err := WrapTemplate(name, rendered); err == nil {
+			t.Fatalf("expected an error wrapping name %q, got none", name)
+		}
+	}
+}
+
 func TestUnwrapTemplateRejectsMissingWrapper(t *testing.T) {
 	profile := completeProfile()
 	rendered, err := Render(profile)

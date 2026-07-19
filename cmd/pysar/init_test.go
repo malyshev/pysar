@@ -620,6 +620,37 @@ func TestInitAutoRefreshesSkillWithoutForceWhenOnlyShippedContentChanged(t *test
 	}
 }
 
+// TestInitSelfHealsCorruptSkillManifest guards against a truncated
+// .pysar-manifest.json (e.g. left behind by a process killed mid-write)
+// permanently bricking every future `pysar init` -- it must fall back to
+// treating the manifest as empty rather than hard-failing.
+func TestInitSelfHealsCorruptSkillManifest(t *testing.T) {
+	fakeHome := withFakeHome(t)
+	skillsDir := filepath.Join(fakeHome, ".claude", "skills")
+	if err := os.MkdirAll(skillsDir, 0o755); err != nil {
+		t.Fatalf("seed skills dir: %v", err)
+	}
+	manifestPath := filepath.Join(skillsDir, skillManifestFile)
+	if err := os.WriteFile(manifestPath, []byte(`{"files": {"ps-voice/SKILL`), 0o644); err != nil {
+		t.Fatalf("seed corrupt manifest: %v", err)
+	}
+
+	dir := t.TempDir()
+	cmd := newRootCmd()
+	cmd.SetArgs([]string{"init", dir})
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("expected init to self-heal past a corrupt manifest, got: %v", err)
+	}
+
+	updated, err := loadSkillManifest(manifestPath)
+	if err != nil {
+		t.Fatalf("read manifest after self-heal: %v", err)
+	}
+	if len(updated.Files) == 0 {
+		t.Fatal("expected the manifest to be rewritten with real entries after self-heal")
+	}
+}
+
 // TestInitSeedsBuiltInVoiceTemplate covers dec-20260719-3e36577e: pysar init
 // seeds the built-in "generic" voice template into the operator's
 // cross-project template store, not just the project itself.

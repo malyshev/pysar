@@ -19,6 +19,9 @@ type templateWrapper struct {
 // ahead of profileContent, which must already be exactly what Render
 // produces for a Profile. UnwrapTemplate reverses this exactly.
 func WrapTemplate(name, profileContent string) (string, error) {
+	if strings.TrimSpace(name) == "" {
+		return "", fmt.Errorf("template name is required")
+	}
 	fm, err := yaml.Marshal(templateWrapper{Name: name})
 	if err != nil {
 		return "", fmt.Errorf("render template wrapper: %w", err)
