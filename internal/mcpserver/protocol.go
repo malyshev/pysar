@@ -99,6 +99,7 @@ func New(name, version, baseDir, homeDir string, in io.Reader, out io.Writer) *S
 	s.registerSaveStyleProfile()
 	s.registerSaveStyleTemplate()
 	s.registerListStyleTemplates()
+	s.registerCheckOnboardingStatus()
 	return s
 }
 

@@ -36,6 +36,16 @@ type allowsEmpty interface {
 	AllowEmpty() bool
 }
 
+// OnboardingPass is an optional interface a Pass implements to mark itself as
+// author-level onboarding (voice, style, and any future kind) rather than a
+// per-piece editorial pass (idea-scaffold, draft-edit, discoverability). It
+// is the property check_onboarding_status filters the shared registry on --
+// never a hardcoded pass name (dec-20260718-ebca6318 invariant: "/ps-onboard
+// contains no hardcoded knowledge of specific questionnaire names").
+type OnboardingPass interface {
+	IsOnboardingPass() bool
+}
+
 // Run gates a Pass's Body behind its own Precondition. The body never
 // executes when Check fails (dec-20260718-20a08f83).
 func Run(p Pass, s *State) (*State, error) {

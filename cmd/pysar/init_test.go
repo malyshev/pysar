@@ -804,6 +804,30 @@ func TestInitInstallsPsStyleSkillGlobally(t *testing.T) {
 	}
 }
 
+// TestInitInstallsPsOnboardSkillGlobally covers dec-20260718-ebca6318's
+// implementation: /ps-onboard ships alongside /ps-voice and /ps-style.
+func TestInitInstallsPsOnboardSkillGlobally(t *testing.T) {
+	fakeHome := withFakeHome(t)
+	dir := t.TempDir()
+	cmd := newRootCmd()
+	cmd.SetArgs([]string{"init", dir})
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("init failed: %v", err)
+	}
+
+	skillPath := filepath.Join(fakeHome, ".claude", "skills", "ps-onboard", "SKILL.md")
+	content, err := os.ReadFile(skillPath)
+	if err != nil {
+		t.Fatalf("expected ps-onboard skill installed to home dir: %v", err)
+	}
+	if !strings.Contains(string(content), "name: ps-onboard") {
+		t.Fatalf("installed skill missing expected frontmatter, got: %q", content[:min(len(content), 100)])
+	}
+	if !strings.Contains(string(content), "check_onboarding_status") {
+		t.Fatalf("installed skill missing expected tool reference, got: %q", content[:min(len(content), 200)])
+	}
+}
+
 // TestInitSeedsBuiltInStyleTemplate covers the promoted, genuinely dogfooded
 // style default: unlike an earlier, agent-fabricated attempt at this file
 // (removed after the operator caught it -- see note-20260719-99c8f3a0), this

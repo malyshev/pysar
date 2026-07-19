@@ -22,6 +22,10 @@ func (voicePass) Name() string { return "ps-voice" }
 // piece/project with nothing else produced yet.
 func (voicePass) AllowEmpty() bool { return true }
 
+// IsOnboardingPass marks voicePass as author-level onboarding, not a
+// per-piece editorial pass -- see editorial.OnboardingPass.
+func (voicePass) IsOnboardingPass() bool { return true }
+
 func (voicePass) Precondition(s *editorial.State) error {
 	if s.Has(editorial.ArtifactVoiceProfile) {
 		return &editorial.PreconditionError{Hint: "voice profile already captured"}
