@@ -12,6 +12,10 @@ allowed-tools: Read mcp__pysar__save_voice_profile mcp__pysar__save_voice_templa
 
 You are conducting a conversation, not administering a form. The author should never feel like they are filling out fields — the questions below exist to make sure a real `VoiceProfile` gets produced, not to be read aloud verbatim.
 
+**Every message you send is governed by this project's "Pysar output discipline" section (CLAUDE.md, dec-20260719-7d675b61)** — apply its 3-question check before sending anything, including every specific rule below (Step 2's one-question-at-a-time rule, Step 6's silent-skip rule) which are elaborations of that shared principle, not separate rules.
+
+**Never assume the author works in software or any technical field.** Pysar's audience is deliberately wide and non-technical (dec-20260718-ab150a73). If you need an example to illustrate a question, use something universally relatable — a letter, an email, a text to a friend, a story, a recipe, a note left for someone. Never reach for "a PR description," "a repo," "a commit message," or similar unless the author's own words already establish that's their actual context.
+
 ## What you are producing
 
 The structured fields of a `VoiceProfile` (Go source of truth: `internal/onboarding/profile.go`), which you pass directly as arguments to the `save_voice_profile` tool at the end of the conversation:
@@ -44,12 +48,23 @@ Before diving into the conversation, call `list_voice_templates` to see what reu
 
 Tell the author what's available by its actual display name (e.g. "Measured plain English -- speakable, understated, general audience"), not its slug -- the slug (e.g. "generic") is a machine key, never show it as if it were the template's name. Summarize each one's tone/formality/register in a line, the same way Step 1 summarizes an existing profile. Ask whether they'd like to start from one of these as a first draft to edit, or start from a blank conversation. Either is fine; this is a starting point, never a final answer.
 
-- If they pick a template: remember its slug (you'll need it in Step 6 if they later want to update that same template rather than create a new one). Use its fields and goldens as your working draft for Steps 2-3 below, but still actually have the conversation -- confirm each field feels right for them, don't silently adopt it. Treat the template as a first draft you're editing together, not a form to auto-submit.
+- If they pick a template: remember its slug (you'll need it in Step 6 if they later want to update that same template rather than create a new one), then go straight to Step 1b -- **do not** proceed to Step 2.
 - If they start blank (or somehow no templates exist), proceed to Step 2 normally.
 
-## Step 2 — the conversation
+## Step 1b — apply a template (template path only; skip Steps 2-4)
 
-Ask about these naturally, in whatever order fits the conversation — not as a numbered checklist read aloud:
+Show the author the template's full profile in readable form (all fields, all goldens) -- the same shape Step 4 would show for a fresh conversation, just earlier. Ask one question: "Want to use this as-is, or is there anything you'd like to change first?"
+
+- If they want changes: make them right there in the conversation -- however many are needed -- then show the updated profile once more and confirm it looks right. Do not turn this into Step 2's field-by-field walkthrough; handle whatever they raise directly and move on.
+- If they say it looks good / no changes: proceed straight to Step 5 to save.
+
+This is the entire template path. Steps 2-4 are for the blank-conversation path only -- never run them after a template has already been confirmed here.
+
+## Step 2 — the conversation (blank-conversation path only)
+
+**Ask exactly ONE question per message. Wait for the author's answer before asking the next one. Never list, number, or bundle two or more of these into a single message — that turns a conversation into a form, which is exactly what this skill exists to avoid.**
+
+The topics below are what the conversation needs to cover, in whatever order fits naturally — not a script to read in order, and never all at once:
 
 - **Tone.** How do they want to come across? Encourage concrete words over vague ones ("warm but a little dry," not "good"). If they're stuck, offer 2-3 contrasting options to react to rather than an open blank.
 - **Formality.** Conversational, neutral, or formal — and where on that range.
@@ -75,25 +90,33 @@ Show the author the full profile (all fields, all goldens) in readable form and 
 
 Mention in one plain sentence that you're about to save this (e.g. "Saving this now"). The tool is pre-approved by `pysar init`, so this normally completes with no prompt at all — but if you do see a one-time confirmation, that's expected the very first time and not a problem.
 
-Call `save_voice_profile` with the structured fields from Steps 2-3. The tool itself validates completeness against the real rules — if it returns an error, it names exactly what's missing; go back, get that specific thing, and call it again. Don't try to work around a tool error by writing anything yourself.
+Call `save_voice_profile` with the confirmed fields -- from Steps 2-3 on the blank-conversation path, or from Step 1b on the template path. The tool itself validates completeness against the real rules — if it returns an error, it names exactly what's missing; go back, get that specific thing, and call it again. Don't try to work around a tool error by writing anything yourself.
 
 On success, tell the author what was saved, in one sentence — not a long summary they didn't ask for.
 
 ## Step 6 — offer to save as a reusable template (optional)
 
-After a successful save, ask if they'd also like this voice available as a named template for future projects (not just this one). This is genuinely optional — never push it, one offer is enough.
+**Skip this step entirely if the profile came from Step 1b applied as-is with no changes — and say NOTHING about skipping it.** The exact content already exists as that template, so there is nothing new to offer saving. Do not tell the author you're skipping this step, do not explain why, do not say anything like "there's nothing new to save" or "you're all set" — that is itself a pointless message about an absence, exactly the noise this rule exists to avoid. The conversation simply ends after Step 5's success message. Nothing else gets said.
 
-If yes: ask for a short, memorable name (e.g. "Measured plain English"). If this conversation started from an existing template in Step 1a and the author wants to update that same template (not create a new one), call `save_voice_template` with that template's original slug alongside the new name -- this updates it in place rather than creating a duplicate. Otherwise, omit slug entirely; a new one is derived automatically. Call `save_voice_template` with the name (and slug if updating) plus the exact same fields and goldens you just saved with `save_voice_profile`. Tell them what was saved, in one sentence.
+Otherwise -- a blank-conversation profile, or a template the author actually edited in Step 1b -- ask about saving a template, framed for which case it is:
 
-If no, or they don't respond to the offer: stop here. `.pysar/voice.md` is already saved regardless — this step never blocks or changes that outcome.
+- **Edited an existing template:** ask whether they'd like those changes saved back to that same template (updating it in place) or saved as a separate new template, or not saved as a template at all.
+- **Entirely new voice** (blank-conversation path): ask if they'd also like this voice available as a named template for future projects (not just this one).
+
+Either way, this is genuinely optional — never push it, one offer is enough.
+
+If yes: for an update, you already have the name and slug -- confirm the name still fits rather than asking from scratch, and call `save_voice_template` with that slug. For a new template, ask for a short, memorable name (e.g. "Measured plain English") and omit slug -- one is derived automatically. Call `save_voice_template` with the name (and slug if updating) plus the exact same fields and goldens just saved with `save_voice_profile`. Tell them what was saved, in one sentence.
+
+If no, they don't respond, or this step was skipped: stop here. `.pysar/voice.md` is already saved regardless — this step never blocks or changes that outcome.
 
 ## What NOT to do
 
 - Do not read the fields above as a literal script or numbered survey — this directly contradicts why this skill exists (see the schema decision's own rationale: abstract rule-following reads as a form, not a conversation).
+- Do not send more than one question in a single message, numbered or otherwise, under any circumstances — one question, wait for the answer, then the next.
 - Do not fabricate goldens the author hasn't seen and confirmed.
 - Do not call either save tool with a profile you know is incomplete, hoping it lets it through — it won't, and that's the point.
 - Do not silently overwrite an existing complete profile without the author choosing to re-tune.
-- Do not silently adopt a template's fields without actually confirming them with the author in Steps 2-4 — a template is a first draft, not a final answer.
+- Do not silently adopt a template's fields without showing them to the author and asking if they'd like changes (Step 1b) — a template is a first draft, not a final answer. But do not march the author through Step 2's field-by-field walkthrough for a template either; that reintroduces exactly the friction Step 1b exists to remove.
 - Do not push the Step 6 template offer more than once, and never make it feel mandatory.
 - Do not touch style — that's `/ps-style`, a separate command. If the author starts talking about structural/mechanical writing conventions instead of voice, gently note that's a separate command and stay focused on voice for this session.
 - Never use Write, Edit, or Bash to touch `.pysar/voice.md` or any file under `~/.pysar/templates/` yourself, for any reason -- always go through `save_voice_profile` / `save_voice_template`. Bypassing them defeats the reason this skill calls a tool instead of writing files directly.

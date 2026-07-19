@@ -209,3 +209,51 @@ agents document. Autonomous architectural decisions = protocol violation.
 **State location:** `.haft/` directory (markdown projections, git-tracked).
 Database in `~/.haft/projects/<id>/`.
 <!-- haft:end -->
+
+## Pysar output discipline (dec-20260719-7d675b61)
+
+This section governs what **Pysar itself** says to its own end users — CLI
+output (`cmd/pysar/main.go`) and the `ps-*` agentic skill conversations
+(`cmd/pysar/assets/claude/skills/*/SKILL.md`). It is distinct from this
+file's "Communication style" section above, which governs how *Claude*
+talks to the *operator* during development of Pysar. Do not conflate the
+two — a fix to one does not fix the other.
+
+**Before considering any new or changed CLI message or skill conversational
+instruction complete, apply this check:**
+
+1. Does this tell the reader something new and actionable?
+2. Would removing it change what they do next?
+3. Am I explaining an absence instead of just staying silent?
+
+If the answer to 1 and 2 is no, or 3 is yes — cut it. An instruction that
+tells an agent to "skip" something must also say to say nothing about the
+skip; "skip X" and "say nothing about X" are different instructions, and an
+executing agent will fill the gap with an explanation unless told not to.
+
+**Real incidents this project already shipped and fixed** (concrete negative
+examples, not hypotheticals):
+- CLI: a raw, un-humanized argument printed verbatim (`pysar init: . is
+  already set up`) — see `TestInitDefaultArgNeverPrintsRawDot`.
+- CLI: a normal, successful outcome ("project already initialized")
+  presented as an `Error:` — see `TestInitOnAlreadySetUpProjectSucceeds`.
+- CLI: a "this file differs" message with no actionable next step for the
+  reader — see `TestInitStaysQuietForProjectFilesThatDiffer`.
+- Agentic: all of a step's questions dumped into one numbered-list message
+  despite an explicit written prohibition against exactly that.
+- Agentic: an offer to "save a template of the template you didn't change" —
+  asked reflexively after every save, without checking whether there was
+  anything new to offer.
+- Agentic: after fixing the above, the skill explained that it was skipping
+  the offer instead of just skipping it — an explanation of an absence,
+  which is itself the same noise this section exists to prevent.
+
+**`ps-*` skill files reference this section by name rather than re-deriving
+their own noise-prevention wording.** If you are writing or editing a
+`SKILL.md`, point back here instead of writing a new version of this rule.
+
+**Known gap (see `dec-20260719-7d675b61`'s own weakest_link, stated
+honestly, not hidden):** the self-check above is not machine-enforced for
+the agentic surface — it depends on being applied. If a session ships a 4th
+recurrence, this section did not prevent it by itself; treat that as
+evidence the mechanism needs strengthening, not evidence to ignore it.

@@ -221,10 +221,18 @@ func scaffoldClaude(dir string, force bool) error {
 		return fmt.Errorf("pysar init: %w", err)
 	}
 
-	templatesInstalled, templatesAutoRefreshed, templatesRefreshed, templatesAmbiguous, err := writeVoiceTemplates(home, force)
+	voiceInstalled, voiceAutoRefreshed, voiceRefreshed, voiceAmbiguous, err := writeVoiceTemplates(home, force)
 	if err != nil {
 		return fmt.Errorf("pysar init: %w", err)
 	}
+	styleInstalled, styleAutoRefreshed, styleRefreshed, styleAmbiguous, err := writeStyleTemplates(home, force)
+	if err != nil {
+		return fmt.Errorf("pysar init: %w", err)
+	}
+	templatesInstalled := append(voiceInstalled, styleInstalled...)
+	templatesAutoRefreshed := append(voiceAutoRefreshed, styleAutoRefreshed...)
+	templatesRefreshed := append(voiceRefreshed, styleRefreshed...)
+	templatesAmbiguous := append(voiceAmbiguous, styleAmbiguous...)
 
 	settingsPath := filepath.Join(dir, ".claude", "settings.json")
 	if err := os.MkdirAll(filepath.Dir(settingsPath), 0o755); err != nil {
@@ -257,16 +265,16 @@ func scaffoldClaude(dir string, force bool) error {
 		fmt.Println("pysar init: some agentic skills look customized or from an unrecognized version -- left untouched; rerun with --force to overwrite them")
 	}
 	if len(templatesInstalled) > 0 {
-		fmt.Println("pysar init: installed the built-in voice template (shared across all pysar projects on this machine)")
+		fmt.Println("pysar init: installed built-in templates (shared across all pysar projects on this machine)")
 	}
 	if len(templatesAutoRefreshed) > 0 {
-		fmt.Println("pysar init: updated the built-in voice template to the current version")
+		fmt.Println("pysar init: updated built-in templates to the current version")
 	}
 	if len(templatesRefreshed) > 0 {
-		fmt.Println("pysar init: refreshed the built-in voice template to the current version (--force)")
+		fmt.Println("pysar init: refreshed built-in templates to the current version (--force)")
 	}
 	if len(templatesAmbiguous) > 0 && !force {
-		fmt.Println("pysar init: the built-in voice template looks customized or from an unrecognized version -- left untouched; rerun with --force to overwrite it")
+		fmt.Println("pysar init: some built-in templates look customized or from an unrecognized version -- left untouched; rerun with --force to overwrite them")
 	}
 	// Deliberately silent, without --force, when a project-local file (CLAUDE.md,
 	// .claude/settings.json, .mcp.json) differs from what pysar would write: with
@@ -396,6 +404,15 @@ func syncManagedFile(target string, content []byte, manifest *skillManifest, key
 // into targetDir (preserving the embedded tree's relative structure) via
 // syncManagedFile, using one manifest stored at targetDir/skillManifestFile.
 func syncManagedTree(assets fs.FS, embedRoot, targetDir string, force bool) (installed, autoRefreshed, refreshed, ambiguous []string, err error) {
+	// Not every Kind ships a built-in default yet -- e.g. Style's generic
+	// template is deliberately withheld until it comes from a real
+	// operator-run /ps-style conversation (dec-20260719-a1ac8959's own
+	// generic.md was fabricated content, not dogfooded, and was removed).
+	// A missing embedded subtree is a legitimate empty state, not an error.
+	if _, statErr := fs.Stat(assets, embedRoot); statErr != nil {
+		return nil, nil, nil, nil, nil
+	}
+
 	manifestPath := filepath.Join(targetDir, skillManifestFile)
 	manifest, err := loadSkillManifest(manifestPath)
 	if err != nil {
@@ -467,6 +484,14 @@ func writeClaudeSkills(home string, force bool) (installed, autoRefreshed, refre
 func writeVoiceTemplates(home string, force bool) (installed, autoRefreshed, refreshed, ambiguous []string, err error) {
 	templatesDir := onboarding.TemplatesDir(home, onboarding.KindVoice)
 	return syncManagedTree(templateAssets, "assets/templates/voice", templatesDir, force)
+}
+
+// writeStyleTemplates mirrors writeVoiceTemplates for the built-in style
+// template (dec-20260719-a1ac8959) -- same mechanism, same manifest format,
+// a second Kind's subdirectory under the same cross-project template store.
+func writeStyleTemplates(home string, force bool) (installed, autoRefreshed, refreshed, ambiguous []string, err error) {
+	templatesDir := onboarding.TemplatesDir(home, onboarding.KindStyle)
+	return syncManagedTree(templateAssets, "assets/templates/style", templatesDir, force)
 }
 
 // writeProjectManifest writes .pysar/project if it doesn't already exist.

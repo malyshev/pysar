@@ -32,19 +32,30 @@ type GoldenExample struct {
 // must carry (dec-20260718-ab150a73 -- goldens are not optional).
 const MinGoldens = 3
 
+// MinRules is the minimum number of Rules entries a complete style-kind
+// Profile must carry (dec-20260719-a1ac8959 -- a single rule wouldn't
+// constitute real style guidance).
+const MinRules = 3
+
 // Profile is the shared schema shape for any onboarding-produced content
 // profile: structured attributes plus required golden examples
 // (dec-20260718-ab150a73). VoiceProfile and StyleProfile are both this same
 // type, distinguished only by Kind -- no divergent format
-// (dec-20260718-ab150a73 invariant).
+// (dec-20260718-ab150a73 invariant). Rules (dec-20260719-a1ac8959) is
+// available to any Kind but is Style's primary content-bearing field --
+// short, individually actionable imperative statements (e.g. "Prefer active
+// voice") that don't fit the voice-flavored scalar fields below. Tone,
+// Formality, SentenceLength, and Register are required for Kind=voice and
+// optional for Kind=style, per Validate's Kind-conditional rules.
 type Profile struct {
 	Kind           ProfileKind     `json:"kind"`
-	Tone           string          `json:"tone"`
-	Formality      string          `json:"formality"`
-	SentenceLength string          `json:"sentence_length"`
-	Register       string          `json:"register"`
+	Tone           string          `json:"tone,omitempty"`
+	Formality      string          `json:"formality,omitempty"`
+	SentenceLength string          `json:"sentence_length,omitempty"`
+	Register       string          `json:"register,omitempty"`
 	BannedPhrases  []string        `json:"banned_phrases,omitempty"`
 	Notes          string          `json:"notes,omitempty"`
+	Rules          []string        `json:"rules,omitempty"`
 	Goldens        []GoldenExample `json:"goldens"`
 }
 
@@ -58,24 +69,35 @@ func (e *ValidationError) Error() string {
 	return fmt.Sprintf("profile incomplete: missing %v", e.Missing)
 }
 
-// Validate checks that p satisfies the completeness bar: every structured
-// attribute field is non-empty and at least MinGoldens golden examples, each
-// with non-empty text, are present.
+// Validate checks that p satisfies the completeness bar for its Kind
+// (dec-20260719-a1ac8959): Kind=voice requires the four voice-flavored
+// scalar fields (unchanged from before Rules existed -- already-shipped
+// Voice behavior is not affected); Kind=style requires at least MinRules
+// Rules entries instead, since those fields don't fit style content.
+// Goldens are required for every Kind.
 func Validate(p Profile) error {
 	var missing []string
 
-	if p.Tone == "" {
-		missing = append(missing, "tone")
+	switch p.Kind {
+	case KindStyle:
+		if len(p.Rules) < MinRules {
+			missing = append(missing, fmt.Sprintf("rules (need >= %d, have %d)", MinRules, len(p.Rules)))
+		}
+	default:
+		if p.Tone == "" {
+			missing = append(missing, "tone")
+		}
+		if p.Formality == "" {
+			missing = append(missing, "formality")
+		}
+		if p.SentenceLength == "" {
+			missing = append(missing, "sentence_length")
+		}
+		if p.Register == "" {
+			missing = append(missing, "register")
+		}
 	}
-	if p.Formality == "" {
-		missing = append(missing, "formality")
-	}
-	if p.SentenceLength == "" {
-		missing = append(missing, "sentence_length")
-	}
-	if p.Register == "" {
-		missing = append(missing, "register")
-	}
+
 	if len(p.Goldens) < MinGoldens {
 		missing = append(missing, fmt.Sprintf("goldens (need >= %d, have %d)", MinGoldens, len(p.Goldens)))
 	}
@@ -97,12 +119,13 @@ func Validate(p Profile) error {
 // concatenation that could produce invalid YAML.
 type frontmatter struct {
 	Kind           ProfileKind `yaml:"kind"`
-	Tone           string      `yaml:"tone"`
-	Formality      string      `yaml:"formality"`
-	SentenceLength string      `yaml:"sentence_length"`
-	Register       string      `yaml:"register"`
+	Tone           string      `yaml:"tone,omitempty"`
+	Formality      string      `yaml:"formality,omitempty"`
+	SentenceLength string      `yaml:"sentence_length,omitempty"`
+	Register       string      `yaml:"register,omitempty"`
 	BannedPhrases  []string    `yaml:"banned_phrases,omitempty"`
 	Notes          string      `yaml:"notes,omitempty"`
+	Rules          []string    `yaml:"rules,omitempty"`
 }
 
 // TemplatesDir is the cross-project, host-agnostic directory pysar stores
@@ -152,6 +175,7 @@ func Render(p Profile) (string, error) {
 		Register:       p.Register,
 		BannedPhrases:  p.BannedPhrases,
 		Notes:          p.Notes,
+		Rules:          p.Rules,
 	}
 	fmBytes, err := yaml.Marshal(fm)
 	if err != nil {
@@ -161,9 +185,25 @@ func Render(p Profile) (string, error) {
 	var b strings.Builder
 	b.WriteString("---\n")
 	b.Write(fmBytes)
-	b.WriteString("---\n\n# Voice Profile\n")
+	fmt.Fprintf(&b, "---\n\n# %s Profile\n", title(string(p.Kind)))
+	if len(p.Rules) > 0 {
+		b.WriteString("\n## Rules\n\n")
+		for _, r := range p.Rules {
+			b.WriteString(fmt.Sprintf("- %s\n", r))
+		}
+	}
 	for _, g := range p.Goldens {
 		b.WriteString(fmt.Sprintf("\n## Golden: %s\n\n%s\n", g.Label, g.Text))
 	}
 	return b.String(), nil
+}
+
+// title capitalizes the first letter of a Kind for the rendered H1 (e.g.
+// "voice" -> "Voice", "style" -> "Style") without pulling in a whole
+// strings/cases package for one letter.
+func title(s string) string {
+	if s == "" {
+		return s
+	}
+	return strings.ToUpper(s[:1]) + s[1:]
 }

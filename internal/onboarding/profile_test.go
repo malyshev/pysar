@@ -127,6 +127,95 @@ func TestVoicePassIsRegistered(t *testing.T) {
 	t.Fatal("expected ps-voice to be registered in the editorial Pass registry")
 }
 
+func completeStyleProfile() Profile {
+	return Profile{
+		Kind: KindStyle,
+		Rules: []string{
+			"Put the main point first",
+			"Prefer active voice",
+			"Cut what doesn't earn its place",
+		},
+		Goldens: []GoldenExample{
+			{Label: "opening", Text: "The deadline moved to Friday. Ship what's ready; hold the rest."},
+			{Label: "structure", Text: "Three things changed. First, ... Second, ... Third, ..."},
+			{Label: "cutting", Text: "We tested it. It broke. We fixed it."},
+		},
+	}
+}
+
+func TestValidateAcceptsCompleteStyleProfileWithoutVoiceFields(t *testing.T) {
+	if err := Validate(completeStyleProfile()); err != nil {
+		t.Fatalf("expected a complete style profile (rules + goldens, no tone/formality/etc) to validate, got %v", err)
+	}
+}
+
+func TestValidateRejectsStyleProfileWithTooFewRules(t *testing.T) {
+	p := completeStyleProfile()
+	p.Rules = p.Rules[:1]
+
+	err := Validate(p)
+	var ve *ValidationError
+	if !errors.As(err, &ve) {
+		t.Fatalf("expected *ValidationError, got %v", err)
+	}
+	found := false
+	for _, m := range ve.Missing {
+		if strings.HasPrefix(m, "rules") {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("expected missing entries to name 'rules', got %v", ve.Missing)
+	}
+}
+
+func TestValidateStillRequiresVoiceFieldsForVoiceKind(t *testing.T) {
+	// A voice-kind profile with plenty of Rules but no tone/formality/etc
+	// must still fail -- Rules doesn't substitute for voice's own fields.
+	p := completeProfile()
+	p.Tone = ""
+	p.Rules = completeStyleProfile().Rules
+
+	err := Validate(p)
+	var ve *ValidationError
+	if !errors.As(err, &ve) {
+		t.Fatalf("expected *ValidationError, got %v", err)
+	}
+}
+
+func TestRenderStyleProfileOmitsVoiceFieldsAndShowsRulesHeading(t *testing.T) {
+	p := completeStyleProfile()
+	rendered, err := Render(p)
+	if err != nil {
+		t.Fatalf("Render failed: %v", err)
+	}
+
+	if strings.Contains(rendered, "tone:") || strings.Contains(rendered, "formality:") {
+		t.Fatalf("expected an unpopulated voice field to be omitted from a style profile's frontmatter, got: %q", rendered)
+	}
+	if !strings.Contains(rendered, "# Style Profile") {
+		t.Fatalf("expected the H1 heading to say 'Style Profile', got: %q", rendered[:min(len(rendered), 80)])
+	}
+	if !strings.Contains(rendered, "## Rules") {
+		t.Fatalf("expected a Rules section, got: %q", rendered)
+	}
+	for _, r := range p.Rules {
+		if !strings.Contains(rendered, "- "+r) {
+			t.Fatalf("expected rule %q rendered as a list item, got: %q", r, rendered)
+		}
+	}
+}
+
+func TestRenderVoiceProfileStillSaysVoiceProfile(t *testing.T) {
+	rendered, err := Render(completeProfile())
+	if err != nil {
+		t.Fatalf("Render failed: %v", err)
+	}
+	if !strings.Contains(rendered, "# Voice Profile") {
+		t.Fatalf("expected the H1 heading to remain 'Voice Profile' for Kind=voice, got: %q", rendered[:min(len(rendered), 80)])
+	}
+}
+
 func TestTemplatesDirIsHostAgnosticAndKindScoped(t *testing.T) {
 	got := TemplatesDir("/home/author", KindVoice)
 	want := "/home/author/.pysar/templates/voice"

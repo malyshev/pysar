@@ -781,3 +781,82 @@ func TestInitMutuallyExclusiveHostFlags(t *testing.T) {
 		t.Fatal("expected mutually exclusive flags to fail")
 	}
 }
+
+func TestInitInstallsPsStyleSkillGlobally(t *testing.T) {
+	fakeHome := withFakeHome(t)
+	dir := t.TempDir()
+	cmd := newRootCmd()
+	cmd.SetArgs([]string{"init", dir})
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("init failed: %v", err)
+	}
+
+	skillPath := filepath.Join(fakeHome, ".claude", "skills", "ps-style", "SKILL.md")
+	content, err := os.ReadFile(skillPath)
+	if err != nil {
+		t.Fatalf("expected ps-style skill installed to home dir: %v", err)
+	}
+	if !strings.Contains(string(content), "name: ps-style") {
+		t.Fatalf("installed skill missing expected frontmatter, got: %q", content[:min(len(content), 100)])
+	}
+	if !strings.Contains(string(content), "save_style_profile") {
+		t.Fatalf("installed skill missing expected tool reference, got: %q", content[:min(len(content), 200)])
+	}
+}
+
+// TestInitSeedsBuiltInStyleTemplate covers the promoted, genuinely dogfooded
+// style default: unlike an earlier, agent-fabricated attempt at this file
+// (removed after the operator caught it -- see note-20260719-99c8f3a0), this
+// content came from the operator's own real /ps-style conversation and was
+// explicitly promoted with their approval, the same process already
+// established for voice's own generic default.
+func TestInitSeedsBuiltInStyleTemplate(t *testing.T) {
+	fakeHome := withFakeHome(t)
+	dir := t.TempDir()
+	cmd := newRootCmd()
+	cmd.SetArgs([]string{"init", dir})
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("init failed: %v", err)
+	}
+
+	templatePath := filepath.Join(fakeHome, ".pysar", "templates", "style", "generic.md")
+	content, err := os.ReadFile(templatePath)
+	if err != nil {
+		t.Fatalf("expected built-in generic style template seeded at %s: %v", templatePath, err)
+	}
+	if !strings.Contains(string(content), "kind: style") {
+		t.Fatalf("seeded template missing expected frontmatter, got: %q", content[:min(len(content), 100)])
+	}
+	if !strings.Contains(string(content), "Lead with the main point") {
+		t.Fatalf("seeded template missing the real dogfooded rules content, got: %q", content[:min(len(content), 300)])
+	}
+
+	// Voice and Style templates must never collide.
+	voicePath := filepath.Join(fakeHome, ".pysar", "templates", "voice", "generic.md")
+	if _, err := os.Stat(voicePath); err != nil {
+		t.Fatalf("expected voice's own generic template to also still be seeded: %v", err)
+	}
+}
+
+// TestInitMessagingIsKindAgnosticForTemplates locks in the simplified
+// messaging design: with two profile kinds now shipping built-in templates
+// (voice, style), the init summary reports on "templates" collectively
+// rather than naming each kind separately.
+func TestInitMessagingIsKindAgnosticForTemplates(t *testing.T) {
+	withFakeHome(t)
+	dir := t.TempDir()
+	output := captureStdout(t, func() {
+		cmd := newRootCmd()
+		cmd.SetArgs([]string{"init", dir})
+		if err := cmd.Execute(); err != nil {
+			t.Fatalf("init failed: %v", err)
+		}
+	})
+
+	if !strings.Contains(output, "installed built-in templates") {
+		t.Fatalf("expected a Kind-agnostic templates-installed message, got: %q", output)
+	}
+	if strings.Contains(output, "voice template") || strings.Contains(output, "style template") {
+		t.Fatalf("expected no Kind-specific template wording, got: %q", output)
+	}
+}

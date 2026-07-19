@@ -96,6 +96,9 @@ func New(name, version, baseDir, homeDir string, in io.Reader, out io.Writer) *S
 	s.registerSaveVoiceProfile()
 	s.registerSaveVoiceTemplate()
 	s.registerListVoiceTemplates()
+	s.registerSaveStyleProfile()
+	s.registerSaveStyleTemplate()
+	s.registerListStyleTemplates()
 	return s
 }
 
