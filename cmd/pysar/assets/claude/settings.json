@@ -2,7 +2,12 @@
   "permissions": {
     "allow": [
       "mcp__pysar__*",
-      "Read(.pysar/**)"
+      "Read(.pysar/**)",
+      "Skill(ps-factcheck)",
+      "Skill(ps-intake)",
+      "Skill(ps-onboard)",
+      "Skill(ps-style)",
+      "Skill(ps-voice)"
     ]
   }
 }

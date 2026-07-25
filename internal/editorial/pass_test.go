@@ -13,8 +13,8 @@ func TestDraftEditBlockedWithoutStake(t *testing.T) {
 	if !errors.As(err, &pe) {
 		t.Fatalf("expected *PreconditionError, got %v", err)
 	}
-	if len(pe.Missing) != 1 || pe.Missing[0] != ArtifactStake {
-		t.Fatalf("expected missing=[stake], got %v", pe.Missing)
+	if len(pe.Missing) != 2 || pe.Missing[0] != ArtifactStake || pe.Missing[1] != ArtifactBrief {
+		t.Fatalf("expected missing=[stake brief], got %v", pe.Missing)
 	}
 }
 

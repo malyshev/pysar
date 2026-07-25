@@ -1,23 +1,7 @@
 package editorial
 
-// Seam stubs exercising the mechanism (ordering + target-surface
-// applicability) ahead of real editorial pass bodies (dec-20260718-ffbfb04b).
-
-type ideaScaffoldPass struct{}
-
-var _ Pass = (*ideaScaffoldPass)(nil)
-
-func (ideaScaffoldPass) Name() string { return "idea-scaffold" }
-
-// AllowEmpty: idea-scaffold is the legitimate first pass -- it applies to a
-// piece with nothing produced yet.
-func (ideaScaffoldPass) AllowEmpty() bool { return true }
-
-func (ideaScaffoldPass) Precondition(_ *State) error { return nil }
-
-func (ideaScaffoldPass) Body(s *State) (*State, error) {
-	return s.WithProduced(ArtifactStake), nil
-}
+// Seam stubs for later passes; intake is a real pass in intake_pass.go
+// (dec-20260718-ffbfb04b, dec-20260725-35fa2d24).
 
 type draftEditPass struct{}
 
@@ -26,10 +10,10 @@ var _ Pass = (*draftEditPass)(nil)
 func (draftEditPass) Name() string { return "draft-edit" }
 
 func (draftEditPass) Precondition(s *State) error {
-	if !s.Has(ArtifactStake) {
+	if !s.Has(ArtifactStake) && !s.Has(ArtifactBrief) {
 		return &PreconditionError{
-			Missing: []ArtifactKind{ArtifactStake},
-			Hint:    "run idea-scaffold first to produce a stake",
+			Missing: []ArtifactKind{ArtifactStake, ArtifactBrief},
+			Hint:    "run intake first to produce a stake/brief",
 		}
 	}
 	return nil
@@ -65,7 +49,7 @@ func (discoverabilityPass) Body(s *State) (*State, error) {
 }
 
 func init() {
-	Register(ideaScaffoldPass{})
+	Register(intakePass{})
 	Register(draftEditPass{})
 	Register(discoverabilityPass{})
 }

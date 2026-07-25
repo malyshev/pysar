@@ -101,6 +101,8 @@ func New(name, version, baseDir, homeDir string, in io.Reader, out io.Writer) *S
 	s.registerSaveStyleTemplate()
 	s.registerListStyleTemplates()
 	s.registerCheckOnboardingStatus()
+	s.registerReadAuthorDefaults()
+	s.registerSaveIntakeBundle()
 	return s
 }
 

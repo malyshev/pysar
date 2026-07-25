@@ -5,6 +5,10 @@ type ArtifactKind string
 
 const (
 	ArtifactStake        ArtifactKind = "stake"
+	ArtifactBrief        ArtifactKind = "brief"
+	ArtifactOutline      ArtifactKind = "outline"
+	ArtifactAngles       ArtifactKind = "angles"
+	ArtifactSourcesStub  ArtifactKind = "sources_stub"
 	ArtifactDraft        ArtifactKind = "draft"
 	ArtifactVoiceLock    ArtifactKind = "voice_lock"
 	ArtifactVoiceProfile ArtifactKind = "voice_profile"
