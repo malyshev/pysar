@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"strings"
 	"unicode/utf8"
+
+	"pysar/internal/validation"
 )
 
 // EntryMode records how the thesis entered intake.
@@ -95,13 +97,7 @@ type Bundle struct {
 }
 
 // ValidationError names every missing/invalid field at once.
-type ValidationError struct {
-	Missing []string
-}
-
-func (e *ValidationError) Error() string {
-	return fmt.Sprintf("intake bundle incomplete: missing %v", e.Missing)
-}
+type ValidationError = validation.Error
 
 // Degenerate reports mechanical cases where intake must block (empty,
 // whitespace-only, a single word regardless of length, or no extractable
@@ -204,7 +200,7 @@ func Validate(b Bundle) error {
 		}
 	}
 	if len(missing) > 0 {
-		return &ValidationError{Missing: missing}
+		return &ValidationError{Kind: "intake bundle", Missing: missing}
 	}
 	return nil
 }

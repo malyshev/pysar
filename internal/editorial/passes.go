@@ -50,6 +50,7 @@ func (discoverabilityPass) Body(s *State) (*State, error) {
 
 func init() {
 	Register(intakePass{})
+	Register(researchPass{})
 	Register(draftEditPass{})
 	Register(discoverabilityPass{})
 }

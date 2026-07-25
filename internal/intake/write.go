@@ -85,6 +85,17 @@ func truncatePrefix(base string) string {
 // Directory naming and collisions are storage mechanics, never a decision
 // surfaced to the author. base may be empty; a bare suffix is still unique.
 func AllocateUniqueName(projectRoot, base string) (string, error) {
+	return AllocateUniqueNameUnder(projectRoot, PiecesDir, "brief.md", base)
+}
+
+// AllocateUniqueNameUnder is the generic form AllocateUniqueName wraps —
+// exported so other packages (e.g. internal/research, whose output isn't a
+// piece and doesn't live under PiecesDir) can allocate unique,
+// randomly-suffixed directory names under their own root and marker file
+// without duplicating the suffix-generation/truncation logic. Same
+// contract: base may be empty, the random suffix is never skipped, and a
+// name collision is retried silently rather than surfaced as an error.
+func AllocateUniqueNameUnder(projectRoot, subdir, markerFile, base string) (string, error) {
 	base = truncatePrefix(onboarding.Slug(base))
 	for attempt := 0; attempt < 8; attempt++ {
 		suffix, err := randomSuffixHex(6)
@@ -95,11 +106,14 @@ func AllocateUniqueName(projectRoot, base string) (string, error) {
 		if base != "" {
 			candidate = base + "-" + suffix
 		}
-		if _, statErr := os.Stat(filepath.Join(PieceDir(projectRoot, candidate), "brief.md")); os.IsNotExist(statErr) {
+		// candidate is already fully slug-safe (base was slugged above, and
+		// suffix is lowercase hex) -- no need to slug it a second time.
+		dir := filepath.Join(projectRoot, subdir, candidate)
+		if _, statErr := os.Stat(filepath.Join(dir, markerFile)); os.IsNotExist(statErr) {
 			return candidate, nil
 		}
 	}
-	return "", fmt.Errorf("could not allocate a unique piece name after several attempts")
+	return "", fmt.Errorf("could not allocate a unique name under %s after several attempts", subdir)
 }
 
 // WriteBundle validates b, allocates a fresh unique piece directory, and
@@ -255,16 +269,25 @@ Intake never fabricates citations; every source it does list here was actually f
 }
 
 func appendChangelog(dir string, b Bundle) error {
-	path := filepath.Join(dir, "intake-changelog.md")
 	line := fmt.Sprintf("- %s — entry=%s piece=%s thesis=%q\n",
 		time.Now().UTC().Format(time.RFC3339), b.EntryMode, b.Name, strings.TrimSpace(b.Thesis))
+	return AppendChangelogLine(dir, "intake-changelog.md", line)
+}
+
+// AppendChangelogLine appends a single pre-formatted line to filename inside
+// dir, creating the file if needed. Exported so other packages (e.g.
+// internal/research, whose research-changelog.md follows the exact same
+// append-only shape) share this instead of duplicating the OpenFile dance —
+// same reasoning as AllocateUniqueNameUnder below.
+func AppendChangelogLine(dir, filename, line string) error {
+	path := filepath.Join(dir, filename)
 	f, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644)
 	if err != nil {
-		return fmt.Errorf("open changelog: %w", err)
+		return fmt.Errorf("open %s: %w", filename, err)
 	}
 	defer f.Close()
 	if _, err := f.WriteString(line); err != nil {
-		return fmt.Errorf("append changelog: %w", err)
+		return fmt.Errorf("append %s: %w", filename, err)
 	}
 	return nil
 }

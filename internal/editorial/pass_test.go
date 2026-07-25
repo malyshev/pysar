@@ -18,6 +18,30 @@ func TestDraftEditBlockedWithoutStake(t *testing.T) {
 	}
 }
 
+func TestResearchBlockedWithoutBrief(t *testing.T) {
+	s := NewState(SurfaceBlog)
+	_, err := Run(researchPass{}, s)
+
+	var pe *PreconditionError
+	if !errors.As(err, &pe) {
+		t.Fatalf("expected *PreconditionError, got %v", err)
+	}
+	if len(pe.Missing) != 1 || pe.Missing[0] != ArtifactBrief {
+		t.Fatalf("expected missing=[brief], got %v", pe.Missing)
+	}
+}
+
+func TestResearchProceedsWithBrief(t *testing.T) {
+	s := NewState(SurfaceBlog, ArtifactStake, ArtifactBrief)
+	ns, err := Run(researchPass{}, s)
+	if err != nil {
+		t.Fatalf("expected research to proceed once a brief exists, got %v", err)
+	}
+	if !ns.Has(ArtifactSourcesFull) {
+		t.Fatal("expected ArtifactSourcesFull to be produced")
+	}
+}
+
 func TestDiscoverabilityDeclinesForLetter(t *testing.T) {
 	s := NewState(SurfaceLetter, ArtifactStake, ArtifactDraft)
 	if _, err := Run(discoverabilityPass{}, s); err == nil {
@@ -81,7 +105,7 @@ func TestMetaCheckCatchesTrivialNilPrecondition(t *testing.T) {
 }
 
 func TestRegisteredLength(t *testing.T) {
-	if got := len(Registered()); got != 3 {
-		t.Fatalf("expected 3 registered seam stubs, got %d", got)
+	if got := len(Registered()); got != 4 {
+		t.Fatalf("expected 4 registered passes (intake, research, draft-edit, discoverability), got %d", got)
 	}
 }

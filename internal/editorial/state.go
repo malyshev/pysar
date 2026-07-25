@@ -9,6 +9,7 @@ const (
 	ArtifactOutline      ArtifactKind = "outline"
 	ArtifactAngles       ArtifactKind = "angles"
 	ArtifactSourcesStub  ArtifactKind = "sources_stub"
+	ArtifactSourcesFull  ArtifactKind = "sources_full"
 	ArtifactDraft        ArtifactKind = "draft"
 	ArtifactVoiceLock    ArtifactKind = "voice_lock"
 	ArtifactVoiceProfile ArtifactKind = "voice_profile"
