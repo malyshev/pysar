@@ -146,8 +146,9 @@ silently over- or under-shooting.
 
 Call `save_draft_bundle` with `piece_path` and `draft_md` (plus an optional
 one-line `notes` for the changelog, e.g. `"first full draft"` or `"revision
-after a staff-edit pass"`). Never use Write/Bash for this — the tool
-validates citation integrity (every `[^shortname]` resolves to a real
+after a staff-edit pass"`). Never use `Edit`, `Write`, or Bash on `draft.md`
+directly, including for a small fix after the tool flags a problem — the
+tool validates citation integrity (every `[^shortname]` resolves to a real
 source; no raw URL in prose), so nothing here risks shipping a broken or
 invented citation. It does **not** resolve citation markers to links or
 check heading/title shape — link-resolution and heading shape both depend
@@ -169,6 +170,7 @@ Stop.
 
 ## Do not
 
+- Use `Edit`, `Write`, or Bash on `draft.md` — always `save_draft_bundle`
 - Invent a fixed opener/closing-archetype taxonomy the operator's profile
   doesn't have — use `voice.md`/`style.md` via `read_author_defaults`, the
   same source `/ps-intake` already reads

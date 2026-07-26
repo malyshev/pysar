@@ -109,7 +109,7 @@ Omit: Author / Author-name fields, target length / `--length`. Real URLs in `sou
 
 Call `save_intake_bundle` with the structured fields (`name` only if `--name=` was explicitly given; otherwise omit it and the tool derives one from the idea, always with a unique suffix; `sources` only if `ps-factcheck` actually fetched something). Mention in one short sentence that you are saving.
 
-On tool error: fix exactly what it names (missing field, degenerate idea). Directory naming and collisions are never a tool error the author needs to resolve — the tool handles that silently. Retry the tool. Never Write files yourself to work around it.
+On tool error: fix exactly what it names (missing field, degenerate idea). Directory naming and collisions are never a tool error the author needs to resolve — the tool handles that silently. Retry the tool. Never Write or Edit files yourself to work around it, including a quick fix to an already-written brief.md/outline.md/angles.md — re-run the tool with the corrected fields instead.
 
 On success the tool writes under a **provisional**, uniquely-named piece directory:
 
@@ -135,7 +135,7 @@ No phase jargon for the author. No permission theater. Stop.
 - Ask clarifying questions for merely broad ideas
 - Ask the author to name, rename, or resolve a collision for a piece directory
 - Say "slug" — call it the piece, the directory, or the piece name
-- Use Bash to create directories or write Markdown
+- Use Bash to create directories or write Markdown, or `Edit`/`Write` on a piece file directly
 - Copy prior-POC author-registry or length-cap behavior
 - Expand the restatement into a confirmation gate
 - Mention that no voice/style profile exists as a caveat on the restatement — state the resulting default as a plain fact instead

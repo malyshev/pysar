@@ -1,7 +1,7 @@
 package editorial
 
-// Seam stub for a later pass; intake, research, and draft are real passes
-// in their own files (dec-20260718-ffbfb04b, dec-20260725-35fa2d24).
+// Seam stub for a later pass; intake, research, draft, and staff-edit are
+// real passes in their own files (dec-20260718-ffbfb04b, dec-20260725-35fa2d24).
 
 type discoverabilityPass struct{}
 
@@ -32,5 +32,6 @@ func init() {
 	Register(intakePass{})
 	Register(researchPass{})
 	Register(draftPass{})
+	Register(staffEditPass{})
 	Register(discoverabilityPass{})
 }

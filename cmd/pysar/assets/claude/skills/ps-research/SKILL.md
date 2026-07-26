@@ -129,9 +129,10 @@ research is procrastination — persist and hand off.
 
 Call `save_research_bundle` with `piece_path` (piece-anchored) or `topic`
 (standalone), `expert_lens`, `sources`, and whatever `competitors`/
-`key_questions_additions`/`angles_*` apply. Never use Write/Bash for any
-of this — the tool does the mechanical file work so nothing here risks
-touching content it shouldn't.
+`key_questions_additions`/`angles_*` apply. Never use `Edit`, `Write`, or
+Bash for any of this, including on the piece's existing `brief.md`/
+`angles.md`/`sources.md` — the tool does the mechanical file work so
+nothing here risks touching content it shouldn't.
 
 ## Step 8 — summary (short)
 
@@ -145,6 +146,7 @@ No phase jargon. No permission theater. Stop.
 
 ## Do not
 
+- Use `Edit`, `Write`, or Bash on any piece file — always `save_research_bundle`
 - Rewrite the operator's thesis, killer_sections, or counterintuitive to
   match what sources say — research adds citations, intake owns the take
 - Invent a source, a URL, or a raw excerpt that wasn't actually fetched

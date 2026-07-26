@@ -29,6 +29,30 @@ func TestDraftProceedsWithBrief(t *testing.T) {
 	}
 }
 
+func TestStaffEditBlockedWithoutDraft(t *testing.T) {
+	s := NewState(SurfaceBlog, ArtifactStake, ArtifactBrief)
+	_, err := Run(staffEditPass{}, s)
+
+	var pe *PreconditionError
+	if !errors.As(err, &pe) {
+		t.Fatalf("expected *PreconditionError, got %v", err)
+	}
+	if len(pe.Missing) != 1 || pe.Missing[0] != ArtifactDraft {
+		t.Fatalf("expected missing=[draft], got %v", pe.Missing)
+	}
+}
+
+func TestStaffEditProceedsWithDraft(t *testing.T) {
+	s := NewState(SurfaceBlog, ArtifactStake, ArtifactBrief, ArtifactDraft)
+	ns, err := Run(staffEditPass{}, s)
+	if err != nil {
+		t.Fatalf("expected staff-edit to proceed once a draft exists, got %v", err)
+	}
+	if !ns.Has(ArtifactStaffEdit) {
+		t.Fatal("expected ArtifactStaffEdit to be produced")
+	}
+}
+
 func TestResearchBlockedWithoutBrief(t *testing.T) {
 	s := NewState(SurfaceBlog)
 	_, err := Run(researchPass{}, s)
@@ -116,7 +140,7 @@ func TestMetaCheckCatchesTrivialNilPrecondition(t *testing.T) {
 }
 
 func TestRegisteredLength(t *testing.T) {
-	if got := len(Registered()); got != 4 {
-		t.Fatalf("expected 4 registered passes (intake, research, draft, discoverability), got %d", got)
+	if got := len(Registered()); got != 5 {
+		t.Fatalf("expected 5 registered passes (intake, research, draft, staff-edit, discoverability), got %d", got)
 	}
 }
