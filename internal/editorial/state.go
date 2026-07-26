@@ -12,6 +12,7 @@ const (
 	ArtifactSourcesFull  ArtifactKind = "sources_full"
 	ArtifactDraft        ArtifactKind = "draft"
 	ArtifactStaffEdit    ArtifactKind = "staff_edit"
+	ArtifactSharpen      ArtifactKind = "sharpen"
 	ArtifactVoiceLock    ArtifactKind = "voice_lock"
 	ArtifactVoiceProfile ArtifactKind = "voice_profile"
 	ArtifactStyleProfile ArtifactKind = "style_profile"

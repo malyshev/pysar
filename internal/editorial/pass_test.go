@@ -53,6 +53,39 @@ func TestStaffEditProceedsWithDraft(t *testing.T) {
 	}
 }
 
+func TestSharpenBlockedWithoutDraft(t *testing.T) {
+	s := NewState(SurfaceBlog, ArtifactStake, ArtifactBrief)
+	_, err := Run(sharpenPass{}, s)
+
+	var pe *PreconditionError
+	if !errors.As(err, &pe) {
+		t.Fatalf("expected *PreconditionError, got %v", err)
+	}
+	if len(pe.Missing) != 1 || pe.Missing[0] != ArtifactDraft {
+		t.Fatalf("expected missing=[draft], got %v", pe.Missing)
+	}
+}
+
+func TestSharpenProceedsWithDraftAlone(t *testing.T) {
+	// Staff-edit is optional -- sharpen must proceed on a draft alone, the
+	// same way draft itself proceeds without research having run.
+	s := NewState(SurfaceBlog, ArtifactStake, ArtifactBrief, ArtifactDraft)
+	ns, err := Run(sharpenPass{}, s)
+	if err != nil {
+		t.Fatalf("expected sharpen to proceed once a draft exists, got %v", err)
+	}
+	if !ns.Has(ArtifactSharpen) {
+		t.Fatal("expected ArtifactSharpen to be produced")
+	}
+}
+
+func TestSharpenProceedsWithStaffEditToo(t *testing.T) {
+	s := NewState(SurfaceBlog, ArtifactStake, ArtifactBrief, ArtifactDraft, ArtifactStaffEdit)
+	if _, err := Run(sharpenPass{}, s); err != nil {
+		t.Fatalf("expected sharpen to proceed when staff-edit also ran, got %v", err)
+	}
+}
+
 func TestResearchBlockedWithoutBrief(t *testing.T) {
 	s := NewState(SurfaceBlog)
 	_, err := Run(researchPass{}, s)
@@ -140,7 +173,7 @@ func TestMetaCheckCatchesTrivialNilPrecondition(t *testing.T) {
 }
 
 func TestRegisteredLength(t *testing.T) {
-	if got := len(Registered()); got != 5 {
-		t.Fatalf("expected 5 registered passes (intake, research, draft, staff-edit, discoverability), got %d", got)
+	if got := len(Registered()); got != 6 {
+		t.Fatalf("expected 6 registered passes (intake, research, draft, staff-edit, sharpen, discoverability), got %d", got)
 	}
 }
