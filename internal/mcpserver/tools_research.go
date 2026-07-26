@@ -3,7 +3,6 @@ package mcpserver
 import (
 	"encoding/json"
 	"fmt"
-	"path/filepath"
 	"strings"
 
 	"pysar/internal/editorial"
@@ -98,16 +97,8 @@ func (s *Server) callSaveResearchBundle(args json.RawMessage) callToolResult {
 		return textResult("standalone research saved under %s. no piece was created -- run /ps-intake --from-draft=%s/research-summary.md when ready to turn this into a piece.", dir, dir)
 	}
 
-	pass := findPass("research")
-	if pass == nil {
-		return errorResult("research pass is not registered")
-	}
-	pieceDir := research.ResolvePieceDir(s.baseDir, b.PiecePath)
-	state := editorial.NewState(editorial.SurfaceBlog)
-	if fileExists(filepath.Join(pieceDir, "brief.md")) {
-		state = state.WithProduced(editorial.ArtifactStake).WithProduced(editorial.ArtifactBrief)
-	}
-	if _, err := editorial.Run(pass, state); err != nil {
+	pieceDir, err := s.resolveAnchoredPass("research", b.PiecePath)
+	if err != nil {
 		return errorResult("%s", err.Error())
 	}
 

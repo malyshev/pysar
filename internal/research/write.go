@@ -9,7 +9,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 
 	"pysar/internal/intake"
 )
@@ -37,21 +36,26 @@ const standaloneMarkerFile = "sources.md"
 // (that heuristic both misresolves anything nested more than one level deep,
 // and misfires on a directory name that legitimately contains a dot). So
 // this walks up from the given path looking for the real marker on disk.
-func ResolvePieceDir(projectRoot, piecePath string) string {
-	dir := filepath.Clean(filepath.Join(projectRoot, filepath.FromSlash(strings.TrimSpace(piecePath))))
+//
+// found reports whether brief.md actually exists at the returned dir --
+// callers that only need to know "is this piece real" (e.g. building an
+// editorial.State) should use this instead of re-stat'ing brief.md
+// themselves; this function already paid for that exact check internally.
+func ResolvePieceDir(projectRoot, piecePath string) (dir string, found bool) {
+	dir = filepath.Clean(filepath.Join(projectRoot, filepath.FromSlash(strings.TrimSpace(piecePath))))
 	root := filepath.Clean(projectRoot)
 	for {
 		if info, err := os.Stat(dir); err == nil && info.IsDir() {
 			if _, err := os.Stat(filepath.Join(dir, "brief.md")); err == nil {
-				return dir
+				return dir, true
 			}
 		}
 		if dir == root {
-			return dir
+			return dir, false
 		}
 		parent := filepath.Dir(dir)
 		if parent == dir {
-			return dir // reached filesystem root without finding brief.md
+			return dir, false // reached filesystem root without finding brief.md
 		}
 		dir = parent
 	}
@@ -110,7 +114,7 @@ func WriteToPiece(projectRoot string, b Bundle) error {
 	if strings.TrimSpace(b.PiecePath) == "" {
 		return fmt.Errorf("WriteToPiece called with no piece_path — use WriteStandalone instead")
 	}
-	dir := ResolvePieceDir(projectRoot, b.PiecePath)
+	dir, _ := ResolvePieceDir(projectRoot, b.PiecePath)
 
 	briefPath := filepath.Join(dir, "brief.md")
 	briefRaw, err := os.ReadFile(briefPath)
@@ -158,6 +162,24 @@ func WriteToPiece(projectRoot string, b Bundle) error {
 	}
 
 	return appendResearchChangelog(dir, b)
+}
+
+// LoadShortnames returns the set of Shortnames a piece's research has
+// recorded, for callers outside this package (e.g. internal/draft, which
+// validates [^shortname] citation markers against real sources) that need
+// to know what's citable without depending on this package's internal
+// manifest format. Empty (not an error) when no research has run yet for
+// this piece -- that's a legitimate state, not a fault.
+func LoadShortnames(pieceDir string) (map[string]bool, error) {
+	sources, err := loadSourcesManifest(pieceDir)
+	if err != nil {
+		return nil, err
+	}
+	set := make(map[string]bool, len(sources))
+	for _, s := range sources {
+		set[s.Shortname] = true
+	}
+	return set, nil
 }
 
 // sourcesManifestFile stores the piece's full accumulated source list as
@@ -399,7 +421,6 @@ func splitSection(content, heading string) (section, before, after string) {
 }
 
 func appendResearchChangelog(dir string, b Bundle) error {
-	line := fmt.Sprintf("- %s — sources=%d competitors=%d\n",
-		time.Now().UTC().Format(time.RFC3339), len(b.Sources), len(b.Competitors))
+	line := intake.FormatChangelogLine(fmt.Sprintf("sources=%d competitors=%d", len(b.Sources), len(b.Competitors)))
 	return intake.AppendChangelogLine(dir, "research-changelog.md", line)
 }

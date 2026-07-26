@@ -269,9 +269,16 @@ Intake never fabricates citations; every source it does list here was actually f
 }
 
 func appendChangelog(dir string, b Bundle) error {
-	line := fmt.Sprintf("- %s — entry=%s piece=%s thesis=%q\n",
-		time.Now().UTC().Format(time.RFC3339), b.EntryMode, b.Name, strings.TrimSpace(b.Thesis))
+	line := FormatChangelogLine(fmt.Sprintf("entry=%s piece=%s thesis=%q", b.EntryMode, b.Name, strings.TrimSpace(b.Thesis)))
 	return AppendChangelogLine(dir, "intake-changelog.md", line)
+}
+
+// FormatChangelogLine builds the standard "- <RFC3339 UTC> — <summary>\n"
+// line every *-changelog.md in this project shares. Exported alongside
+// AppendChangelogLine so a future change to the timestamp format or
+// separator has one call site instead of one per package.
+func FormatChangelogLine(summary string) string {
+	return fmt.Sprintf("- %s — %s\n", time.Now().UTC().Format(time.RFC3339), summary)
 }
 
 // AppendChangelogLine appends a single pre-formatted line to filename inside

@@ -5,16 +5,27 @@ import (
 	"testing"
 )
 
-func TestDraftEditBlockedWithoutStake(t *testing.T) {
+func TestDraftBlockedWithoutBrief(t *testing.T) {
 	s := NewState(SurfaceBlog)
-	_, err := Run(draftEditPass{}, s)
+	_, err := Run(draftPass{}, s)
 
 	var pe *PreconditionError
 	if !errors.As(err, &pe) {
 		t.Fatalf("expected *PreconditionError, got %v", err)
 	}
-	if len(pe.Missing) != 2 || pe.Missing[0] != ArtifactStake || pe.Missing[1] != ArtifactBrief {
-		t.Fatalf("expected missing=[stake brief], got %v", pe.Missing)
+	if len(pe.Missing) != 1 || pe.Missing[0] != ArtifactBrief {
+		t.Fatalf("expected missing=[brief], got %v", pe.Missing)
+	}
+}
+
+func TestDraftProceedsWithBrief(t *testing.T) {
+	s := NewState(SurfaceBlog, ArtifactStake, ArtifactBrief)
+	ns, err := Run(draftPass{}, s)
+	if err != nil {
+		t.Fatalf("expected draft to proceed once a brief exists, got %v", err)
+	}
+	if !ns.Has(ArtifactDraft) {
+		t.Fatal("expected ArtifactDraft to be produced")
 	}
 }
 
@@ -99,13 +110,13 @@ func TestMetaCheckCatchesTrivialNilPrecondition(t *testing.T) {
 		t.Fatal("expected meta-check to flag a non-AllowEmpty pass with a trivially-nil Precondition")
 	}
 
-	if !passHandlesEmptyCorrectly(draftEditPass{}, empty) {
+	if !passHandlesEmptyCorrectly(draftPass{}, empty) {
 		t.Fatal("expected a correctly implemented pass to pass the meta-check")
 	}
 }
 
 func TestRegisteredLength(t *testing.T) {
 	if got := len(Registered()); got != 4 {
-		t.Fatalf("expected 4 registered passes (intake, research, draft-edit, discoverability), got %d", got)
+		t.Fatalf("expected 4 registered passes (intake, research, draft, discoverability), got %d", got)
 	}
 }

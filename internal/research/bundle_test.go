@@ -510,11 +510,22 @@ func TestResolvePieceDirAcceptsDirectoryOrFileInside(t *testing.T) {
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			got := ResolvePieceDir(root, tc.input)
+			got, found := ResolvePieceDir(root, tc.input)
 			if got != tc.want {
 				t.Fatalf("ResolvePieceDir(%q) = %q, want %q", tc.input, got, tc.want)
 			}
+			if !found {
+				t.Fatalf("ResolvePieceDir(%q) found=false, want true (brief.md exists at %q)", tc.input, tc.want)
+			}
 		})
+	}
+}
+
+func TestResolvePieceDirReportsNotFoundForMissingPiece(t *testing.T) {
+	root := t.TempDir()
+	_, found := ResolvePieceDir(root, ".pysar/pieces/does-not-exist")
+	if found {
+		t.Fatal("expected found=false for a piece_path with no brief.md anywhere on the walk up")
 	}
 }
 

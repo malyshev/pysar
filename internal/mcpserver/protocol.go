@@ -104,6 +104,7 @@ func New(name, version, baseDir, homeDir string, in io.Reader, out io.Writer) *S
 	s.registerReadAuthorDefaults()
 	s.registerSaveIntakeBundle()
 	s.registerSaveResearchBundle()
+	s.registerSaveDraftBundle()
 	return s
 }
 
