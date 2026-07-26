@@ -52,6 +52,27 @@ func TestValidateReusesDraftCitationIntegrity(t *testing.T) {
 	}
 }
 
+func TestValidateErrorNamesRevisedMDNotDraftMD(t *testing.T) {
+	// save_sharpen_bundle's schema has revised_md, not draft_md -- an error
+	// telling the agent to fix "draft_md" would point at a field that
+	// doesn't exist in the tool it's calling.
+	b := Bundle{
+		PiecePath: "x",
+		RevisedMD: "# Title\n\nSee https://example.com directly.\n",
+		Checks:    []string{"[opener] tightened the hook"},
+	}
+	err := Validate(b, nil)
+	if err == nil {
+		t.Fatal("expected error for a raw URL")
+	}
+	if !strings.Contains(err.Error(), "revised_md") {
+		t.Fatalf("expected error to name revised_md, got %v", err)
+	}
+	if strings.Contains(err.Error(), "draft_md") {
+		t.Fatalf("error must not reference draft_md -- that field doesn't exist in save_sharpen_bundle's schema, got %v", err)
+	}
+}
+
 func TestValidateReusesDraftRawURLCheck(t *testing.T) {
 	b := Bundle{
 		PiecePath: "x",

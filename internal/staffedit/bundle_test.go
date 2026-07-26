@@ -40,7 +40,7 @@ func TestValidateReusesDraftCitationIntegrity(t *testing.T) {
 	// (an unmatched shortname) is caught here too.
 	b := Bundle{
 		PiecePath: "x",
-		RevisedMD:   "# Title\n\nA claim that cites a source that was never fetched[^ghost-source].\n",
+		RevisedMD: "# Title\n\nA claim that cites a source that was never fetched[^ghost-source].\n",
 		Checks:    []string{"[stakes] tightened the opener"},
 	}
 	err := Validate(b, map[string]bool{"other-source": true})
@@ -52,10 +52,31 @@ func TestValidateReusesDraftCitationIntegrity(t *testing.T) {
 	}
 }
 
+func TestValidateErrorNamesRevisedMDNotDraftMD(t *testing.T) {
+	// save_staff_edit_bundle's schema has revised_md, not draft_md -- an
+	// error telling the agent to fix "draft_md" would point at a field
+	// that doesn't exist in the tool it's calling.
+	b := Bundle{
+		PiecePath: "x",
+		RevisedMD: "# Title\n\nSee https://example.com directly.\n",
+		Checks:    []string{"[stakes] tightened the opener"},
+	}
+	err := Validate(b, nil)
+	if err == nil {
+		t.Fatal("expected error for a raw URL")
+	}
+	if !strings.Contains(err.Error(), "revised_md") {
+		t.Fatalf("expected error to name revised_md, got %v", err)
+	}
+	if strings.Contains(err.Error(), "draft_md") {
+		t.Fatalf("error must not reference draft_md -- that field doesn't exist in save_staff_edit_bundle's schema, got %v", err)
+	}
+}
+
 func TestValidateReusesDraftRawURLCheck(t *testing.T) {
 	b := Bundle{
 		PiecePath: "x",
-		RevisedMD:   "# Title\n\nSee https://example.com directly.\n",
+		RevisedMD: "# Title\n\nSee https://example.com directly.\n",
 		Checks:    []string{"[readability] smoothed the transition"},
 	}
 	if err := Validate(b, nil); err == nil {
@@ -66,7 +87,7 @@ func TestValidateReusesDraftRawURLCheck(t *testing.T) {
 func TestValidateAcceptsWellFormedRevision(t *testing.T) {
 	b := Bundle{
 		PiecePath: "x",
-		RevisedMD:   validRevisedDraft(),
+		RevisedMD: validRevisedDraft(),
 		Checks:    []string{"[readability] split a long sentence into two", "[stakes] named the specific failure mode in paragraph 2"},
 	}
 	if err := Validate(b, map[string]bool{"src-a": true}); err != nil {

@@ -21,7 +21,6 @@
 package sharpen
 
 import (
-	"fmt"
 	"strings"
 
 	"pysar/internal/draft"
@@ -57,30 +56,21 @@ type Bundle struct {
 	Mode string `json:"mode,omitempty"`
 }
 
-// Validate reuses draft.Validate for citation integrity (sharpen.md's
-// content is still, mechanically, a piece of draft prose -- the same
+// Validate reuses draft.ValidateContent for citation integrity (sharpen.
+// md's content is still, mechanically, a piece of draft prose -- the same
 // citation/raw-URL rules apply, so this doesn't re-implement them a fourth
-// time) and adds the one check specific to this pass: at least one
-// recorded check.
+// time, and calling it with this package's own "revised_md" field name
+// keeps error messages pointing at an argument that actually exists in
+// save_sharpen_bundle's schema) and validation.RequireNonEmptyChecks for
+// the one check specific to this pass.
 func Validate(b Bundle, validShortnames map[string]bool) error {
 	var missing []string
 
-	if len(b.Checks) == 0 {
-		missing = append(missing, "checks (>=1 required -- even 'no changes needed' is worth recording as one entry)")
+	if strings.TrimSpace(b.PiecePath) == "" {
+		missing = append(missing, "piece_path")
 	}
-	for i, c := range b.Checks {
-		if strings.TrimSpace(c) == "" {
-			missing = append(missing, fmt.Sprintf("checks[%d] (empty)", i))
-		}
-	}
-
-	if err := draft.Validate(draft.Bundle{PiecePath: b.PiecePath, DraftMD: b.RevisedMD}, validShortnames); err != nil {
-		if ve, ok := err.(*validation.Error); ok {
-			missing = append(missing, ve.Missing...)
-		} else {
-			missing = append(missing, err.Error())
-		}
-	}
+	missing = append(missing, validation.RequireNonEmptyChecks(b.Checks)...)
+	missing = append(missing, draft.ValidateContent("revised_md", b.RevisedMD, validShortnames)...)
 
 	if len(missing) > 0 {
 		return &validation.Error{Kind: "sharpen bundle", Missing: missing}

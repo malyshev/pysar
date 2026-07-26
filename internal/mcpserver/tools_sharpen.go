@@ -3,6 +3,7 @@ package mcpserver
 import (
 	"encoding/json"
 	"fmt"
+	"path/filepath"
 
 	"pysar/internal/editorial"
 	"pysar/internal/research"
@@ -29,7 +30,7 @@ func (s *Server) registerSaveSharpenBundle() {
 		tool{
 			Name: "save_sharpen_bundle",
 			Description: "Validate and persist a /ps-sharpen pass: writes the revision to sharpen.md and appends sharpen-changelog.md. Neither draft.md nor staff-edit.md is touched -- each stage keeps its own file. " +
-				"Reuses draft.Validate for citation integrity (sharpen.md's content is still, mechanically, a piece of draft prose) -- no raw URL in prose, every [^shortname] resolved against the piece's actual research output, never accepted on trust. Requires >=1 recorded check -- an edit pass that logged nothing isn't a completed pass. " +
+				"Reuses draft.ValidateContent for citation integrity (sharpen.md's content is still, mechanically, a piece of draft prose) -- no raw URL in prose, every [^shortname] resolved against the piece's actual research output, never accepted on trust. Requires >=1 recorded check -- an edit pass that logged nothing isn't a completed pass. " +
 				"A re-run replaces sharpen.md wholesale, same as the earlier passes' own writes -- expected, not data loss. Never touches brief.md, outline.md, angles.md, or sources.md. Prefer this over Write/Bash so no extra filesystem permissions are needed.",
 			InputSchema: saveSharpenBundleSchema,
 		},
@@ -60,9 +61,20 @@ func (s *Server) callSaveSharpenBundle(args json.RawMessage) callToolResult {
 	if err != nil {
 		return errorResult("%s", err)
 	}
+
+	// Sharpen is the first pass with a genuine "which file did this
+	// revise from" ambiguity (staff-edit.md if present, else draft.md,
+	// per the skill's own instruction) -- the tool can't know which the
+	// agent actually read, but recording whether staff-edit.md existed at
+	// save time gives the run-log a real trace to check against later,
+	// instead of no signal at all.
+	revisedFrom := "draft.md"
+	if fileExists(filepath.Join(pieceDir, "staff-edit.md")) {
+		revisedFrom = "staff-edit.md"
+	}
 	if err := editorial.AppendRunLog(pieceDir, editorial.RunLogEntry{
 		Pass:    "sharpen",
-		Summary: fmt.Sprintf("piece=%s words=%d checks=%d", b.PiecePath, words, len(b.Checks)),
+		Summary: fmt.Sprintf("piece=%s words=%d checks=%d revised_from=%s", b.PiecePath, words, len(b.Checks), revisedFrom),
 	}); err != nil {
 		return errorResult("append run-log: %s", err)
 	}

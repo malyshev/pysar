@@ -29,7 +29,7 @@ func (s *Server) registerSaveStaffEditBundle() {
 		tool{
 			Name: "save_staff_edit_bundle",
 			Description: "Validate and persist a /ps-staff-edit pass: writes the revision to staff-edit.md and appends staff-edit-changelog.md. draft.md is never touched -- it stays the untouched first-draft artifact for comparison (or a future UI showing both). " +
-				"Reuses draft.Validate for citation integrity (staff-edit.md's content is still, mechanically, a piece of draft prose) -- no raw URL in prose, every [^shortname] resolved against the piece's actual research output, never accepted on trust. Requires >=1 recorded check -- an edit pass that logged nothing isn't a completed pass. " +
+				"Reuses draft.ValidateContent for citation integrity (staff-edit.md's content is still, mechanically, a piece of draft prose) -- no raw URL in prose, every [^shortname] resolved against the piece's actual research output, never accepted on trust. Requires >=1 recorded check -- an edit pass that logged nothing isn't a completed pass. " +
 				"A re-run replaces staff-edit.md wholesale, same as /ps-draft's own write for draft.md -- expected, not data loss. Never touches brief.md, outline.md, angles.md, or sources.md. Prefer this over Write/Bash so no extra filesystem permissions are needed.",
 			InputSchema: saveStaffEditBundleSchema,
 		},

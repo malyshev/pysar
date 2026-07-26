@@ -87,6 +87,9 @@ func TestSaveSharpenBundleEndToEndDirectlyAfterDraft(t *testing.T) {
 	if !strings.Contains(string(runLog), `"pass":"sharpen"`) {
 		t.Fatalf("run-log missing sharpen entry: %s", runLog)
 	}
+	if !strings.Contains(string(runLog), "revised_from=draft.md") {
+		t.Fatalf("run-log should record revised_from=draft.md when staff-edit.md doesn't exist: %s", runLog)
+	}
 
 	brief, _ := os.ReadFile(filepath.Join(pieceDir, "brief.md"))
 	if !strings.Contains(string(brief), "Most Docker pain comes from ignoring the defaults, not Docker itself") {
@@ -125,6 +128,11 @@ func TestSaveSharpenBundleEndToEndAfterStaffEdit(t *testing.T) {
 	gotSharpen, _ := os.ReadFile(filepath.Join(pieceDir, "sharpen.md"))
 	if !strings.Contains(string(gotSharpen), "Sharpened Title") {
 		t.Fatalf("sharpen.md missing the revised content:\n%s", gotSharpen)
+	}
+
+	runLog, _ := os.ReadFile(filepath.Join(pieceDir, "run-log.jsonl"))
+	if !strings.Contains(string(runLog), "revised_from=staff-edit.md") {
+		t.Fatalf("run-log should record revised_from=staff-edit.md when it exists: %s", runLog)
 	}
 }
 

@@ -90,28 +90,41 @@ func Validate(b Bundle, validShortnames map[string]bool) error {
 	if strings.TrimSpace(b.PiecePath) == "" {
 		missing = append(missing, "piece_path")
 	}
-
-	body := strings.TrimSpace(b.DraftMD)
-	if body == "" {
-		missing = append(missing, "draft_md")
-		return &validation.Error{Kind: "draft bundle", Missing: missing}
-	}
-
-	codeFree := stripCode(body)
-	if rawURLRe.MatchString(codeFree) {
-		missing = append(missing, "draft_md (raw URL found in prose -- cite via [^shortname] instead)")
-	}
-	for _, m := range citationRe.FindAllStringSubmatch(codeFree, -1) {
-		name := m[1]
-		if !validShortnames[name] {
-			missing = append(missing, fmt.Sprintf("draft_md ([^%s] does not match any source this piece's research has recorded)", name))
-		}
-	}
+	missing = append(missing, ValidateContent("draft_md", b.DraftMD, validShortnames)...)
 
 	if len(missing) > 0 {
 		return &validation.Error{Kind: "draft bundle", Missing: missing}
 	}
 	return nil
+}
+
+// ValidateContent checks citation integrity for a piece of draft prose --
+// every [^shortname] marker resolves to a real source, nothing bypasses
+// that convention with a raw URL, and the content isn't empty. fieldName
+// names the field in the CALLER's own schema -- "draft_md" here, but
+// internal/staffedit and internal/sharpen call this directly with their
+// own field name ("revised_md") for content that's mechanically the same
+// draft prose under a different name, so their error messages point at an
+// argument that actually exists in the tool being validated for, instead
+// of a hardcoded "draft_md" that isn't in their schema at all.
+func ValidateContent(fieldName, content string, validShortnames map[string]bool) []string {
+	body := strings.TrimSpace(content)
+	if body == "" {
+		return []string{fieldName}
+	}
+
+	var missing []string
+	codeFree := stripCode(body)
+	if rawURLRe.MatchString(codeFree) {
+		missing = append(missing, fmt.Sprintf("%s (raw URL found in prose -- cite via [^shortname] instead)", fieldName))
+	}
+	for _, m := range citationRe.FindAllStringSubmatch(codeFree, -1) {
+		name := m[1]
+		if !validShortnames[name] {
+			missing = append(missing, fmt.Sprintf("%s ([^%s] does not match any source this piece's research has recorded)", fieldName, name))
+		}
+	}
+	return missing
 }
 
 // WordCount is a plain whitespace-delimited word count of markdown source --

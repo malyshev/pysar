@@ -47,3 +47,29 @@ func WriteToPiece(dir string, b Bundle) (words int, err error) {
 	}
 	return words, nil
 }
+
+// WriteRevision writes revisedMD to dir/contentFile wholesale and appends a
+// changelog entry (checks joined with "; ", optionally mode-prefixed) to
+// dir/changelogFile. Shared by internal/staffedit and internal/sharpen,
+// whose own WriteToPiece functions previously differed only in which two
+// filenames they passed -- the write/changelog-assembly logic itself is
+// identical because both passes' Bundles share the same
+// RevisedMD/Checks/Mode shape. Returns the revised content's word count so
+// callers reuse this one computation instead of re-scanning it.
+func WriteRevision(dir, contentFile, changelogFile, revisedMD string, checks []string, mode string) (words int, err error) {
+	words = WordCount(revisedMD)
+
+	if err := WriteArticleFile(dir, contentFile, revisedMD); err != nil {
+		return 0, err
+	}
+
+	summary := strings.Join(checks, "; ")
+	if m := strings.TrimSpace(mode); m != "" {
+		summary = "(" + m + ") " + summary
+	}
+	line := intake.FormatChangelogLine(summary)
+	if err := intake.AppendChangelogLine(dir, changelogFile, line); err != nil {
+		return 0, err
+	}
+	return words, nil
+}
