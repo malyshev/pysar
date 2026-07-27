@@ -17,10 +17,11 @@ import (
 // only has one place to update instead of one per tool.
 //
 // State is built from cheap, targeted file-existence checks (brief.md ->
-// Stake+Brief, draft.md -> Draft, staff-edit.md -> StaffEdit) rather than
-// a generic "scan every known marker file" abstraction -- add one more
-// check here if a future pass needs a further artifact, the same way this
-// one was added for staff-edit and sharpen.
+// Stake+Brief, draft.md -> Draft, staff-edit.md -> StaffEdit, sharpen.md ->
+// Sharpen, humanize.md -> Humanize) rather than a generic "scan every known
+// marker file" abstraction -- add one more check here if a future pass
+// needs a further artifact, the same way this one was added for
+// staff-edit, sharpen, humanize, and export.
 func (s *Server) resolveAnchoredPass(passName, piecePath string) (pieceDir string, err error) {
 	pass := findPass(passName)
 	if pass == nil {
@@ -33,14 +34,20 @@ func (s *Server) resolveAnchoredPass(passName, piecePath string) (pieceDir strin
 		// Only look for further piece artifacts once the piece itself is
 		// confirmed real -- when !found, pieceDir has fallen back to
 		// s.baseDir (ResolvePieceDir's not-found case), and checking for
-		// draft.md/staff-edit.md there would pick up an unrelated file at
-		// the project root instead of correctly reporting no real piece
-		// was found.
+		// draft.md/staff-edit.md/sharpen.md/humanize.md there would pick up
+		// an unrelated file at the project root instead of correctly
+		// reporting no real piece was found.
 		if fileExists(filepath.Join(pieceDir, "draft.md")) {
 			state = state.WithProduced(editorial.ArtifactDraft)
 		}
 		if fileExists(filepath.Join(pieceDir, "staff-edit.md")) {
 			state = state.WithProduced(editorial.ArtifactStaffEdit)
+		}
+		if fileExists(filepath.Join(pieceDir, "sharpen.md")) {
+			state = state.WithProduced(editorial.ArtifactSharpen)
+		}
+		if fileExists(filepath.Join(pieceDir, "humanize.md")) {
+			state = state.WithProduced(editorial.ArtifactHumanize)
 		}
 	}
 	if _, err := editorial.Run(pass, state); err != nil {

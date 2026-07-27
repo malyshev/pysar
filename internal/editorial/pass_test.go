@@ -86,6 +86,65 @@ func TestSharpenProceedsWithStaffEditToo(t *testing.T) {
 	}
 }
 
+func TestHumanizeBlockedWithoutDraft(t *testing.T) {
+	s := NewState(SurfaceBlog, ArtifactStake, ArtifactBrief)
+	_, err := Run(humanizePass{}, s)
+
+	var pe *PreconditionError
+	if !errors.As(err, &pe) {
+		t.Fatalf("expected *PreconditionError, got %v", err)
+	}
+	if len(pe.Missing) != 1 || pe.Missing[0] != ArtifactDraft {
+		t.Fatalf("expected missing=[draft], got %v", pe.Missing)
+	}
+}
+
+func TestHumanizeProceedsWithDraftAlone(t *testing.T) {
+	// Staff-edit and sharpen are both optional -- humanize must proceed on
+	// a draft alone, the same way sharpen proceeds without staff-edit.
+	s := NewState(SurfaceBlog, ArtifactStake, ArtifactBrief, ArtifactDraft)
+	ns, err := Run(humanizePass{}, s)
+	if err != nil {
+		t.Fatalf("expected humanize to proceed once a draft exists, got %v", err)
+	}
+	if !ns.Has(ArtifactHumanize) {
+		t.Fatal("expected ArtifactHumanize to be produced")
+	}
+}
+
+func TestHumanizeProceedsWithStaffEditAndSharpenToo(t *testing.T) {
+	s := NewState(SurfaceBlog, ArtifactStake, ArtifactBrief, ArtifactDraft, ArtifactStaffEdit, ArtifactSharpen)
+	if _, err := Run(humanizePass{}, s); err != nil {
+		t.Fatalf("expected humanize to proceed when staff-edit and sharpen also ran, got %v", err)
+	}
+}
+
+func TestExportBlockedWithoutDraft(t *testing.T) {
+	s := NewState(SurfaceBlog, ArtifactStake, ArtifactBrief)
+	_, err := Run(exportPass{}, s)
+
+	var pe *PreconditionError
+	if !errors.As(err, &pe) {
+		t.Fatalf("expected *PreconditionError, got %v", err)
+	}
+	if len(pe.Missing) != 1 || pe.Missing[0] != ArtifactDraft {
+		t.Fatalf("expected missing=[draft], got %v", pe.Missing)
+	}
+}
+
+func TestExportProceedsWithDraftAlone(t *testing.T) {
+	// Staff-edit, sharpen, and humanize are all optional -- export must
+	// work on whatever stage a piece actually reached, even just a draft.
+	s := NewState(SurfaceBlog, ArtifactStake, ArtifactBrief, ArtifactDraft)
+	ns, err := Run(exportPass{}, s)
+	if err != nil {
+		t.Fatalf("expected export to proceed once a draft exists, got %v", err)
+	}
+	if !ns.Has(ArtifactExported) {
+		t.Fatal("expected ArtifactExported to be produced")
+	}
+}
+
 func TestResearchBlockedWithoutBrief(t *testing.T) {
 	s := NewState(SurfaceBlog)
 	_, err := Run(researchPass{}, s)
@@ -173,7 +232,7 @@ func TestMetaCheckCatchesTrivialNilPrecondition(t *testing.T) {
 }
 
 func TestRegisteredLength(t *testing.T) {
-	if got := len(Registered()); got != 6 {
-		t.Fatalf("expected 6 registered passes (intake, research, draft, staff-edit, sharpen, discoverability), got %d", got)
+	if got := len(Registered()); got != 8 {
+		t.Fatalf("expected 8 registered passes (intake, research, draft, staff-edit, sharpen, humanize, export, discoverability), got %d", got)
 	}
 }

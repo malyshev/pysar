@@ -3,8 +3,10 @@
     "allow": [
       "mcp__pysar__*",
       "Read(.pysar/**)",
+      "Skill(ps)",
       "Skill(ps-draft)",
       "Skill(ps-factcheck)",
+      "Skill(ps-humanize)",
       "Skill(ps-intake)",
       "Skill(ps-onboard)",
       "Skill(ps-research)",

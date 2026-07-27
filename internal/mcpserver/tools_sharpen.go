@@ -3,8 +3,8 @@ package mcpserver
 import (
 	"encoding/json"
 	"fmt"
-	"path/filepath"
 
+	"pysar/internal/draft"
 	"pysar/internal/editorial"
 	"pysar/internal/research"
 	"pysar/internal/sharpen"
@@ -62,16 +62,13 @@ func (s *Server) callSaveSharpenBundle(args json.RawMessage) callToolResult {
 		return errorResult("%s", err)
 	}
 
-	// Sharpen is the first pass with a genuine "which file did this
-	// revise from" ambiguity (staff-edit.md if present, else draft.md,
-	// per the skill's own instruction) -- the tool can't know which the
-	// agent actually read, but recording whether staff-edit.md existed at
-	// save time gives the run-log a real trace to check against later,
-	// instead of no signal at all.
-	revisedFrom := "draft.md"
-	if fileExists(filepath.Join(pieceDir, "staff-edit.md")) {
-		revisedFrom = "staff-edit.md"
-	}
+	// Sharpen has a genuine "which file did this revise from" ambiguity
+	// (staff-edit.md if present, else draft.md, per the skill's own
+	// instruction) -- the tool can't know which the agent actually read,
+	// but recording whether staff-edit.md existed at save time gives the
+	// run-log a real trace to check against later, instead of no signal
+	// at all.
+	revisedFrom := draft.LatestRevisionFile(pieceDir, "staff-edit.md", "draft.md")
 	if err := editorial.AppendRunLog(pieceDir, editorial.RunLogEntry{
 		Pass:    "sharpen",
 		Summary: fmt.Sprintf("piece=%s words=%d checks=%d revised_from=%s", b.PiecePath, words, len(b.Checks), revisedFrom),

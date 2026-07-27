@@ -73,3 +73,19 @@ func WriteRevision(dir, contentFile, changelogFile, revisedMD string, checks []s
 	}
 	return words, nil
 }
+
+// LatestRevisionFile returns the first of candidates (checked in priority
+// order, most-refined first) that actually exists in dir, or the last
+// candidate if none exist yet. Shared by the MCP server's own precondition-
+// state tracking (sharpen/humanize's revised_from run-log entries) and
+// internal/export's project-root export, so both agree on one definition
+// of "which stage's file is the piece's current one" instead of each
+// hand-rolling the same priority walk.
+func LatestRevisionFile(dir string, candidates ...string) string {
+	for _, f := range candidates {
+		if _, err := os.Stat(filepath.Join(dir, f)); err == nil {
+			return f
+		}
+	}
+	return candidates[len(candidates)-1]
+}
