@@ -247,6 +247,13 @@ examples, not hypotheticals):
 - Agentic: after fixing the above, the skill explained that it was skipping
   the offer instead of just skipping it — an explanation of an absence,
   which is itself the same noise this section exists to prevent.
+- Agentic: `ps-style`/`ps-voice` asked "start from a template as a first
+  draft, or start blank?" as an up-front question, before showing any
+  template content. A non-technical author has no way to judge a mechanism
+  choice they can't see yet — that's a form question, not a conversation.
+  Fixed by defaulting to the template (there's always at least one) and
+  showing its actual content first; only ask when 2+ named templates exist
+  to pick between, since that's a real content-level choice.
 
 **`ps-*` skill files reference this section by name rather than re-deriving
 their own noise-prevention wording.** If you are writing or editing a

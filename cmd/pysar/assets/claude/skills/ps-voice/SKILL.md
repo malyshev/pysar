@@ -42,18 +42,21 @@ If it's already complete:
 
 If the file is missing or incomplete, proceed to Step 1a as a first-time setup.
 
-## Step 1a — offer a starting template (first-time setup only)
+## Step 1a — default to a template, don't ask a process question first
 
 Before diving into the conversation, call `list_voice_templates` to see what reusable voice templates are available (Pysar's own cross-project template store, seeded by `pysar init` -- always contains at least the built-in "generic" template). It returns each template's display name, its stable slug, and full content -- never use Glob or Bash (e.g. `ls`) to look for these files yourself; that only produces a raw filesystem listing without the content, and triggers a permission prompt this tool exists specifically to avoid.
 
-Tell the author what's available by its actual display name (e.g. "Measured plain English -- speakable, understated, general audience"), not its slug -- the slug (e.g. "generic") is a machine key, never show it as if it were the template's name. Summarize each one's tone/formality/register in a line, the same way Step 1 summarizes an existing profile. Ask whether they'd like to start from one of these as a first draft to edit, or start from a blank conversation. Either is fine; this is a starting point, never a final answer.
+**Do not ask "template or blank conversation?" as an up-front choice.** A non-technical author has no way to judge that question before seeing what a template actually contains -- it's a mechanism decision, not a content one, and asking it first is exactly the "administering a form" failure this skill's opening paragraph warns against.
 
-- If they pick a template: remember its slug (you'll need it in Step 6 if they later want to update that same template rather than create a new one), then go straight to Step 1b -- **do not** proceed to Step 2.
-- If they start blank (or somehow no templates exist), proceed to Step 2 normally.
+- **Exactly one template exists** (the common case -- just the seeded "generic" baseline, no prior projects): treat it as the default starting draft with no up-front question at all. Go straight to Step 1b and show its actual content; the first thing the author reacts to is real substance, not a fork in a road they can't see yet.
+- **More than one template exists** (the author has tuned voice on earlier projects too): this is now a genuine, judgeable choice between named, distinct options -- ask which one they'd like to start from, listing each by its actual display name (e.g. "Measured plain English -- speakable, understated, general audience"), never its slug, plus the option to start blank instead. Then go to Step 1b with whichever they picked (or Step 2 if blank).
+- **No templates exist at all** (shouldn't happen -- `generic` is always seeded, but don't hard-fail if it somehow isn't there): proceed straight to Step 2, no question needed -- there's nothing to offer instead.
 
-## Step 1b — apply a template (template path only; skip Steps 2-4)
+Either way, remember which slug (if any) was used -- you'll need it in Step 6 if they later want to update that same template rather than create a new one.
 
-Show the author the template's full profile in readable form (all fields, all goldens) -- the same shape Step 4 would show for a fresh conversation, just earlier. Ask one question: "Want to use this as-is, or is there anything you'd like to change first?"
+## Step 1b — show the template as a first draft (skip Steps 2-4)
+
+Show the author the template's full profile in readable form (all fields, all goldens) -- the same shape Step 4 would show for a fresh conversation, just earlier -- framed as a starting draft, not a question about whether to use one. Ask one concrete question grounded in what they just saw: "Want to change anything here, or does this look right?"
 
 - If they want changes: make them right there in the conversation -- however many are needed -- then show the updated profile once more and confirm it looks right. Do not turn this into Step 2's field-by-field walkthrough; handle whatever they raise directly and move on.
 - If they say it looks good / no changes: proceed straight to Step 5 to save.
@@ -117,6 +120,7 @@ If no, they don't respond, or this step was skipped: stop here. `.pysar/voice.md
 - Do not call either save tool with a profile you know is incomplete, hoping it lets it through — it won't, and that's the point.
 - Do not silently overwrite an existing complete profile without the author choosing to re-tune.
 - Do not silently adopt a template's fields without showing them to the author and asking if they'd like changes (Step 1b) — a template is a first draft, not a final answer. But do not march the author through Step 2's field-by-field walkthrough for a template either; that reintroduces exactly the friction Step 1b exists to remove.
+- Do not ask an up-front "template or blank conversation?" process question when only one template exists — default to it and show its actual content first (Step 1a). Only ask a choice when there are 2+ named templates to pick between; that's a real content decision, not a mechanism one.
 - Do not push the Step 6 template offer more than once, and never make it feel mandatory.
 - Do not touch style — that's `/ps-style`, a separate command. If the author starts talking about structural/mechanical writing conventions instead of voice, gently note that's a separate command and stay focused on voice for this session.
 - Never use Write, Edit, or Bash to touch `.pysar/voice.md` or any file under `~/.pysar/templates/` yourself, for any reason -- always go through `save_voice_profile` / `save_voice_template`. Bypassing them defeats the reason this skill calls a tool instead of writing files directly.
