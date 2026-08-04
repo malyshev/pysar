@@ -20,9 +20,9 @@ func (s *Server) registerSaveExportBundle() {
 	s.register(
 		tool{
 			Name: "export_piece_to_root",
-			Description: "Copies a piece's most-refined revision (humanize.md if it ran, else sharpen.md, else staff-edit.md, else draft.md) to <project_root>/<slug>.md -- the one step that writes outside the piece's own .pysar/pieces/ directory. " +
-				"Does not touch draft.md, staff-edit.md, sharpen.md, or humanize.md; does not require every earlier stage to have run -- only a draft. Re-running overwrites the previous export of the same piece, same as every other save_*_bundle's wholesale-replace contract. " +
-				"Not a publish ceremony: no SEO/tags/cover-image/Status handling -- this project deliberately excludes that (see CLAUDE.md). Prefer this over Write/Bash so no extra filesystem permissions are needed.",
+			Description: "Copies a piece's most-refined revision (humanize.md if it ran, else seo.md, else sharpen.md, else staff-edit.md, else draft.md) to <project_root>/<slug>.md -- the one step that writes outside the piece's own .pysar/pieces/ directory. " +
+				"Does not touch draft.md, staff-edit.md, sharpen.md, seo.md, seo-checklist.md, or humanize.md; does not require every earlier stage to have run -- only a draft. Re-running overwrites the previous export of the same piece, same as every other save_*_bundle's wholesale-replace contract. " +
+				"Not a publish ceremony: no cover-image or Status-enum handling (dec-20260718-20a08f83). SEO/discoverability packaging is a real, separate opt-in capability (save_seo_bundle, dec-20260804-e3234e50) -- this tool copies whatever seo.md already produced, it does not generate or edit SEO fields itself. Prefer this over Write/Bash so no extra filesystem permissions are needed.",
 			InputSchema: saveExportBundleSchema,
 		},
 		s.callSaveExportBundle,

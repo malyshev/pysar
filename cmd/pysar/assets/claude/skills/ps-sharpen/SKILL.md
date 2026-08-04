@@ -18,10 +18,11 @@ description: |
   opener concreteness already live in this project's /ps-staff-edit
   (water/filler + readability + stakes checks); that POC's numeric rhythm
   floor is explicitly not reproduced here, replaced by the expression
-  check above. Agent-agnostic: no author registry, no SEO/title/tag tuning
-  (a prior writing POC's OPTIMIZE phase, unbuilt here), no AI-detection-
-  evasion rhythm-breaking (that POC's HUMANIZE phase -- not built, and not
-  a goal this project has any interest in).
+  check above. Agent-agnostic: no author registry. SEO/citation-resolution/
+  title-for-search tuning is a separate, opt-in pass (/ps-seo, runs after
+  this one) -- not this pass's job. No AI-detection-evasion rhythm-breaking
+  (that POC's HUMANIZE phase -- not built, and not a goal this project has
+  any interest in).
 when_to_use: |
   Operator runs /ps-sharpen, says "the intro doesn't land," or wants a
   final reader-experience pass before calling a piece complete.
@@ -58,14 +59,15 @@ mechanical (profile defaults, citation checking, disk writes, run-log). Do
 **not** use Bash/`ls`/`cat` or raw Write for piece files.
 
 Prior writing POCs are inspiration only (CL1); do not copy their author
-registry, SEO/title-tuning ceremony, or AI-detection-evasion rhythm work.
-This project has no author registry — `voice.md`/`style.md` (via
-`read_author_defaults`, the same tool `/ps-draft` and `/ps-staff-edit` use)
-is the whole mechanism. No cross-piece corpus-variance scanning. No SEO
-fields, tags, or title/subtitle tuning for a publish checklist that doesn't
-exist here. No stripping rhythm patterns to evade AI-detection — that's not
-a quality goal, and this project has no interest in building it regardless
-of what a prior POC's pipeline did.
+registry or AI-detection-evasion rhythm work. This project has no author
+registry — `voice.md`/`style.md` (via `read_author_defaults`, the same
+tool `/ps-draft` and `/ps-staff-edit` use) is the whole mechanism. No
+cross-piece corpus-variance scanning. No stripping rhythm patterns to
+evade AI-detection — that's not a quality goal, and this project has no
+interest in building it regardless of what a prior POC's pipeline did.
+SEO/citation-resolution/tag/title-for-search tuning is a real, separate
+pass now (`/ps-seo`, opt-in, runs after this one) — not this pass's job
+either way.
 
 ## Args
 
@@ -226,9 +228,11 @@ jargon, no permission theater. Stop.
   `save_sharpen_bundle` with the full revised `revised_md`
 - Overwrite or edit `draft.md` or `staff-edit.md` — the revision goes to
   `sharpen.md`
-- Resolve `[^shortname]` markers into links, tune SEO fields/tags/titles,
-  or strip rhythm for AI-detection avoidance — none of these exist in this
-  project, and the last one isn't a goal this project has
+- Resolve `[^shortname]` markers into links, or tune SEO fields/tags/
+  titles-for-search — that's `/ps-seo`'s job, a separate opt-in pass, not
+  this one
+- Strip rhythm for AI-detection avoidance — this project has no interest
+  in building it regardless of what a prior POC's pipeline did
 - Re-check stakes, brief-alignment, failure modes, honest scope, technical
   sanity, water/filler, or sentence-level readability — that's
   `/ps-staff-edit`'s job; re-litigating it here is duplicated work

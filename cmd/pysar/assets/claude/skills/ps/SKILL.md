@@ -5,18 +5,21 @@ description: |
   /ps-sharpen -> /ps-humanize -- back to back on one piece, then exports
   the result to the project root. Autopilot by default: no stopping
   between stages. Pass --review to stop after each stage and wait for the
-  operator's explicit go-ahead before continuing. Resumes correctly from
-  an existing piece at whatever stage it already reached -- it does not
-  restart a piece from intake just because /ps is what's invoked.
-  Research is deliberately not in this chain (it's optional and
+  operator's explicit go-ahead before continuing. Pass --seo to insert
+  /ps-seo between /ps-sharpen and /ps-humanize, opt-in discoverability
+  packaging for a piece headed to a blog/web surface (dec-20260804-
+  e3234e50) -- never after /ps-humanize, that ordering is fixed. Resumes
+  correctly from an existing piece at whatever stage it already reached --
+  it does not restart a piece from intake just because /ps is what's
+  invoked. Research is deliberately not in this chain (it's optional and
   ps-intake/ps-draft already invoke it where each needs it); this command
   exists only to remove the "stop and manually invoke the next skill"
-  friction between the five stages above, nothing more.
+  friction between the stages above, nothing more.
 when_to_use: |
   Operator types /ps with a new idea or an existing piece path, wanting
   the whole pipeline run without babysitting each stage themselves.
-argument-hint: "[idea text | @path/to/piece] [--review]"
-allowed-tools: Skill mcp__pysar__read_author_defaults mcp__pysar__save_intake_bundle mcp__pysar__save_draft_bundle mcp__pysar__save_staff_edit_bundle mcp__pysar__save_sharpen_bundle mcp__pysar__save_humanize_bundle mcp__pysar__export_piece_to_root Read WebSearch WebFetch
+argument-hint: "[idea text | @path/to/piece] [--review] [--seo]"
+allowed-tools: Skill mcp__pysar__read_author_defaults mcp__pysar__save_intake_bundle mcp__pysar__save_draft_bundle mcp__pysar__save_staff_edit_bundle mcp__pysar__save_sharpen_bundle mcp__pysar__save_seo_bundle mcp__pysar__save_humanize_bundle mcp__pysar__export_piece_to_root Read WebSearch WebFetch
 ---
 
 # /ps — full pipeline, autopilot by default
@@ -43,16 +46,21 @@ is no earlier stage to detect.
 file inside one — `@`-reference or plain path, same as every other
 piece-anchored command): determine the latest stage already reached by
 attempting to `Read` these files in this order, stopping at the first one
-that exists — the same priority order `/ps-sharpen` and `/ps-humanize`
+that exists — the same priority order `/ps-seo` and `/ps-humanize`
 already use for "which file to revise from":
 
 1. `humanize.md` exists → every stage already ran. Nothing left to do but
    export (Step 4).
-2. `sharpen.md` exists → next stage is `ps-humanize`.
-3. `staff-edit.md` exists → next stage is `ps-sharpen`.
-4. `draft.md` exists → next stage is `ps-staff-edit`.
-5. `brief.md` exists (none of the above) → next stage is `ps-draft`.
-6. None exist → treat like a new idea; start at `ps-intake` with whatever
+2. `seo.md` exists → next stage is `ps-humanize` (the piece already went
+   through `ps-seo`, whether or not `--seo` was passed *this* invocation
+   — an existing `seo.md` always means humanize is next, never re-run
+   `ps-seo` on a piece that already has one).
+3. `sharpen.md` exists → next stage is `ps-seo` if `--seo` was given,
+   else `ps-humanize`.
+4. `staff-edit.md` exists → next stage is `ps-sharpen`.
+5. `draft.md` exists → next stage is `ps-staff-edit`.
+6. `brief.md` exists (none of the above) → next stage is `ps-draft`.
+7. None exist → treat like a new idea; start at `ps-intake` with whatever
    text the operator gave as the idea.
 
 Do not guess or infer from the operator's phrasing which stage to start
@@ -61,8 +69,10 @@ at — check the files.
 ## Step 2 — run the chain, in order, starting from Step 1's answer
 
 The fixed order is: `ps-intake` → `ps-draft` → `ps-staff-edit` →
-`ps-sharpen` → `ps-humanize`. For each stage from the determined starting
-point onward:
+`ps-sharpen` → [`ps-seo` if `--seo`] → `ps-humanize`. `ps-seo` is never
+inserted after `ps-humanize` — that ordering is fixed regardless of when
+`--seo` was noticed (dec-20260804-e3234e50). For each stage from the
+determined starting point onward:
 
 1. Invoke that stage via the Skill tool, passing it the piece path (once
    intake has produced one) exactly as that stage's own `argument-hint`
@@ -144,3 +154,10 @@ already gave their own summaries as they ran. Stop.
 - Do not invoke `/ps-research` as part of this chain — it is deliberately
   excluded; `ps-intake` and `ps-draft` already reach for grounding via
   `ps-factcheck`/research where each needs it, on their own terms.
+- Do not invoke `ps-seo` after `ps-humanize`, ever, even if `--seo` is
+  given late or the operator asks for it in that order mid-run — the
+  ordering is fixed (dec-20260804-e3234e50); explain why if asked, don't
+  silently reorder.
+- Do not skip `ps-seo` when `--seo` was given, and do not run it when it
+  was not — Step 1's `seo.md` check already tells you whether it ran on a
+  resumed piece; don't re-derive that from the operator's phrasing.

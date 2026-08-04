@@ -18,10 +18,11 @@ import (
 //
 // State is built from cheap, targeted file-existence checks (brief.md ->
 // Stake+Brief, draft.md -> Draft, staff-edit.md -> StaffEdit, sharpen.md ->
-// Sharpen, humanize.md -> Humanize) rather than a generic "scan every known
-// marker file" abstraction -- add one more check here if a future pass
-// needs a further artifact, the same way this one was added for
-// staff-edit, sharpen, humanize, and export.
+// Sharpen, seo.md -> Discoverability, humanize.md -> Humanize) rather than
+// a generic "scan every known marker file" abstraction -- add one more
+// check here if a future pass needs a further artifact, the same way this
+// one was added for staff-edit, sharpen, humanize, export, and
+// discoverability.
 func (s *Server) resolveAnchoredPass(passName, piecePath string) (pieceDir string, err error) {
 	pass := findPass(passName)
 	if pass == nil {
@@ -45,6 +46,9 @@ func (s *Server) resolveAnchoredPass(passName, piecePath string) (pieceDir strin
 		}
 		if fileExists(filepath.Join(pieceDir, "sharpen.md")) {
 			state = state.WithProduced(editorial.ArtifactSharpen)
+		}
+		if fileExists(filepath.Join(pieceDir, "seo.md")) {
+			state = state.WithProduced(editorial.ArtifactDiscoverability)
 		}
 		if fileExists(filepath.Join(pieceDir, "humanize.md")) {
 			state = state.WithProduced(editorial.ArtifactHumanize)

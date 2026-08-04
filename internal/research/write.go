@@ -171,15 +171,40 @@ func WriteToPiece(projectRoot string, b Bundle) error {
 // manifest format. Empty (not an error) when no research has run yet for
 // this piece -- that's a legitimate state, not a fault.
 func LoadShortnames(pieceDir string) (map[string]bool, error) {
+	shortnames, _, err := LoadCitationSets(pieceDir)
+	return shortnames, err
+}
+
+// LoadSourceURLs returns the set of URLs a piece's research has actually
+// recorded, keyed by the URL itself (not by Shortname) -- for callers
+// outside this package (internal/seo) that need to confirm a resolved
+// [anchor](url) link points at a real fetched source rather than a
+// fabricated one, the same trust boundary LoadShortnames already enforces
+// for unresolved [^shortname] markers. Empty (not an error) when no
+// research has run yet, same as LoadShortnames.
+func LoadSourceURLs(pieceDir string) (map[string]bool, error) {
+	_, urls, err := LoadCitationSets(pieceDir)
+	return urls, err
+}
+
+// LoadCitationSets returns both LoadShortnames' and LoadSourceURLs' sets
+// from one manifest read -- for a caller that needs both (internal/
+// mcpserver's save_humanize_bundle, which validates unresolved [^shortname]
+// markers and resolved [anchor](url) links in the same pass) instead of
+// two independent LoadShortnames/LoadSourceURLs calls each re-reading and
+// re-unmarshaling the identical .sources.json.
+func LoadCitationSets(pieceDir string) (shortnames, urls map[string]bool, err error) {
 	sources, err := loadSourcesManifest(pieceDir)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	set := make(map[string]bool, len(sources))
+	shortnames = make(map[string]bool, len(sources))
+	urls = make(map[string]bool, len(sources))
 	for _, s := range sources {
-		set[s.Shortname] = true
+		shortnames[s.Shortname] = true
+		urls[s.URL] = true
 	}
-	return set, nil
+	return shortnames, urls, nil
 }
 
 // sourcesManifestFile stores the piece's full accumulated source list as

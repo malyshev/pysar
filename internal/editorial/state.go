@@ -4,20 +4,21 @@ package editorial
 type ArtifactKind string
 
 const (
-	ArtifactStake        ArtifactKind = "stake"
-	ArtifactBrief        ArtifactKind = "brief"
-	ArtifactOutline      ArtifactKind = "outline"
-	ArtifactAngles       ArtifactKind = "angles"
-	ArtifactSourcesStub  ArtifactKind = "sources_stub"
-	ArtifactSourcesFull  ArtifactKind = "sources_full"
-	ArtifactDraft        ArtifactKind = "draft"
-	ArtifactStaffEdit    ArtifactKind = "staff_edit"
-	ArtifactSharpen      ArtifactKind = "sharpen"
-	ArtifactHumanize     ArtifactKind = "humanize"
-	ArtifactExported     ArtifactKind = "exported"
-	ArtifactVoiceLock    ArtifactKind = "voice_lock"
-	ArtifactVoiceProfile ArtifactKind = "voice_profile"
-	ArtifactStyleProfile ArtifactKind = "style_profile"
+	ArtifactStake           ArtifactKind = "stake"
+	ArtifactBrief           ArtifactKind = "brief"
+	ArtifactOutline         ArtifactKind = "outline"
+	ArtifactAngles          ArtifactKind = "angles"
+	ArtifactSourcesStub     ArtifactKind = "sources_stub"
+	ArtifactSourcesFull     ArtifactKind = "sources_full"
+	ArtifactDraft           ArtifactKind = "draft"
+	ArtifactStaffEdit       ArtifactKind = "staff_edit"
+	ArtifactSharpen         ArtifactKind = "sharpen"
+	ArtifactHumanize        ArtifactKind = "humanize"
+	ArtifactDiscoverability ArtifactKind = "discoverability"
+	ArtifactExported        ArtifactKind = "exported"
+	ArtifactVoiceLock       ArtifactKind = "voice_lock"
+	ArtifactVoiceProfile    ArtifactKind = "voice_profile"
+	ArtifactStyleProfile    ArtifactKind = "style_profile"
 )
 
 // TargetSurface names what a piece is ultimately headed for. Passes use it to

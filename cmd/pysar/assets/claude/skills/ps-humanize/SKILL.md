@@ -1,13 +1,15 @@
 ---
 name: ps-humanize
 description: |
-  Final voice-authenticity pass on an existing draft (sharpen.md if
-  present, else staff-edit.md, else draft.md): strips genuine AI-tell
-  patterns -- hedge stacks, stock transitions, throat-clearing, too-clean
-  section/paragraph/bullet symmetry, uniform sentence rhythm -- that read
-  as generic regardless of who or what wrote them. Writes the revision to
-  a separate humanize.md -- earlier stages are never touched, same
-  reasoning as staff-edit and sharpen. Adapted from a prior writing POC's
+  Final voice-authenticity pass on an existing draft (seo.md if present,
+  else sharpen.md, else staff-edit.md, else draft.md): strips genuine
+  AI-tell patterns -- hedge stacks, stock transitions, throat-clearing,
+  too-clean section/paragraph/bullet symmetry, uniform sentence rhythm --
+  that read as generic regardless of who or what wrote them. Writes the
+  revision to a separate humanize.md -- earlier stages are never touched,
+  same reasoning as staff-edit, sharpen, and seo. When seo.md exists, its
+  resolved [anchor](url) links are preserved verbatim -- this pass edits
+  prose around them, never inside them. Adapted from a prior writing POC's
   text-humanizer discipline, deliberately excluding the parts of that
   POC's own aggressive framing (and a since-declined prompt with the same
   shape) that serve no reader and exist only to defeat AI-detection
@@ -51,8 +53,8 @@ generic-model tells that aren't anyone's voice.
 
 **The revision goes to `humanize.md`, not an earlier-stage file.** Same
 convention as every pass since `/ps-draft`: `brief.md`, `outline.md`,
-`angles.md`, `draft.md`, `staff-edit.md`, `sharpen.md` all stay put once
-written.
+`angles.md`, `draft.md`, `staff-edit.md`, `sharpen.md`, `seo.md` (and its
+`seo-checklist.md`) all stay put once written.
 
 This skill is **host-agnostic**. Prefer pysar MCP tools for anything
 mechanical (profile defaults, citation checking, disk writes, run-log). Do
@@ -75,8 +77,10 @@ voice — the same tool and profile every other pass uses. Don't build or
 reuse a separate banned-phrase list; `voice.md`/`style.md` is the whole
 mechanism.
 
-**Which file to revise from:** read `sharpen.md` if it exists (the latest,
-most-refined revision), else `staff-edit.md`, else `draft.md`.
+**Which file to revise from:** read `seo.md` if it exists (the piece went
+through `/ps-seo` -- its resolved `[anchor](url)` links must survive this
+pass untouched, see Hard rules), else `sharpen.md` (the latest, most-
+refined revision), else `staff-edit.md`, else `draft.md`.
 
 ## Step 2 — the checks
 
@@ -121,9 +125,14 @@ rules).
 
 ## Hard rules
 
-- **`[^shortname]` markers preserved.** Don't convert, remove, or relocate
-  a marker away from the claim it anchors. Resolving markers to links is
-  not this pass's job.
+- **`[^shortname]` markers preserved** (only relevant when `/ps-seo` did
+  not run, so markers are still present). Don't convert, remove, or
+  relocate a marker away from the claim it anchors. Resolving markers to
+  links is not this pass's job.
+- **Resolved `[anchor](url)` links preserved verbatim** (only relevant
+  when `/ps-seo` did run). Edit the prose around a link -- never split,
+  rewrite, or relocate the anchor text or URL, and never add a new link of
+  your own. That's `/ps-seo`'s job, not this pass's.
 - **No new factual claims, stats, versions, or names.** This pass changes
   phrasing and structure, never substance.
 - **Preserve verbatim** code blocks, commands, error messages, and version
@@ -136,8 +145,8 @@ rules).
   imperfect, but because it lands), that's normal craft judgment, not a
   goal to manufacture.
 - **Never touch `brief.md`, `outline.md`, `angles.md`, `sources.md`,
-  `draft.md`, `staff-edit.md`, or `sharpen.md`.** This pass only ever
-  writes `humanize.md`.
+  `draft.md`, `staff-edit.md`, `sharpen.md`, `seo.md`, or
+  `seo-checklist.md`.** This pass only ever writes `humanize.md`.
 - **Never use `Edit`, `Write`, or Bash on any piece file — not even for a
   small change.** Read the current file into context, make the change
   there, submit the whole revised text back through
@@ -189,8 +198,10 @@ theater. Stop.
   line explaining the absence
 - Use `Edit`, `Write`, or Bash on any piece file — always
   `save_humanize_bundle` with the full revised `revised_md`
-- Overwrite or edit `draft.md`, `staff-edit.md`, or `sharpen.md` — the
-  revision goes to `humanize.md`
+- Overwrite or edit `draft.md`, `staff-edit.md`, `sharpen.md`, `seo.md`,
+  or `seo-checklist.md` — the revision goes to `humanize.md`
+- Split, rewrite, or relocate a resolved `[anchor](url)` link's anchor
+  text or URL, or add a new link of your own — that's `/ps-seo`'s job
 - Hardcode a banned-phrase list — read the operator's own `voice.md`/
   `style.md` via `read_author_defaults`
 - Re-check stakes, brief-alignment, failure modes, honest scope, technical

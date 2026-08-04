@@ -68,10 +68,26 @@ entries:
     definition: >-
       The state of a body the author trusts, finalized on the author's own
       explicit signal ("I'm ready to post"). The final state Pysar produces
-      in current scope -- platform-specific publish checklists and cover
-      generation are excluded (dec-20260718-e9f5b5e6).
+      in current scope. An opt-in SEO/discoverability checklist (--seo) may
+      package the body before this point (dec-20260804-e3234e50, superseding
+      dec-20260718-e9f5b5e6's earlier full removal); cover generation remains
+      excluded.
     not: []
     aliases: []
+    owners: [human]
+  - term: seo-discoverability-checklist
+    domain: target
+    definition: >-
+      An opt-in (--seo) packaging pass producing citation resolution, title/
+      subtitle tuning for CTR and read-completion, tags, meta description,
+      URL slug, and scannability -- runs before voice-lock, never triggers a
+      post/publish action (dec-20260804-e3234e50).
+    not:
+      - cover/image generation
+      - auto-publish
+    aliases:
+      - SEO checklist
+      - discoverability checklist
     owners: [human]
   - term: author-identity
     domain: target

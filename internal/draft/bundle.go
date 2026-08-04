@@ -43,20 +43,35 @@ type Bundle struct {
 }
 
 var (
-	citationRe   = regexp.MustCompile(`\[\^([a-zA-Z0-9-]+)\]`)
-	rawURLRe     = regexp.MustCompile(`https?://|www\.`)
-	codeFenceRe  = regexp.MustCompile("(?s)```.*?```")
-	inlineCodeRe = regexp.MustCompile("`[^`\n]*`")
+	citationRe  = regexp.MustCompile(`\[\^([a-zA-Z0-9-]+)\]`)
+	rawURLRe    = regexp.MustCompile(`https?://|www\.`)
+	codeFenceRe = regexp.MustCompile("(?s)```.*?```")
+	inlineRe    = regexp.MustCompile("`[^`\n]*`")
+
+	// MarkdownLinkRe matches a resolved [anchor](url) link, capturing the
+	// URL. Allows one level of nested parens inside the URL (e.g.
+	// https://en.wikipedia.org/wiki/Foo_(bar), a common shape on
+	// Wikipedia/doc sites) -- a naive `\(([^)]+)\)` stops at the first
+	// `)`, truncating the captured URL and making a correctly-resolved
+	// link fail every validSourceURLs lookup that compares against the
+	// full recorded URL. Exported so internal/humanize and internal/seo,
+	// which both need to recognize an already-resolved link, share this
+	// one definition instead of each re-declaring a copy that can drift
+	// (and did: two independent copies existed with the same truncation
+	// bug before this was extracted).
+	MarkdownLinkRe = regexp.MustCompile(`\[[^\]]+\]\(([^()]*(?:\([^()]*\)[^()]*)*)\)`)
 )
 
-// stripCode removes both fenced (```...```) and inline (`...`) code from
-// body, once, so the raw-URL check and the citation check apply the same
-// code exclusion consistently -- a code fence that shows citation syntax
-// as a literal example (e.g. "cite claims like `[^example]`") must not be
-// checked against real shortnames, the same way it already shields a URL
-// shown as an example from the raw-URL check.
-func stripCode(body string) string {
-	return inlineCodeRe.ReplaceAllString(codeFenceRe.ReplaceAllString(body, ""), "")
+// StripCode removes both fenced (```...```) and inline (`...`) code from
+// body, once, so callers apply the same code exclusion consistently -- a
+// code fence that shows citation or link syntax as a literal example
+// (e.g. "cite claims like `[^example]`") must not be checked against real
+// shortnames/sources, the same way it already shields a URL shown as an
+// example from the raw-URL check. Exported so internal/seo (which needs
+// the same exclusion for its own inverted citation rule) doesn't
+// re-implement it.
+func StripCode(body string) string {
+	return inlineRe.ReplaceAllString(codeFenceRe.ReplaceAllString(body, ""), "")
 }
 
 // Validate checks citation integrity for a durable draft write: every
@@ -114,17 +129,53 @@ func ValidateContent(fieldName, content string, validShortnames map[string]bool)
 	}
 
 	var missing []string
-	codeFree := stripCode(body)
-	if rawURLRe.MatchString(codeFree) {
+	if HasRawURL(body) {
 		missing = append(missing, fmt.Sprintf("%s (raw URL found in prose -- cite via [^shortname] instead)", fieldName))
 	}
-	for _, m := range citationRe.FindAllStringSubmatch(codeFree, -1) {
-		name := m[1]
+	missing = append(missing, ValidateCitations(fieldName, body, validShortnames)...)
+	return missing
+}
+
+// ValidateCitations checks every [^shortname] marker in content resolves
+// against validShortnames. Split out from ValidateContent so a caller
+// with a different raw-URL policy (internal/humanize, once /ps-seo has
+// resolved some markers into real links) can reuse just the citation half
+// instead of re-implementing it.
+func ValidateCitations(fieldName, content string, validShortnames map[string]bool) []string {
+	var missing []string
+	for _, name := range FindCitationMarkers(content) {
 		if !validShortnames[name] {
 			missing = append(missing, fmt.Sprintf("%s ([^%s] does not match any source this piece's research has recorded)", fieldName, name))
 		}
 	}
 	return missing
+}
+
+// FindCitationMarkers returns every [^shortname] marker's shortname found
+// in content, code-fence-stripped so a marker shown as a literal example
+// doesn't get treated as a real citation. Exported so a caller with a
+// different acceptance rule than ValidateCitations' "must resolve" (
+// internal/seo's inverted "must NOT remain" rule) can reuse the same scan
+// instead of re-declaring the citation regex.
+func FindCitationMarkers(content string) []string {
+	matches := citationRe.FindAllStringSubmatch(StripCode(content), -1)
+	if len(matches) == 0 {
+		return nil
+	}
+	names := make([]string, len(matches))
+	for i, m := range matches {
+		names[i] = m[1]
+	}
+	return names
+}
+
+// HasRawURL reports whether content contains a URL outside of code fences/
+// inline code -- exported so a caller with a different tolerance for
+// *where* a URL is allowed (internal/humanize allows one inside a resolved
+// [anchor](url) link; this package's own ValidateContent allows none) can
+// reuse the same detection instead of re-implementing the regex.
+func HasRawURL(content string) bool {
+	return rawURLRe.MatchString(StripCode(content))
 }
 
 // WordCount is a plain whitespace-delimited word count of markdown source --

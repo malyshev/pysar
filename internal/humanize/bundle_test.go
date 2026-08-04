@@ -11,7 +11,7 @@ func validRevisedDraft() string {
 
 func TestValidateRequiresAtLeastOneCheck(t *testing.T) {
 	b := Bundle{PiecePath: "x", RevisedMD: validRevisedDraft()}
-	err := Validate(b, map[string]bool{"src-a": true})
+	err := Validate(b, map[string]bool{"src-a": true}, nil)
 	if err == nil {
 		t.Fatal("expected error when checks is empty")
 	}
@@ -22,14 +22,14 @@ func TestValidateRequiresAtLeastOneCheck(t *testing.T) {
 
 func TestValidateRejectsEmptyCheckEntry(t *testing.T) {
 	b := Bundle{PiecePath: "x", RevisedMD: validRevisedDraft(), Checks: []string{"   "}}
-	if err := Validate(b, map[string]bool{"src-a": true}); err == nil {
+	if err := Validate(b, map[string]bool{"src-a": true}, nil); err == nil {
 		t.Fatal("expected error for a blank check entry")
 	}
 }
 
 func TestValidateAcceptsNoChangesNeededAsOneEntry(t *testing.T) {
 	b := Bundle{PiecePath: "x", RevisedMD: validRevisedDraft(), Checks: []string{"no changes needed -- all checks already satisfied"}}
-	if err := Validate(b, map[string]bool{"src-a": true}); err != nil {
+	if err := Validate(b, map[string]bool{"src-a": true}, nil); err != nil {
 		t.Fatalf("expected a single 'no changes needed' entry to be sufficient, got %v", err)
 	}
 }
@@ -43,7 +43,7 @@ func TestValidateReusesDraftCitationIntegrity(t *testing.T) {
 		RevisedMD: "# Title\n\nA claim that cites a source that was never fetched[^ghost-source].\n",
 		Checks:    []string{"[hedge-stack] dropped a redundant qualifier"},
 	}
-	err := Validate(b, map[string]bool{"other-source": true})
+	err := Validate(b, map[string]bool{"other-source": true}, nil)
 	if err == nil {
 		t.Fatal("expected error for an unmatched citation")
 	}
@@ -61,7 +61,7 @@ func TestValidateErrorNamesRevisedMDNotDraftMD(t *testing.T) {
 		RevisedMD: "# Title\n\nSee https://example.com directly.\n",
 		Checks:    []string{"[hedge-stack] dropped a redundant qualifier"},
 	}
-	err := Validate(b, nil)
+	err := Validate(b, nil, nil)
 	if err == nil {
 		t.Fatal("expected error for a raw URL")
 	}
@@ -79,7 +79,7 @@ func TestValidateReusesDraftRawURLCheck(t *testing.T) {
 		RevisedMD: "# Title\n\nSee https://example.com directly.\n",
 		Checks:    []string{"[symmetry] varied a too-uniform list"},
 	}
-	if err := Validate(b, nil); err == nil {
+	if err := Validate(b, nil, nil); err == nil {
 		t.Fatal("expected error for a raw URL in the revised prose")
 	}
 }
@@ -90,7 +90,33 @@ func TestValidateAcceptsWellFormedRevision(t *testing.T) {
 		RevisedMD: validRevisedDraft(),
 		Checks:    []string{"[hedge-stack] dropped a redundant qualifier", "[rhythm] varied two consecutive same-length sentences"},
 	}
-	if err := Validate(b, map[string]bool{"src-a": true}); err != nil {
+	if err := Validate(b, map[string]bool{"src-a": true}, nil); err != nil {
 		t.Fatalf("expected a well-formed revision to pass, got %v", err)
+	}
+}
+
+func TestValidateAcceptsResolvedLinkFromSEOPass(t *testing.T) {
+	// When /ps-seo ran first, humanize's input has [^shortname] markers
+	// already resolved into real [anchor](url) links -- those must not be
+	// flagged as raw-URL violations the way a bare URL would be.
+	b := Bundle{
+		PiecePath: "x",
+		RevisedMD: "# Title\n\n*Subtitle.*\n\nA claim citing [the retry budget](https://example.com/retry-budget).\n",
+		Checks:    []string{"[hedge-stack] dropped a redundant qualifier"},
+	}
+	err := Validate(b, nil, map[string]bool{"https://example.com/retry-budget": true})
+	if err != nil {
+		t.Fatalf("expected a resolved link matching a real source to pass, got %v", err)
+	}
+}
+
+func TestValidateRejectsFabricatedResolvedLink(t *testing.T) {
+	b := Bundle{
+		PiecePath: "x",
+		RevisedMD: "# Title\n\n*Subtitle.*\n\nA claim citing [an invented source](https://not-real.example.com).\n",
+		Checks:    []string{"[hedge-stack] dropped a redundant qualifier"},
+	}
+	if err := Validate(b, nil, map[string]bool{"https://example.com/retry-budget": true}); err == nil {
+		t.Fatal("expected error for a resolved-looking link that doesn't match any recorded source")
 	}
 }

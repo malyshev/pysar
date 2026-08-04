@@ -66,7 +66,7 @@ evidence_required: []
 | Draft edit (engagement/substance) | editorial engine core | author flags a problem ("this opening is weak") or asks to "write it" | edited passage preserves author POV (no rewrite of stated thesis) |
 | `sources.md` | platform adapter layer (research) | author explicitly opts in ("I need sources") | sources added; thesis/body text diff is empty outside the opt-in pass |
 | Voice-lock pass | editorial engine core | author says "it sounds like AI," and only after packaging | pass runs strictly after packaging, never before |
-| Ship-ready body | editorial engine core, full pass | author says "write it" (produces it) or "I'm ready to post" (finalizes it) | body assembled without surfacing phase names to the author; finalization triggers no checklist or cover generation (out of current scope, dec-20260718-e9f5b5e6) |
+| Ship-ready body | editorial engine core, full pass | author says "write it" (produces it) or "I'm ready to post" (finalizes it) | body assembled without surfacing phase names to the author; finalization alone triggers no checklist or cover generation; the SEO/discoverability checklist is produced only on the author's explicit `--seo` opt-in (dec-20260804-e3234e50, superseding dec-20260718-e9f5b5e6), and cover generation remains out of current scope |
 
 This is a project-local work-methods spec, distinct from `.haft/workflow.md` (which governs how *haft governance itself* is worked, not how Pysar's editorial passes are worked).
 

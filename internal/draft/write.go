@@ -74,6 +74,17 @@ func WriteRevision(dir, contentFile, changelogFile, revisedMD string, checks []s
 	return words, nil
 }
 
+// RevisionPriority is the canonical "most-refined revision first" order
+// across every pass a piece can go through: humanize (voice-locked) >
+// seo (discoverability-packaged, opt-in) > sharpen > staff-edit > draft.
+// Shared by internal/export's project-root copy and the MCP server's own
+// humanize revised_from tracking, so a future pass added to this chain
+// needs one update here instead of two independently hand-maintained
+// candidate lists that can silently fall out of sync -- exactly the
+// failure mode internal/export/write.go hit when seo.md was added
+// elsewhere but not to its own literal candidate list.
+var RevisionPriority = []string{"humanize.md", "seo.md", "sharpen.md", "staff-edit.md", "draft.md"}
+
 // LatestRevisionFile returns the first of candidates (checked in priority
 // order, most-refined first) that actually exists in dir, or the last
 // candidate if none exist yet. Shared by the MCP server's own precondition-

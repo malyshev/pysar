@@ -8,14 +8,13 @@ import (
 	"pysar/internal/draft"
 )
 
-// WriteToRoot copies the piece's most-refined revision (humanize.md if it
-// ran, else sharpen.md, else staff-edit.md, else draft.md -- same priority
-// draft.LatestRevisionFile already uses for sharpen/humanize's own
-// revised_from tracking) to <projectRoot>/<slug>.md, overwriting any
+// WriteToRoot copies the piece's most-refined revision (draft.RevisionPriority
+// order: humanize.md if it ran, else seo.md, else sharpen.md, else
+// staff-edit.md, else draft.md) to <projectRoot>/<slug>.md, overwriting any
 // previous export of the same piece. Returns the destination path, which
 // source file was copied, and its word count.
 func WriteToRoot(projectRoot, pieceDir string) (destPath, sourceFile string, words int, err error) {
-	sourceFile = draft.LatestRevisionFile(pieceDir, "humanize.md", "sharpen.md", "staff-edit.md", "draft.md")
+	sourceFile = draft.LatestRevisionFile(pieceDir, draft.RevisionPriority...)
 
 	content, err := os.ReadFile(filepath.Join(pieceDir, sourceFile))
 	if err != nil {

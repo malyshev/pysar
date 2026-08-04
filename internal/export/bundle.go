@@ -1,10 +1,14 @@
 // Package export copies a piece's most-refined revision out of
 // .pysar/pieces/<slug>/ to a single Markdown file at the project root --
 // the one step in the pipeline that produces something outside the piece's
-// own directory. Deliberately named "export", not "publish": this project
-// has consistently excluded the POC's publish.md/Status-enum/SEO ceremony
-// (dec-20260718-20a08f83 and its precedents), and this package does none of
-// that -- it is a plain file copy with no side effects on the piece itself.
+// own directory. Deliberately named "export", not "publish": this package
+// still excludes a Status-enum/publish.md ceremony (dec-20260718-20a08f83)
+// -- it is a plain file copy with no side effects on the piece itself, and
+// it never touches internal/seo's own seo-checklist.md (opt-in
+// discoverability metadata, dec-20260804-e3234e50 superseding this
+// package's earlier full SEO-ceremony exclusion) -- that file is
+// operator-facing packaging data, not something export's reader-facing
+// copy owns.
 package export
 
 import (

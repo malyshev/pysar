@@ -61,6 +61,54 @@ func TestSaveExportBundlePicksHumanizeWhenEveryStageRan(t *testing.T) {
 	}
 }
 
+func TestSaveExportBundlePicksSEOWhenHumanizeHasNotRun(t *testing.T) {
+	// Regression: export must not silently fall back to sharpen.md's
+	// unpackaged prose when seo.md exists but humanize hasn't run yet --
+	// draft.RevisionPriority is the single source of truth this and
+	// tools_humanize.go's own revised_from tracking both read from.
+	dir := t.TempDir()
+	s := New("pysar", "test", dir, t.TempDir(), nil, &bytes.Buffer{})
+	piecePath := createTestPiece(t, s)
+
+	runLines(t, s, toolCallLine(t, 2, "save_draft_bundle", map[string]interface{}{
+		"piece_path": piecePath,
+		"draft_md":   "# Title\n\n*Subtitle.*\n\nAn opening claim, no citation yet.\n",
+	}))
+	runLines(t, s, toolCallLine(t, 3, "save_research_bundle", map[string]interface{}{
+		"piece_path":  piecePath,
+		"expert_lens": "distributed-systems / platform engineering",
+		"sources":     []map[string]interface{}{validResearchSource("retry-budget")},
+	}))
+	runLines(t, s, toolCallLine(t, 4, "save_sharpen_bundle", map[string]interface{}{
+		"piece_path": piecePath,
+		"revised_md": "# Sharpened Title\n\n*Subtitle.*\n\nA claim backed by research[^retry-budget].\n",
+		"checks":     []string{"[opener] tightened the hook"},
+	}))
+	runLines(t, s, toolCallLine(t, 5, "save_seo_bundle", validSEOArgs(piecePath,
+		"# SEO Packaged Title\n\n*Subtitle.*\n\nA claim backed by [research](https://example.com/retry-budget).\n")))
+
+	exportResp := runLines(t, s, toolCallLine(t, 6, "export_piece_to_root", map[string]interface{}{
+		"piece_path": piecePath,
+	}))
+	exportResult := toolResultMap(t, exportResp[5])
+	if exportResult["isError"] == true {
+		t.Fatalf("export_piece_to_root error: %v", exportResult)
+	}
+	text := toolText(t, exportResult)
+	if !strings.Contains(text, "seo.md") {
+		t.Fatalf("expected export to report seo.md as the source, got %s", text)
+	}
+
+	slug := filepath.Base(filepath.Join(dir, filepath.FromSlash(piecePath)))
+	got, err := os.ReadFile(filepath.Join(dir, slug+".md"))
+	if err != nil {
+		t.Fatalf("expected %s.md at project root: %v", slug, err)
+	}
+	if !strings.Contains(string(got), "SEO Packaged Title") {
+		t.Fatalf("expected the exported file to contain seo.md's content, not an earlier stage's, got:\n%s", got)
+	}
+}
+
 func TestSaveExportBundleFallsBackToDraftAlone(t *testing.T) {
 	dir := t.TempDir()
 	s := New("pysar", "test", dir, t.TempDir(), nil, &bytes.Buffer{})

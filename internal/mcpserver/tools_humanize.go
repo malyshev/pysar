@@ -14,7 +14,7 @@ var saveHumanizeBundleSchema = map[string]interface{}{
 	"type": "object",
 	"properties": map[string]interface{}{
 		"piece_path": map[string]string{"type": "string", "description": "Path to an existing piece, relative to the project root -- not a slug. Accepts the piece directory itself or a path to a file inside it (e.g. brief.md, what a Claude Code @-reference commonly resolves to, or a raw/ excerpt) -- either form resolves to the same piece directory."},
-		"revised_md": map[string]string{"type": "string", "description": "The FULL revised text, written to humanize.md -- never to draft.md, staff-edit.md, or sharpen.md, which stay untouched. Replaces the whole humanize.md file, not a diff/patch. Citation markers ([^shortname]) must still resolve to a real source this piece's research recorded -- never invented, never resolved to a link here."},
+		"revised_md": map[string]string{"type": "string", "description": "The FULL revised text, written to humanize.md -- never to draft.md, staff-edit.md, sharpen.md, or seo.md, which stay untouched. Replaces the whole humanize.md file, not a diff/patch. If seo.md exists, its resolved [anchor](url) links must survive untouched -- humanize edits prose around them, never inside them. If seo.md does not exist, citation markers ([^shortname]) must still resolve to a real source this piece's research recorded -- never invented, never resolved to a link here (that's /ps-seo's job, not this pass's)."},
 		"checks": map[string]interface{}{
 			"type":        "array",
 			"description": "At least 1 one-line note on what changed and why, e.g. '[hedge-stack] dropped the weaker of two hedges on the compose claim' or '[symmetry] varied the skip-list's third item so it doesn't read as a template'. Record a single 'no changes needed' entry when a check genuinely required none -- omitting checks entirely isn't a completed pass.",
@@ -50,11 +50,11 @@ func (s *Server) callSaveHumanizeBundle(args json.RawMessage) callToolResult {
 		return errorResult("%s", err.Error())
 	}
 
-	validShortnames, err := research.LoadShortnames(pieceDir)
+	validShortnames, validSourceURLs, err := research.LoadCitationSets(pieceDir)
 	if err != nil {
 		return errorResult("%s", err)
 	}
-	if err := humanize.Validate(b, validShortnames); err != nil {
+	if err := humanize.Validate(b, validShortnames, validSourceURLs); err != nil {
 		return errorResult("%s", err)
 	}
 
@@ -63,11 +63,15 @@ func (s *Server) callSaveHumanizeBundle(args json.RawMessage) callToolResult {
 		return errorResult("%s", err)
 	}
 
-	// Humanize has a three-way "which file did this revise from"
-	// ambiguity (sharpen.md if present, else staff-edit.md, else
+	// Humanize has a four-way "which file did this revise from" ambiguity
+	// (seo.md if present, else sharpen.md, else staff-edit.md, else
 	// draft.md, per the skill's own instruction) -- same honest-proxy
-	// reasoning as sharpen's own revised_from tracking.
-	revisedFrom := draft.LatestRevisionFile(pieceDir, "sharpen.md", "staff-edit.md", "draft.md")
+	// reasoning as sharpen's own revised_from tracking. Sliced from
+	// draft.RevisionPriority[1:] (skipping "humanize.md", the file this
+	// call is currently writing, not a valid "revised from" source) so
+	// this list and internal/export's own copy-priority list can't drift
+	// out of sync again the way they did before RevisionPriority existed.
+	revisedFrom := draft.LatestRevisionFile(pieceDir, draft.RevisionPriority[1:]...)
 	if err := editorial.AppendRunLog(pieceDir, editorial.RunLogEntry{
 		Pass:    "humanize",
 		Summary: fmt.Sprintf("piece=%s words=%d checks=%d revised_from=%s", b.PiecePath, words, len(b.Checks), revisedFrom),

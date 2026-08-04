@@ -14,10 +14,11 @@
 // the opening promised -- staff-edit already established that the argument
 // is sound; this pass checks that it lands as a read.
 //
-// Also deliberately absent: SEO/title/tag tuning (a prior writing POC's
-// OPTIMIZE phase) and AI-detection-evasion rhythm-breaking (that POC's
-// HUMANIZE phase) -- neither exists in this project, and the latter isn't
-// a quality goal this project has any interest in building.
+// Also deliberately absent here: SEO/citation-resolution/title-for-search
+// tuning (a prior writing POC's OPTIMIZE phase) -- that's internal/seo's
+// job now, a separate opt-in pass that runs after this one, never this
+// pass's. AI-detection-evasion rhythm-breaking (that POC's HUMANIZE phase)
+// remains unbuilt -- not a quality goal this project has any interest in.
 package sharpen
 
 import (

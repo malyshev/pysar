@@ -99,6 +99,22 @@ func TestValidateRejectsCitationWhenNoResearchRan(t *testing.T) {
 	}
 }
 
+func TestMarkdownLinkReCapturesURLWithNestedParens(t *testing.T) {
+	// Regression: a naive \(([^)]+)\) capture stops at the first ")",
+	// truncating a URL like Wikipedia's own "Foo_(bar)" shape and making
+	// every validSourceURLs lookup miss for an otherwise correctly
+	// resolved link.
+	line := "See [the retry pattern](https://en.wikipedia.org/wiki/Foo_(bar)) for background."
+	m := MarkdownLinkRe.FindStringSubmatch(line)
+	if len(m) != 2 {
+		t.Fatalf("expected exactly one capture group, got %v", m)
+	}
+	want := "https://en.wikipedia.org/wiki/Foo_(bar)"
+	if m[1] != want {
+		t.Fatalf("expected captured URL %q, got %q", want, m[1])
+	}
+}
+
 func TestWordCount(t *testing.T) {
 	if got := WordCount("one two three"); got != 3 {
 		t.Fatalf("expected 3, got %d", got)

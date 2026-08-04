@@ -183,6 +183,16 @@ func TestDiscoverabilityProceedsForBlogWithDraft(t *testing.T) {
 	}
 }
 
+func TestDiscoverabilityDeclinesAfterHumanizeAlreadyRan(t *testing.T) {
+	// Ordering invariant (dec-20260804-e3234e50): discoverability must run
+	// BEFORE humanize, never after -- enforced here via the same
+	// Precondition mechanism every pass uses, not left to prose alone.
+	s := NewState(SurfaceBlog, ArtifactStake, ArtifactDraft, ArtifactHumanize)
+	if _, err := Run(discoverabilityPass{}, s); err == nil {
+		t.Fatal("expected discoverability to decline once humanize.md already exists")
+	}
+}
+
 // passHandlesEmptyCorrectly reports whether p either explicitly allows an
 // empty piece state (AllowEmpty) or correctly rejects it via a non-nil
 // Precondition error. Shared by the registry-wide meta-test and the
