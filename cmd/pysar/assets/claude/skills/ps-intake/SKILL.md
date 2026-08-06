@@ -48,7 +48,25 @@ Complete the whole flow in one pass when the idea is usable:
 3. Persist via `save_intake_bundle`
 4. Print a short summary
 
-**Ask the author only if input is degenerate** (empty, gibberish, a single stray word, or explicitly self-contradictory instructions). Broad or vague ideas are **not** grounds to ask — pick the best default from the profile, state it in the restatement line, and proceed.
+**React only if input is degenerate** (empty, gibberish, a single stray word, or explicitly self-contradictory instructions) — and react differently depending on which:
+
+- **Genuinely empty** (ran `/ps-intake` with nothing at all, no idea text, no `--from-draft=`): show the console-tool-style help below, then stop and wait — don't guess an idea, don't ask a bare "what's your idea?" with no context.
+- **Gibberish, a single stray word, or self-contradictory**: there IS input, just not usable — ask one short, targeted question about specifically what's unclear, not the full help block below. Don't conflate "nothing given" with "something unusable given"; they need different responses.
+
+Broad or vague-but-real ideas are **not** grounds to ask either way — pick the best default from the profile, state it in the restatement line, and proceed.
+
+**Help block for the genuinely-empty case:**
+
+> **Turns your idea or a rough draft into a shaped piece** — a stake,
+> outline, and angles scaffolded from your own words, ready to draft.
+>
+> **To start:**
+> - `/ps-intake a habit that actually helped our team ship faster`
+> - `/ps-intake --from-draft=@notes/rough-draft.md` — if you already
+>   have something written
+>
+> No setup required. If this is part of a longer run, `/ps` handles the
+> whole pipeline in one go instead of stage by stage.
 
 ## Args
 
@@ -125,8 +143,18 @@ Print:
 - The saved path (call it "the piece" or "the directory" — never "slug")
 - Thesis one-liner
 - Suggested next, as one decisive recommendation, not a flat "or":
-  - If `read_author_defaults` returned `source: generalist-fallback`: recommend running `/ps-voice` next (one-time, ~2 minutes) so this and future pieces use the author's own voice automatically — mention drafting now with today's generalist tone as the fallback option, not the primary suggestion.
-  - If `source: profile`: just suggest drafting the piece. Do not mention onboarding at all — it's irrelevant noise in this branch.
+  - Branch on `read_author_defaults`'s **`has_voice`** field specifically —
+    not `source`. `source` turns to `"profile"` if *either* voice.md or
+    style.md exists, so a style-only project (style.md present, voice.md
+    missing) reports `source: profile` while voice is still genuinely
+    unset — `has_voice` is the unambiguous signal for this recommendation.
+  - If `has_voice` is `false`: recommend running `/ps-voice` next
+    (one-time, ~2 minutes) so this and future pieces use the author's own
+    voice automatically — mention drafting now with today's default tone
+    (the author's style.md, if present, or the generalist fallback
+    otherwise) as the fallback option, not the primary suggestion.
+  - If `has_voice` is `true`: just suggest drafting the piece. Do not
+    mention onboarding at all — it's irrelevant noise in this branch.
 
 No phase jargon for the author. No permission theater. Stop.
 

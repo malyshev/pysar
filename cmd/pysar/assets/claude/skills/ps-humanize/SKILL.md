@@ -66,8 +66,20 @@ A path to an existing piece — never call this a "slug." Referencing it via
 Claude Code's native `@` file-picker is normal flow, same as the earlier
 passes.
 
-If `draft.md` doesn't exist yet, tell the operator to run `/ps-draft`
-first — do not invent one.
+**If invoked with no path at all**, don't guess which piece is meant.
+Show this, then stop and wait:
+
+> **Final voice-authenticity pass** — sounds like you, not the
+> machine. Strips genuine AI-tell patterns without touching substance.
+>
+> **To start:**
+> - `/ps-humanize @.pysar/pieces/docker-for-developers-abc123/`
+>
+> If this is part of a longer run, `/ps` handles the whole pipeline in
+> one go instead of stage by stage.
+
+If `draft.md` doesn't exist yet for the given piece, tell the operator to
+run `/ps-draft` first — do not invent one.
 
 ## Step 1 — load context
 

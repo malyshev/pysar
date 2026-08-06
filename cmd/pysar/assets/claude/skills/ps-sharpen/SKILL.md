@@ -76,8 +76,21 @@ abc123/`) — never call this a "slug." Referencing it via Claude Code's
 native `@` file-picker is normal flow, same as `/ps-draft` and
 `/ps-staff-edit`.
 
-If `draft.md` doesn't exist yet, tell the operator to run `/ps-draft`
-first — do not invent one.
+**If invoked with no path at all**, don't guess which piece is meant.
+Show this, then stop and wait:
+
+> **Makes the opening hit and the piece complete** — hook power,
+> whether the piece's own best findings get real weight, whether the
+> ending resolves what the opening promised.
+>
+> **To start:**
+> - `/ps-sharpen @.pysar/pieces/docker-for-developers-abc123/`
+>
+> If this is part of a longer run, `/ps` handles the whole pipeline in
+> one go instead of stage by stage.
+
+If `draft.md` doesn't exist yet for the given piece, tell the operator to
+run `/ps-draft` first — do not invent one.
 
 ## Step 1 — load context
 

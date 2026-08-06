@@ -71,8 +71,27 @@ built here.
   a `draft.md` with no piece behind it — a draft with no brief has nothing
   for later passes (or the operator) to check it against.
 
-If the operator gives neither a path nor enough to scaffold a brief from,
-ask once which they mean — same genuine-fork exception `/ps-research` uses.
+**If invoked with genuinely nothing** — no path, no brief text, no
+`@`-reference at all — don't guess and don't ask a bare "which do you
+mean?". Show this, then stop and wait:
+
+> **Writes the piece's first full draft** from its brief/outline/angles,
+> or scaffolds a piece from a rough brief you give directly if none
+> exists yet.
+>
+> **To start:**
+> - `/ps-draft @.pysar/pieces/docker-for-developers-abc123/` — an
+>   existing piece
+> - `/ps-draft write it from the brief: <a rough idea in a sentence>` —
+>   no piece yet, scaffold one and draft it
+>
+> If this is part of a longer run, `/ps` handles the whole pipeline in
+> one go instead of stage by stage.
+
+If the operator gives *some* input but it's ambiguous between the two
+modes (not enough to scaffold a brief from, not clearly a path either),
+ask once which they mean instead of showing the full help block — same
+genuine-fork exception `/ps-research` uses.
 
 ## Step 1 — load context
 

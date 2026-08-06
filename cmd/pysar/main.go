@@ -16,7 +16,9 @@ import (
 	"pysar/internal/onboarding"
 )
 
-const version = "0.0.1-dev" // Dev version string until release tagging exists
+// version defaults to a dev string for `go build`/`go install`; release builds
+// override it via -ldflags "-X main.version=..." (dec-20260805-db745b4a).
+var version = "0.0.1-dev"
 
 const schemaVersion = 1
 

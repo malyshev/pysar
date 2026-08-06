@@ -72,8 +72,20 @@ native `@` file-picker is normal flow, same as `/ps-draft` and
 rather than the directory itself; pass whatever it resolves to straight
 through as `piece_path`.
 
-If `draft.md` doesn't exist yet, tell the operator to run `/ps-draft`
-first — do not invent one.
+**If invoked with no path at all**, don't guess which piece is meant.
+Show this, then stop and wait:
+
+> **Pressure-tests a draft's substance** — stakes, brief-alignment,
+> failure modes, honest scope — before calling the argument sound.
+>
+> **To start:**
+> - `/ps-staff-edit @.pysar/pieces/docker-for-developers-abc123/`
+>
+> If this is part of a longer run, `/ps` handles the whole pipeline in
+> one go instead of stage by stage.
+
+If `draft.md` doesn't exist yet for the given piece, tell the operator to
+run `/ps-draft` first — do not invent one.
 
 ## Step 1 — load context
 

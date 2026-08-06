@@ -1,0 +1,59 @@
+version: 2
+
+project_name: pysar
+
+before:
+  hooks: []
+
+builds:
+  - id: pysar
+    dir: .
+    main: ./cmd/pysar/
+    binary: pysar
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w
+      - -X main.version={{ .Version }}
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - id: pysar-cli
+    ids:
+      - pysar
+    name_template: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
+    formats:
+      - tar.gz
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    files:
+      - README*
+      - LICENSE*
+
+checksum:
+  name_template: "checksums.txt"
+
+changelog:
+  use: github-native
+
+release:
+  header: |
+    ## Pysar {{ .Tag }}
+
+    An author-directed editorial engine for your writing projects -- CLI + MCP server + `ps-*` skills for Claude Code.
+
+    ### Install
+
+    ```bash
+    curl -fsSL https://raw.githubusercontent.com/malyshev/pysar/main/install.sh | bash
+    ```
+
+    See [README](https://github.com/malyshev/pysar/blob/main/README.md) for setup and usage.

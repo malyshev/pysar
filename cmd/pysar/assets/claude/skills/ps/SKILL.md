@@ -14,12 +14,17 @@ description: |
   invoked. Research is deliberately not in this chain (it's optional and
   ps-intake/ps-draft already invoke it where each needs it); this command
   exists only to remove the "stop and manually invoke the next skill"
-  friction between the stages above, nothing more.
+  friction between the stages above, nothing more. When run with
+  genuinely nothing -- no idea text, no piece path -- shows a short,
+  plain-language orientation instead of guessing at an idea, for a
+  non-technical author's first contact with the tool.
 when_to_use: |
   Operator types /ps with a new idea or an existing piece path, wanting
-  the whole pipeline run without babysitting each stage themselves.
+  the whole pipeline run without babysitting each stage themselves. Typing
+  /ps with nothing at all shows plain-language orientation instead of
+  guessing at an idea.
 argument-hint: "[idea text | @path/to/piece] [--review] [--seo]"
-allowed-tools: Skill mcp__pysar__read_author_defaults mcp__pysar__save_intake_bundle mcp__pysar__save_draft_bundle mcp__pysar__save_staff_edit_bundle mcp__pysar__save_sharpen_bundle mcp__pysar__save_seo_bundle mcp__pysar__save_humanize_bundle mcp__pysar__export_piece_to_root Read WebSearch WebFetch
+allowed-tools: Skill mcp__pysar__read_author_defaults mcp__pysar__check_onboarding_status mcp__pysar__save_intake_bundle mcp__pysar__save_draft_bundle mcp__pysar__save_staff_edit_bundle mcp__pysar__save_sharpen_bundle mcp__pysar__save_seo_bundle mcp__pysar__save_humanize_bundle mcp__pysar__export_piece_to_root Read WebSearch WebFetch
 ---
 
 # /ps — full pipeline, autopilot by default
@@ -37,7 +42,56 @@ follows exactly as written, same pattern `/ps-onboard` already established.
 pre-approved by `pysar init`'s shipped `settings.json`; a raw `Read` on a
 skill file's absolute path is not.
 
+## Step 0 — nothing to work with: show orientation, don't guess
+
+If the operator ran `/ps` with genuinely nothing to work with — no idea
+text, no `@path/to/piece`, nothing but flags or literally nothing at
+all — do not hand an empty string to `ps-intake` and do not guess at an
+idea. Show orientation instead, then stop.
+
+Any `--review` or `--seo` flag given on this invocation still applies
+once the operator's next message supplies the idea or path — this is
+one continuous exchange, not two separate invocations. Don't ask them
+to repeat a flag they already gave.
+
+1. Call `check_onboarding_status` once, silently — no need to narrate
+   the check itself. **On tool error:** skip straight to the orientation
+   message below without the onboarding paragraph — don't surface the
+   raw error to the operator, and don't drop the whole message over one
+   failed side-check.
+2. Print exactly this shape, in plain language, no phase jargon (never
+   say intake, staff-edit, sharpen, seo, or humanize here):
+
+   > **Pysar turns an idea or a rough draft into a piece you'd actually
+   > publish.** You bring the take; I handle turning it into something
+   > finished.
+   >
+   > **To start, just tell me what it's about:**
+   > - `/ps a habit that actually helped our team ship faster`
+   > - `/ps --from-draft=@notes/half-finished-draft.md` — if you already
+   >   have something written
+   >
+   > That's it — no setup required. I'll ask if I genuinely need more
+   > from you; otherwise I'll get on with it and show you the result.
+
+   If `check_onboarding_status` reports voice or style outstanding, add
+   one more short paragraph: an optional one-time step, `/ps-onboard`
+   (about 2 minutes), teaches Pysar to sound like the operator from the
+   start — framed as optional, not a blocker; skipping it and just
+   writing now with a general-audience default works fine too. If both
+   are already done, don't mention onboarding at all — irrelevant noise
+   in that branch.
+3. Stop. Do not invoke `ps-intake` or any other stage this turn — wait
+   for the operator's next message.
+
+The two example lines above are illustrative, not a fixed script —
+adapt the wording if it reads more naturally, but keep both forms (a
+bare idea, and an `@path` to an existing draft) and keep it this short.
+
 ## Step 1 — figure out where this piece actually is
+
+Only reachable once real input exists (this invocation had one from the
+start, or Step 0's stop was followed by the operator supplying one).
 
 **A new idea (no existing piece path given):** start at `ps-intake`. There
 is no earlier stage to detect.
@@ -60,8 +114,17 @@ already use for "which file to revise from":
 4. `staff-edit.md` exists → next stage is `ps-sharpen`.
 5. `draft.md` exists → next stage is `ps-staff-edit`.
 6. `brief.md` exists (none of the above) → next stage is `ps-draft`.
-7. None exist → treat like a new idea; start at `ps-intake` with whatever
-   text the operator gave as the idea.
+7. None exist:
+   - **The operator gave actual idea text or `--from-draft=`** (not a
+     piece path): treat like a new idea; start at `ps-intake` with the
+     operator's own words, exactly as the no-existing-piece-path branch
+     above does.
+   - **The operator gave a piece path** (a directory under
+     `.pysar/pieces/`, or an `@`-reference to one) **but it has no
+     artifacts at all**: don't silently pass that path string to
+     `ps-intake` as if it were idea text — it isn't one. Say so plainly
+     ("that piece directory exists but has nothing in it yet — want to
+     start intake there, or did you mean a different path?") and wait.
 
 Do not guess or infer from the operator's phrasing which stage to start
 at — check the files.
@@ -145,8 +208,10 @@ already gave their own summaries as they ran. Stop.
 - Do not silently skip the review gate when `--review` was given — actually
   stop and wait for the operator's next message, not just a rhetorical
   pause before continuing anyway.
-- Do not ask the operator to confirm continuing when `--review` was NOT
-  given — autopilot means no stops, not "ask before each stage."
+- Do not ask the operator to confirm continuing *between pipeline stages*
+  when `--review` was NOT given — autopilot means no stops there, not
+  "ask before each stage." This does not apply to Step 0's stop, which
+  is unconditional (there's no stage to run yet at all when it fires).
 - Do not call `export_piece_to_root` more than once, or before the chain
   for this run has actually ended.
 - Do not `Read` a stage's `SKILL.md` file directly — always go through the
@@ -161,3 +226,10 @@ already gave their own summaries as they ran. Stop.
 - Do not skip `ps-seo` when `--seo` was given, and do not run it when it
   was not — Step 1's `seo.md` check already tells you whether it ran on a
   resumed piece; don't re-derive that from the operator's phrasing.
+- Do not treat a genuinely empty invocation as an idea and hand it to
+  `ps-intake` — show Step 0's orientation and stop instead of guessing.
+- Do not list this project's internal pass names (intake, staff-edit,
+  sharpen, seo, humanize) in the Step 0 orientation message — an author
+  running `/ps` for the first time has no reason to know these exist.
+- Do not mention `/ps-onboard` in Step 0 when `check_onboarding_status`
+  reports both voice and style already done.

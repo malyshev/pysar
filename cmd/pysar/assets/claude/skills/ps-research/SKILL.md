@@ -52,9 +52,27 @@ not as a settled decision in its own right.
   topic before I honestly say I know what I'm writing about" — background
   before a brief exists, not a brief itself. No thesis is committed here.
 
-If the operator gives neither a path nor a topic, ask once which mode they
-mean — this is the one genuine fork with no sensible default, unlike a
-broad idea (which always has one).
+**If invoked with genuinely nothing** — no path, no topic, no
+`@`-reference at all — don't guess and don't ask a bare "which do you
+mean?". Show this, then stop and wait:
+
+> **Adds real, tiered sources** — to an existing piece, or as a
+> standalone research bundle before you've committed to a brief.
+>
+> **To start:**
+> - `/ps-research @.pysar/pieces/docker-for-developers-abc123/` — add
+>   sources to an existing piece
+> - `/ps-research zero-trust service mesh adoption` — learn broadly
+>   before writing anything
+>
+> Research is optional — most pieces don't need it. If this is part of
+> a longer run, `/ps` doesn't include this stage automatically;
+> `/ps-intake` and `/ps-draft` reach for it on their own terms.
+
+If the operator gives *some* input but it's ambiguous between the two
+modes, ask once which they mean instead of showing the full help block —
+the one genuine fork with no sensible default, unlike a broad idea
+(which always has one).
 
 ## Step 1 — load context
 
