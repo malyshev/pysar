@@ -10,7 +10,7 @@ skills for Claude Code.
 ## Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/malyshev/pysar/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/malyshev/pysar/master/install.sh | bash
 ```
 
 This installs the `pysar` binary for macOS and Linux (amd64/arm64) from the
