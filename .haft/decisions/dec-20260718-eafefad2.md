@@ -1,13 +1,13 @@
 ---
 id: dec-20260718-eafefad2
 kind: DecisionRecord
-version: 5
+version: 10
 status: active
 title: Typed-field discipline -- reuse haft's existing congruence_level / counterargument / why_not_others fields as the enforcement surface
 mode: standard
-valid_until: 2026-10-18
+valid_until: 2026-11-06T07:50:07Z
 created_at: 2026-07-18T06:19:46Z
-updated_at: 2026-07-18T08:32:32Z
+updated_at: 2026-08-08T07:50:51Z
 links:
   - ref: prob-20260718-7b559d43
     type: based_on
@@ -104,3 +104,24 @@ Prediction 1 (fix dec-20260718-239680d4's framing) was confirmed same-session wh
 **Measurements:**
 - Prediction 1: confirmed at bind time (evid-20260718-733114000)
 - Prediction 2: 7/7 post-gate decisions audited, 0 violations, including 1 decision from a separate agent session (evid-20260718-960054000)
+
+## Waiver (2026-08-08)
+
+**Extended until:** 2026-11-06T07:50:07Z
+**Reason:** Real evidence gathered 2026-08-08: read dec-20260718-239680d4 directly -- title/why_selected already correctly reflect what this decision required.
+**Evidence:** evid recorded via haft_decision(action=evidence) this session, verdict=supports
+
+## Impact Measurement (2026-08-08)
+
+**Verdict:** accepted
+
+**Findings:**
+Real evidence gathered 2026-08-08: read dec-20260718-239680d4 directly -- title and why_selected text already correctly reflect what this decision required (no longer cite haft-mirroring, binary_distribution_fit reasoning preserved).
+
+**Criteria met:**
+- [x] Title no longer reads 'mirrors haft's own distribution'
+- [x] why_selected no longer cites haft-mirroring as supporting reasoning
+- [x] binary_distribution_fit reasoning preserved unchanged
+
+**Measurements:**
+- dec-20260718-239680d4 title/why_selected text read directly: matches required correction
