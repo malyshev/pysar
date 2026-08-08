@@ -1,14 +1,14 @@
 ---
 id: dec-20260808-footer-subscribe-host-form-598699a0
 kind: DecisionRecord
-version: 6
+version: 7
 status: active
 title: Newsletter host form POST (Buttondown / ConvertKit)
 context: site
 mode: standard
 valid_until: 2026-11-08
 created_at: 2026-08-08T15:36:27Z
-updated_at: 2026-08-08T16:26:29Z
+updated_at: 2026-08-08T16:43:37Z
 links:
   - ref: prob-20260808-c0712044
     type: based_on
@@ -135,3 +135,21 @@ Both predictions hold. Static export + Pages path unchanged. Operator confirmed 
 - live form action embed-subscribe/malyshev
 - operator Buttondown success modal confirmed
 - output:export + wrangler pages deploy out
+
+## Impact Measurement (2026-08-08)
+
+**Verdict:** accepted
+
+**Findings:**
+/h-verify: both predictions hold. Production footer still POSTs to Buttondown embed-subscribe/malyshev; prior operator E2E success stands; static export + Pages Direct Upload unchanged. Drift on affected carriers is incidental (docs/setup/site churn) — re-baselined.
+
+**Criteria met:**
+- [x] 1 successful end-to-end capture on production (prior operator confirmation; live form still wired)
+- [x] Static export and Pages Direct Upload path remain unchanged
+
+**Measurements:**
+- live form action embed-subscribe/malyshev method=post
+- home HTTP 200
+- output:export + wrangler pages deploy out
+- no site/src/app/api
+- E2E list capture: prior operator Buttondown success (not re-run)

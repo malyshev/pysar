@@ -1,14 +1,14 @@
 ---
 id: dec-20260808-journey-docs-corpus-e8b5483b
 kind: DecisionRecord
-version: 7
+version: 9
 status: active
 title: Journey-first docs/ tree with SSG-ready frontmatter
 context: docs
 mode: standard
 valid_until: 2026-11-08T00:00:00Z
 created_at: 2026-08-08T11:37:16Z
-updated_at: 2026-08-08T14:40:19Z
+updated_at: 2026-08-08T16:45:09Z
 links:
   - ref: prob-20260808-39f48c3d
     type: based_on
@@ -168,3 +168,21 @@ All three DRR predictions still hold after motherhome-related drift. Journey doc
 - README → docs/index.md
 - init --cursor and --codex scratch exit 0
 - getpysar.com/docs + /docs/install 200
+
+## Impact Measurement (2026-08-08)
+
+**Verdict:** accepted
+
+**Findings:**
+/h-verify: all three predictions hold. Journey corpus + README pointer intact; frontmatter 100%; cold-path Cursor and Codex init succeed from docs steps without .go reads; live /docs ingest 200. Drift (2 modified + 18 added) is same-corpus host/docs updates plus site packaging — expected refresh, not dual-corpus divergence. Soft: index intro/step2 still omit Codex while What you need lists it.
+
+**Criteria met:**
+- [x] docs tree + six aspect pages + README pointer
+- [x] cold-path install confirm + Cursor/Codex init from docs alone
+- [x] frontmatter ≥90% uniform (100%)
+
+**Measurements:**
+- 7/7 pages with title/slug/nav_order/section; nav_order 0..60
+- README → docs/index.md
+- pysar 0.3.0 init --cursor/--codex scratch exit 0
+- getpysar.com/docs* all 200
