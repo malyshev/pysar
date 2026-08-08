@@ -130,7 +130,17 @@ Submit leaves getpysar.com and lands on Buttondown’s confirm / double-opt-in p
 
 ---
 
-## Step 8 — After first deploy
+## Step 8 — Analytics (Umami Cloud)
+
+Root layout loads a 1×1 Umami pixel:
+
+`https://cloud.umami.is/p/4IWutlpOL`
+
+- [ ] Confirm hits appear in the Umami dashboard after a production visit
+
+---
+
+## Step 9 — After first deploy
 
 - [ ] `https://getpysar.com` serves the motherhome
 - [ ] `https://getpysar.com/sitemap.xml` and `/robots.txt` exist

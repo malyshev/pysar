@@ -15,26 +15,41 @@ type Node = {
 const nodes: Node[] = [
   { src: "/hosts/claude.svg", alt: "Claude Code", left: "0%", top: "8.5%" },
   { src: "/hosts/cursor.svg", alt: "Cursor", left: "10.7%", top: "8.5%" },
-  { src: "/hosts/codex.svg", alt: "Codex", left: "21.4%", top: "8.5%" },
   {
-    src: "/hosts/opencode.svg",
-    alt: "OpenCode",
+    src: "/hosts/chatgpt.svg",
+    alt: "ChatGPT Codex",
+    left: "21.4%",
+    top: "8.5%",
+  },
+  {
+    src: "/hosts/gemini-icon.svg",
+    alt: "Gemini",
     left: "0%",
     top: "63%",
     planned: true,
   },
   { src: "/hosts/claude.svg", alt: "Claude Code", left: "10.7%", top: "63%" },
-  { src: "/hosts/codex.svg", alt: "Codex", left: "73%", top: "8.5%" },
+  {
+    src: "/hosts/chatgpt.svg",
+    alt: "ChatGPT Codex",
+    left: "73%",
+    top: "8.5%",
+  },
   { src: "/hosts/cursor.svg", alt: "Cursor", left: "83.7%", top: "8.5%" },
   { src: "/hosts/claude.svg", alt: "Claude Code", left: "94.4%", top: "8.5%" },
   {
-    src: "/hosts/opencode.svg",
-    alt: "OpenCode",
+    src: "/hosts/gemini-icon.svg",
+    alt: "Gemini",
     left: "94.4%",
     top: "63%",
     planned: true,
   },
-  { src: "/hosts/codex.svg", alt: "Codex", left: "83.7%", top: "63%" },
+  {
+    src: "/hosts/chatgpt.svg",
+    alt: "ChatGPT Codex",
+    left: "83.7%",
+    top: "63%",
+  },
 ];
 
 /**
@@ -84,12 +99,13 @@ export function HomeIntegrations() {
                 key={`${node.alt}-${i}`}
                 className="absolute flex size-10 items-center justify-center rounded-sm bg-zinc-100 p-1.5 md:size-12.5"
                 style={{ left: node.left, top: node.top }}
+                title={node.planned ? `${node.alt} — Coming soon` : undefined}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={node.src}
-                  alt={node.planned ? `${node.alt} (planned)` : node.alt}
-                  className={`h-auto max-h-full w-full object-contain ${node.planned ? "opacity-40" : ""}`}
+                  alt={node.planned ? `${node.alt} (coming soon)` : node.alt}
+                  className={`h-auto max-h-full w-full object-contain ${node.planned ? "grayscale opacity-40" : ""}`}
                   loading="lazy"
                 />
               </div>

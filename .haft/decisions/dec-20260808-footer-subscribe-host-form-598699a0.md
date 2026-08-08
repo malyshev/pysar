@@ -1,14 +1,14 @@
 ---
 id: dec-20260808-footer-subscribe-host-form-598699a0
 kind: DecisionRecord
-version: 1
+version: 6
 status: active
 title: Newsletter host form POST (Buttondown / ConvertKit)
 context: site
 mode: standard
 valid_until: 2026-11-08
 created_at: 2026-08-08T15:36:27Z
-updated_at: 2026-08-08T15:36:27Z
+updated_at: 2026-08-08T16:26:29Z
 links:
   - ref: prob-20260808-c0712044
     type: based_on
@@ -97,3 +97,41 @@ Blast radius: site/src/components/footer-subscribe.tsx, public env for form endp
 - Need for Turnstile/secret-backed subscribe (reopen V2)
 
 **Affected files:** site/src/components/footer-subscribe.tsx, site/src/lib/site.ts, site/.env.example, site/engineering/human-setup.md
+
+## Impact Measurement (2026-08-08)
+
+**Verdict:** partial
+
+**Findings:**
+/h-verify: Prediction 2 holds — static export + Pages Direct Upload unchanged; native Buttondown form POST on production. Prediction 1 incomplete — live form correctly targets Buttondown embed-subscribe/malyshev, but successful list/pending capture in Buttondown dashboard was not confirmed this session.
+
+**Criteria met:**
+- [x] Static export and Pages Direct Upload path remain unchanged
+- [x] Footer POSTs to public Buttondown embed endpoint (no silent fake success)
+- [x] Engineering note names Buttondown
+
+**Criteria NOT met:**
+- [ ] 1 successful end-to-end capture on production confirmed in host list/pending
+
+**Measurements:**
+- next.config output:export
+- wrangler pages deploy out
+- live form action buttondown embed-subscribe/malyshev method=post
+- E2E Buttondown dashboard: not observed
+
+## Impact Measurement (2026-08-08)
+
+**Verdict:** accepted
+
+**Findings:**
+Both predictions hold. Static export + Pages path unchanged. Operator confirmed live footer → Buttondown success acknowledgment (subscribed to Serhii Malyshev newsletter).
+
+**Criteria met:**
+- [x] 1 successful end-to-end capture on production
+- [x] Static export and Pages Direct Upload path remain unchanged
+- [x] Footer POSTs to Buttondown; failure/success is host-visible
+
+**Measurements:**
+- live form action embed-subscribe/malyshev
+- operator Buttondown success modal confirmed
+- output:export + wrangler pages deploy out

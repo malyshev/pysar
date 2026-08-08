@@ -26,6 +26,9 @@ export const homePageSeo = {
 export const installCommand =
   "curl -fsSL https://getpysar.com/install.sh | bash";
 
+/** Umami Cloud 1×1 pageview pixel (GIF). */
+export const umamiPixelSrc = "https://cloud.umami.is/p/4IWutlpOL";
+
 /**
  * Buttondown newsletter username (public). Override with NEXT_PUBLIC_BUTTONDOWN_USERNAME.
  * Embed docs: https://docs.buttondown.com/building-your-subscriber-base

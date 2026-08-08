@@ -9,14 +9,27 @@ cursor.svg
   Zip: cursor-brand-assets.zip
   Path: General Logos / Lockup Horizontal / SVG / LOCKUP_HORIZONTAL_2D_LIGHT.svg
 
-opencode.svg
-  OpenCode Brand — https://opencode.ai/brand
-  Zip: opencode-brand-assets.zip (anomalyco/opencode)
-  Path: Wordmark / opencode-wordmark-light.svg
+chatgpt.svg
+  ChatGPT mark (black glyph) via Wikimedia Commons File:ChatGPT-Logo.svg
+  Homepage label: “ChatGPT Codex” (product users know; desktop coding surface
+  is Codex inside the ChatGPT app — OpenAI Help Center 2026).
+  Clients strip: glyph + wordmark text. Integrations nodes: glyph only.
+  No separate official “Codex” wordmark was published on openai.com/brand.
+
+gemini.svg
+  Google Gemini wordmark (2025) via Wikimedia Commons
+  File:Google Gemini logo 2025.svg (extracted from About Gemini / Google)
+  Planned host slot (dimmed) — not a shipped pysar init target yet.
+
+gemini-icon.svg
+  Google Gemini star icon (2025) via Wikimedia Commons
+  File:Google Gemini icon 2025.svg
+  Used in small integration node plates.
 
 codex.svg
-  OpenAI Brand — https://openai.com/brand/ (no separate Codex wordmark published)
-  File: OpenAI logo 2025 (wordmark).svg via Wikimedia Commons FilePath
-  Use as the Codex host mark; alt text names Codex.
+  Legacy OpenAI 2025 company wordmark (kept unused). Prefer chatgpt.svg +
+  “ChatGPT Codex” label.
 
-Trademarks belong to their owners. Used here only to identify supported hosts.
+Trademarks belong to their owners. Used here only to identify supported /
+planned hosts. Google marks: trademark rules apply; fair product identification
+only — no endorsement implied.

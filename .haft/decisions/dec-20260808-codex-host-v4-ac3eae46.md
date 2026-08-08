@@ -1,13 +1,13 @@
 ---
 id: dec-20260808-codex-host-v4-ac3eae46
 kind: DecisionRecord
-version: 5
+version: 7
 status: active
 title: Full Codex dialect including openai.yaml / invocation policy
 mode: standard
 valid_until: 2026-11-08T00:00:00Z
 created_at: 2026-08-08T13:28:55Z
-updated_at: 2026-08-08T14:33:06Z
+updated_at: 2026-08-08T16:02:50Z
 links:
   - ref: prob-20260808-7ba11dda
     type: based_on
@@ -150,3 +150,20 @@ codexHost registered; init --codex scaffolds project .codex/config.toml, install
 - go test Codex goldens ok
 - ps openai.yaml implicit true; stage skills false
 - brief.md + run-log passes on testing-what-matters-ed5e514799b0
+
+## Impact Measurement (2026-08-08)
+
+**Verdict:** accepted
+
+**Findings:**
+/h-verify on released pysar 0.3.0: both predictions hold. Release binary init --codex scaffolds MCP+skills+openai.yaml; goldens green; Claude/Cursor init unaffected. Live Codex MCP pipeline artifacts on test-codex still satisfy prediction 2. Re-baselining after incidental drift.
+
+**Criteria met:**
+- [x] pysar init --codex scaffolds MCP + skills + openai.yaml without error
+- [x] Codex can run intake smoke via MCP after init
+
+**Measurements:**
+- pysar 0.3.0 ~/.local/bin
+- scratch init --codex: approve + 12 skills + openai.yaml policies
+- go test Init*|Codex*|ResolveHost ok
+- test-codex brief.md + run-log + export present
