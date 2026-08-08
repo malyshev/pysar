@@ -1,0 +1,22 @@
+Official host logo sources (fetched 2026-08-08)
+
+claude.svg
+  Anthropic press kit — https://www.anthropic.com/press-kit
+  Path: Claude logos / 2 Claude Code logo / SVG / Claude Code logo - Slate.svg
+
+cursor.svg
+  Cursor Brand Guidelines — https://cursor.com/brand
+  Zip: cursor-brand-assets.zip
+  Path: General Logos / Lockup Horizontal / SVG / LOCKUP_HORIZONTAL_2D_LIGHT.svg
+
+opencode.svg
+  OpenCode Brand — https://opencode.ai/brand
+  Zip: opencode-brand-assets.zip (anomalyco/opencode)
+  Path: Wordmark / opencode-wordmark-light.svg
+
+codex.svg
+  OpenAI Brand — https://openai.com/brand/ (no separate Codex wordmark published)
+  File: OpenAI logo 2025 (wordmark).svg via Wikimedia Commons FilePath
+  Use as the Codex host mark; alt text names Codex.
+
+Trademarks belong to their owners. Used here only to identify supported hosts.

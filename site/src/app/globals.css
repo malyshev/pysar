@@ -61,7 +61,6 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
   --max-width-shell: var(--shell-max);
-  --background-image-stripe: var(--stripe-fill);
   /*
     Lockup — optical match to Boxsi logo-light.svg (100×22 @ h-5.5).
     SVG letters fill ~17px of that 22px; HTML needs text-2xl for same cap-height.
@@ -69,6 +68,14 @@
   --text-logo: var(--text-2xl);
   --tracking-logo: -0.03em;
   --size-logo-mark: calc(var(--spacing) * 6); /* size-6 — mark padding eats ~10% */
+
+  /* Boxsi Hero.tsx — values lifted from template classes, not invented */
+  --text-hero: 36px;
+  --text-hero-md: 58px;
+  --leading-hero: 1.1em;
+  --tracking-hero: -0.03em;
+  --size-hero-sparkle: 60%;
+  --spacing-hero-blur: 330px;
 }
 
 :root {
@@ -103,15 +110,6 @@
   --frame: oklch(0.92 0.004 286.3);
   --corner: oklch(0.552 0.014 285.9);
   --shell-max: 62.5rem; /* ~1000px, template container max-w-250 */
-  --stripe-fill: repeating-linear-gradient(
-    45deg,
-    oklch(0.967 0.001 286.4) 0,
-    oklch(0.967 0.001 286.4) 1px,
-    transparent 0,
-    transparent 50%
-  );
-  --stripe-size: 12px 12px;
-
   --chart-1: oklch(0.655 0.224 30.9);
   --chart-2: oklch(0.552 0.014 285.9);
   --chart-3: oklch(0.439 0 0);
@@ -154,13 +152,6 @@
   --ring: oklch(0.72 0.2 32);
   --frame: oklch(1 0 0 / 12%);
   --corner: oklch(0.708 0 0);
-  --stripe-fill: repeating-linear-gradient(
-    45deg,
-    oklch(1 0 0 / 8%) 0,
-    oklch(1 0 0 / 8%) 1px,
-    transparent 0,
-    transparent 50%
-  );
   --chart-1: oklch(0.72 0.2 32);
   --chart-2: oklch(0.708 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -205,13 +196,24 @@
   border-color: var(--frame);
 }
 
+/*
+  Boxsi Navbar stripe — MUST set image AND size together.
+  --background-size-stripe in @theme did not emit a utility (verified in build CSS),
+  so md:bg-size-stripe was a no-op and the hatch smeared.
+*/
+@utility bg-stripe {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--color-zinc-100) 0,
+    var(--color-zinc-100) 1px,
+    transparent 0,
+    transparent 50%
+  );
+  background-size: 12px 12px;
+}
+
 /* Style primitives — frame language + restrained motion */
 @layer utilities {
-  .bg-stripe {
-    background-image: var(--stripe-fill);
-    background-size: var(--stripe-size);
-  }
-
   .pixelated {
     image-rendering: pixelated;
   }
