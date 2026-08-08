@@ -44,7 +44,7 @@ export function buildHomeJsonLd() {
         "@id": softwareId,
         name: siteConfig.name,
         applicationCategory: "Productivity",
-        operatingSystem: "macOS, Linux",
+        operatingSystem: "macOS, Linux, Windows",
         url: siteUrl,
         downloadUrl: `${siteUrl}/install.sh`,
         installUrl: installDocs,

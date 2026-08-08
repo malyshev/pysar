@@ -1,4 +1,5 @@
 import { Circle } from "lucide-react";
+import Link from "next/link";
 import { CopyCommand } from "@/components/copy-command";
 import { homePageSeo, installCommand, siteConfig } from "@/lib/site";
 
@@ -9,7 +10,7 @@ import { homePageSeo, installCommand, siteConfig } from "@/lib/site";
 export function HomeHero() {
   return (
     <section className="size-full overflow-hidden px-4 md:px-5 lg:px-7.5">
-      <div className="relative mx-auto w-full max-w-250 border-x-2 border-zinc-100 pt-32 pb-10 md:pt-37.5 lg:pt-48 lg:pb-30">
+      <div className="relative mx-auto w-full max-w-250 border-x-2 border-zinc-100 pt-28 pb-8 md:pt-32 lg:pt-40 lg:pb-16">
         {/* Plain img — next/image wrapper breaks template's absolute inset-0 pattern. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -18,7 +19,7 @@ export function HomeHero() {
           className="absolute inset-0 z-1 size-full"
         />
 
-        <div className="relative space-y-7.5 text-center">
+        <div className="relative space-y-6 text-center">
           <div className="relative z-10 mx-auto max-w-200 space-y-4 md:px-12.5">
             <div className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-zinc-200 bg-white px-4 py-1.5 text-xs/none font-semibold uppercase text-zinc-900">
               <Circle
@@ -52,7 +53,7 @@ export function HomeHero() {
               in charge; Pysar never posts for you.
             </p>
 
-            <div className="mx-auto w-full max-w-xl space-y-4 pt-3 text-left">
+            <div className="mx-auto w-full max-w-xl space-y-3 pt-2 text-left">
               <p className="text-center text-sm text-zinc-500">
                 macOS or Linux — install, then open your writing project in
                 Claude Code, Cursor, or Codex:
@@ -61,16 +62,30 @@ export function HomeHero() {
               <CopyCommand command={installCommand} />
 
               <p className="text-center text-sm text-zinc-500">
-                Or paste{" "}
+                Windows builds ship too — download the zip from{" "}
+                <Link
+                  href="/docs/install"
+                  className="font-medium text-zinc-800 underline decoration-zinc-300 underline-offset-4 transition-colors hover:text-primary hover:decoration-primary"
+                >
+                  Install
+                </Link>
+                .
+              </p>
+
+              <p className="text-center text-sm text-zinc-500">
+                Or paste this into that editor and say{" "}
+                <span className="font-medium text-zinc-800">install</span>
+                {" "}(
                 <a
                   href="#for-ai-agents"
                   className="font-medium text-zinc-800 underline decoration-zinc-300 underline-offset-4 transition-colors hover:text-primary hover:decoration-primary"
                 >
-                  {siteConfig.url.replace(/^https?:\/\//, "")}
-                </a>{" "}
-                into that editor and say{" "}
-                <span className="font-medium text-zinc-800">install</span>.
+                  steps for agents
+                </a>
+                ):
               </p>
+
+              <CopyCommand command={siteConfig.url} />
             </div>
           </div>
 

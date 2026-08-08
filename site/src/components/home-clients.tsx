@@ -30,7 +30,7 @@ export function HomeClients() {
       <div className="relative z-10 mx-auto w-full max-w-250 border-x-2 border-zinc-100">
         <div className="grid grid-cols-2 divide-x-2 divide-y-2 divide-zinc-100 border-y-2 border-zinc-100 md:grid-cols-5">
           <div className="col-span-2 md:col-span-1">
-            <div className="relative flex h-full flex-col items-center justify-center bg-zinc-100 px-7.5 py-9">
+            <div className="relative flex h-full flex-col items-center justify-center bg-zinc-100 px-7.5 py-8">
               <p className="text-sm text-zinc-900">
                 Works with <span className="text-primary">Claude Code</span>,
                 Cursor &amp; ChatGPT Codex
@@ -42,7 +42,7 @@ export function HomeClients() {
           {hosts.map((host) => (
             <div
               key={host.alt}
-              className="flex h-full flex-col items-center justify-center gap-2 px-7.5 py-9"
+              className="flex h-full flex-col items-center justify-center gap-2 px-7.5 py-8"
             >
               {host.wordmark ? (
                 <span
