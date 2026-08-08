@@ -151,13 +151,13 @@ jobs:
           done
           pnpm exec wrangler pages deploy out \
             --project-name="$CLOUDFLARE_PROJECT_NAME" \
-            --branch=main \
+            --branch=master \
             --commit-dirty=true
 ```
 
 **Deploy note:** Use repo-local `wrangler` via `pnpm exec`, not `cloudflare/wrangler-action`. The action’s auto-install path has failed on modern pnpm layouts; shell deploy with an explicit secret check surfaces real errors.
 
-**Pages `--branch=main`:** Cloudflare production environment label — independent of whether git default is `master` or `main`.
+**Pages `--branch`:** Must equal the project’s **Production branch** in the Cloudflare dashboard (API: `production_branch`). For `getpysar` that is **`master`**. Deploying `main` or `production` creates Preview only — apex `getpysar.pages.dev` stays “Deployment Not Found” while `https://<hash>.getpysar.pages.dev` works.
 
 ---
 

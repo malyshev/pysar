@@ -73,7 +73,9 @@ jobs:
               exit 1
             fi
           done
+          # Must match Pages project production_branch (getpysar = "master").
+          # main/production → Preview only → getpysar.pages.dev = Deployment Not Found.
           pnpm exec wrangler pages deploy out \
             --project-name="$CLOUDFLARE_PROJECT_NAME" \
-            --branch=main \
+            --branch=master \
             --commit-dirty=true
