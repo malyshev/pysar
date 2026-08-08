@@ -1,6 +1,6 @@
-import { Check, Circle } from "lucide-react";
+import { Circle } from "lucide-react";
 import { CopyCommand } from "@/components/copy-command";
-import { homePageSeo, installCommand } from "@/lib/site";
+import { homePageSeo, installCommand, siteConfig } from "@/lib/site";
 
 /**
  * Port of Boxsi (home)/components/Hero.tsx — same structure, paddings, blur, pattern.
@@ -59,45 +59,17 @@ export function HomeHero() {
 
               <CopyCommand command={installCommand} />
 
-              <div className="space-y-2">
-                <p className="text-sm font-semibold text-zinc-800">
-                  What this does:
-                </p>
-                <ul className="space-y-1.5 text-sm text-zinc-600">
-                  <li className="flex items-start gap-2">
-                    <Check
-                      className="mt-0.5 size-4 shrink-0 text-primary"
-                      aria-hidden="true"
-                    />
-                    <span>
-                      Installs{" "}
-                      <code className="rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-[13px] text-zinc-800">
-                        pysar
-                      </code>{" "}
-                      on your PATH
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check
-                      className="mt-0.5 size-4 shrink-0 text-primary"
-                      aria-hidden="true"
-                    />
-                    <span>macOS and Linux (amd64 / arm64)</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check
-                      className="mt-0.5 size-4 shrink-0 text-primary"
-                      aria-hidden="true"
-                    />
-                    <span>
-                      Then run{" "}
-                      <code className="rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-[13px] text-zinc-800">
-                        pysar init
-                      </code>
-                    </span>
-                  </li>
-                </ul>
-              </div>
+              <p className="text-center text-sm text-zinc-500">
+                Or paste{" "}
+                <a
+                  href="#for-ai-agents"
+                  className="font-medium text-zinc-800 underline decoration-zinc-300 underline-offset-4 transition-colors hover:text-primary hover:decoration-primary"
+                >
+                  {siteConfig.url.replace(/^https?:\/\//, "")}
+                </a>{" "}
+                into Claude Code, Cursor, or Codex and say{" "}
+                <span className="font-medium text-zinc-800">install</span>.
+              </p>
             </div>
           </div>
 

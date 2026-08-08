@@ -1,3 +1,4 @@
+import { HomeAgentInstall } from "@/components/home-agent-install";
 import { HomeClients } from "@/components/home-clients";
 import { HomeFeatures } from "@/components/home-features";
 import { HomeHero } from "@/components/home-hero";
@@ -19,6 +20,7 @@ export default function HomePage() {
       <HomeFeatures />
       <HomeSteps />
       <HomeIntegrations />
+      <HomeAgentInstall />
     </SiteShell>
   );
 }

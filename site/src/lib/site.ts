@@ -26,6 +26,40 @@ export const homePageSeo = {
 export const installCommand =
   "curl -fsSL https://getpysar.com/install.sh | bash";
 
+/**
+ * Homepage AI-install carrier (dec-20260808-homepage-ai-install-signals-9eb5a6a9).
+ * Must stay aligned with docs/install.md + docs/init.md.
+ */
+export const agentInstallGuide = {
+  /** Trigger phrase when a user pastes this site URL into a coding agent. */
+  trigger: "install",
+  docsInstallPath: "/docs/install",
+  docsInitPath: "/docs/init",
+  hosts: [
+    {
+      name: "Claude Code",
+      initCommand: "pysar init --claude",
+      note: "Default host; bare `pysar init` is the same.",
+    },
+    {
+      name: "Cursor",
+      initCommand: "pysar init --cursor",
+      note: "Enable the pysar MCP server if prompted.",
+    },
+    {
+      name: "ChatGPT Codex",
+      initCommand: "pysar init --codex",
+      note: "Trust the project so MCP approval settings apply.",
+    },
+  ],
+  /**
+   * Condensed machine-facing summary for meta tags / JSON-LD description.
+   * Agents that truncate HTML still get the authoritative recipe here.
+   */
+  metaSummary:
+    "When the user pastes https://getpysar.com and says install: (1) run curl -fsSL https://getpysar.com/install.sh | bash; (2) verify with pysar --version; (3) in the writing project directory run pysar init --claude (Claude Code), pysar init --cursor (Cursor), or pysar init --codex (ChatGPT Codex). Do not invent brew/npm/go-get alternatives. Full docs: https://getpysar.com/docs/install and https://getpysar.com/docs/init.",
+} as const;
+
 /** Umami Cloud 1×1 pageview pixel (GIF). */
 export const umamiPixelSrc = "https://cloud.umami.is/p/4IWutlpOL";
 

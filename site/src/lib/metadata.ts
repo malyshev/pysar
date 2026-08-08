@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { homePageSeo, siteConfig, siteLogo } from "@/lib/site";
+import { agentInstallGuide, homePageSeo, siteConfig, siteLogo } from "@/lib/site";
 
 const DEFAULT_OG_IMAGE_PATH = "/og-default.png";
 
@@ -86,6 +86,12 @@ export function buildHomeMetadata(): Metadata {
       title: homePageSeo.title,
       description: homePageSeo.description,
       images: [image],
+    },
+    // Machine-facing install carrier co-located with the homepage URL
+    // (dec-20260808-homepage-ai-install-signals-9eb5a6a9).
+    other: {
+      "pysar:agent-install": agentInstallGuide.metaSummary,
+      "pysar:agent-trigger": agentInstallGuide.trigger,
     },
   };
 }
