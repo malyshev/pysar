@@ -214,7 +214,7 @@ Database in `~/.haft/projects/<id>/`.
 
 This section governs what **Pysar itself** says to its own end users — CLI
 output (`cmd/pysar/main.go`) and the `ps-*` agentic skill conversations
-(`cmd/pysar/assets/claude/skills/*/SKILL.md`). It is distinct from this
+(`cmd/pysar/assets/skills/*/SKILL.md`). It is distinct from this
 file's "Communication style" section above, which governs how *Claude*
 talks to the *operator* during development of Pysar. Do not conflate the
 two — a fix to one does not fix the other.

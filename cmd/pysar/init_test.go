@@ -775,17 +775,78 @@ func TestInitLeavesExistingClaudeMDUntouched(t *testing.T) {
 	}
 }
 
-func TestInitCursorNotYetSupported(t *testing.T) {
-	withFakeHome(t)
+func TestInitCursorScaffoldsMCPAndSkills(t *testing.T) {
+	fakeHome := withFakeHome(t)
 	dir := t.TempDir()
 	cmd := newRootCmd()
 	cmd.SetArgs([]string{"init", "--cursor", dir})
-	if err := cmd.Execute(); err == nil {
-		t.Fatal("expected --cursor to fail")
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("init --cursor failed: %v", err)
 	}
-	entries, _ := os.ReadDir(dir)
-	if len(entries) != 0 {
-		t.Fatalf("expected no files written for --cursor, got %v", entries)
+
+	mcpPath := filepath.Join(dir, ".cursor", "mcp.json")
+	content, err := os.ReadFile(mcpPath)
+	if err != nil {
+		t.Fatalf("expected .cursor/mcp.json: %v", err)
+	}
+	if !strings.Contains(string(content), `"command": "pysar"`) || !strings.Contains(string(content), `${workspaceFolder}`) {
+		t.Fatalf(".cursor/mcp.json missing expected pysar serve / workspaceFolder entry, got: %s", content)
+	}
+
+	manifestPath := filepath.Join(dir, ".pysar", "project")
+	data, err := os.ReadFile(manifestPath)
+	if err != nil {
+		t.Fatalf("read manifest: %v", err)
+	}
+	var m projectManifest
+	if err := json.Unmarshal(data, &m); err != nil {
+		t.Fatalf("parse manifest: %v", err)
+	}
+	if m.Host != "cursor" {
+		t.Fatalf("manifest host = %q, want cursor", m.Host)
+	}
+
+	skillPath := filepath.Join(fakeHome, ".cursor", "skills", "ps", "SKILL.md")
+	if _, err := os.ReadFile(skillPath); err != nil {
+		t.Fatalf("expected /ps skill under ~/.cursor/skills: %v", err)
+	}
+	// Cursor init must not write Claude-only project files.
+	if _, err := os.Stat(filepath.Join(dir, "CLAUDE.md")); !os.IsNotExist(err) {
+		t.Fatalf("cursor init should not write CLAUDE.md, err=%v", err)
+	}
+	if _, err := os.Stat(filepath.Join(dir, ".mcp.json")); !os.IsNotExist(err) {
+		t.Fatalf("cursor init should not write root .mcp.json, err=%v", err)
+	}
+}
+
+func TestInitClaudeAndCursorSkillsShareCorpus(t *testing.T) {
+	fakeHome := withFakeHome(t)
+	claudeDir := t.TempDir()
+	cursorDir := t.TempDir()
+
+	cmd := newRootCmd()
+	cmd.SetArgs([]string{"init", "--claude", claudeDir})
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("init --claude: %v", err)
+	}
+	cmd = newRootCmd()
+	cmd.SetArgs([]string{"init", "--cursor", cursorDir})
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("init --cursor: %v", err)
+	}
+
+	claudeSkill := filepath.Join(fakeHome, ".claude", "skills", "ps-intake", "SKILL.md")
+	cursorSkill := filepath.Join(fakeHome, ".cursor", "skills", "ps-intake", "SKILL.md")
+	a, err := os.ReadFile(claudeSkill)
+	if err != nil {
+		t.Fatalf("read claude skill: %v", err)
+	}
+	b, err := os.ReadFile(cursorSkill)
+	if err != nil {
+		t.Fatalf("read cursor skill: %v", err)
+	}
+	if string(a) != string(b) {
+		t.Fatal("claude and cursor skill bodies diverged — shared corpus invariant broken")
 	}
 }
 

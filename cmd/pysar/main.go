@@ -30,14 +30,12 @@ Initialized by ` + "`pysar init --claude`" + `. Host-file conventions here are
 provisional and may change as Pysar's Claude Code integration develops.
 `
 
-// claudeSkillAssets holds every ps-* skill shipped for the Claude Code host
-// surface (dec-20260718-a2a24f32), embedded into the binary so a single
-// static executable can scaffold them into any project (dec-20260718-239680d4).
-// New skills (e.g. ps-style) need only a new directory under assets/claude/skills --
-// scaffoldClaude walks whatever is here, no per-skill wiring.
+// skillAssets is the host-neutral ps-* skill corpus (dec-20260808-f3001106).
+// Host adapters install these bytes into Claude/Cursor skill directories; new
+// skills need only a directory under assets/skills -- no per-host wiring.
 //
-//go:embed assets/claude/skills
-var claudeSkillAssets embed.FS
+//go:embed assets/skills
+var skillAssets embed.FS
 
 // claudeSettingsJSON pre-approves the pysar MCP server's tools plus reading
 // .pysar/** (dec-20260719-fa0366dd) -- ps-* skills persist author content by
@@ -57,12 +55,18 @@ var claudeSettingsJSON string
 //go:embed assets/claude/mcp.json
 var claudeMCPJSON string
 
+// cursorMCPJSON registers pysar serve for Cursor (haft CL1 path shape:
+// .cursor/mcp.json + ${workspaceFolder}; dec-20260808-f3001106).
+//
+//go:embed assets/cursor/mcp.json
+var cursorMCPJSON string
+
 // templateAssets holds every built-in reusable content template (starting
 // with the one "generic" voice default), seeded into the operator's
 // cross-project template store (dec-20260719-3e36577e) the same way
-// claudeSkillAssets seeds ~/.claude/skills/ -- same embed-and-sync shape,
+// skillAssets seed host skill dirs -- same embed-and-sync shape,
 // different target directory, host-agnostic since templates are pysar's own
-// data, not a Claude-Code-specific config surface.
+// data, not a host-specific config surface.
 //
 //go:embed assets/templates
 var templateAssets embed.FS
@@ -92,6 +96,7 @@ This binary is the console CLI. Agentic slash commands (ps-* / /ps) are a
 separate host-agent surface when installed; they are not invoked by typing pysar.`,
 		Example: `  pysar init              # scaffold a Claude Code project in .
   pysar init --claude ./my-piece
+  pysar init --cursor ./my-piece
   pysar --version`,
 		Version:      version,
 		SilenceUsage: true,
@@ -114,22 +119,18 @@ func newInitCmd() *cobra.Command {
 			if len(args) > 0 {
 				dir = args[0]
 			}
-
-			switch {
-			case cursor:
-				return fmt.Errorf("pysar init --cursor: not yet supported")
-			case codex:
-				return fmt.Errorf("pysar init --codex: not yet supported")
-			default:
-				return scaffoldClaude(dir, force)
+			host, err := resolveHost(claude, cursor, codex)
+			if err != nil {
+				return err
 			}
+			return host.Scaffold(dir, force)
 		},
 	}
 
 	cmd.Flags().BoolVar(&claude, "claude", false, "scaffold for Claude Code (default)")
-	cmd.Flags().BoolVar(&cursor, "cursor", false, "scaffold for Cursor (not yet supported)")
+	cmd.Flags().BoolVar(&cursor, "cursor", false, "scaffold for Cursor")
 	cmd.Flags().BoolVar(&codex, "codex", false, "scaffold for Codex (not yet supported)")
-	cmd.Flags().BoolVar(&force, "force", false, "refresh CLAUDE.md, agentic skills, and permission/MCP config to the current shipped version, even if already installed -- never touches .pysar/ project data")
+	cmd.Flags().BoolVar(&force, "force", false, "refresh host project files, agentic skills, and permission/MCP config to the current shipped version, even if already installed -- never touches .pysar/ project data")
 	cmd.MarkFlagsMutuallyExclusive("claude", "cursor", "codex")
 
 	return cmd
@@ -188,117 +189,10 @@ func projectLabel(dir string) string {
 	return name
 }
 
-// scaffoldClaude writes the .pysar/project machine manifest (dec-20260718-4b222794),
-// a minimal, provisional CLAUDE.md host file (dec-20260718-fe926229), installs
-// every embedded ps-* skill into the user's global ~/.claude/skills/, and
-// writes project-local .claude/settings.json and .mcp.json so pysar serve is
-// registered and its tools pre-approved (dec-20260719-fa0366dd) -- ps-* skills
-// persist author content through it, never through a raw client-side
-// Write/Edit tool call.
-//
-// Skills are installed globally, not per-project: Claude Code only discovers
-// skills from ~/.claude/skills/, never from a project-local .claude/skills/
-// (confirmed by direct testing against a real pysar-init'd project; see
-// upstream https://github.com/anthropics/claude-code/issues/33733, closed as
-// not planned). This also fits Pysar's own shape: a skill's prompt is
-// project-agnostic -- only the data it produces (.pysar/voice.md) is
-// project-scoped, and that already lives under the project itself.
-func scaffoldClaude(dir string, force bool) error {
-	alreadySetUp, err := writeProjectManifest(dir, "claude")
-	if err != nil {
-		return fmt.Errorf("pysar init: %w", err)
-	}
-
-	claudePath := filepath.Join(dir, "CLAUDE.md")
-	if _, _, err := writeIfAbsent(claudePath, claudeMDTemplate, force); err != nil {
-		return fmt.Errorf("pysar init: %w", err)
-	}
-
-	home, err := homeDir()
-	if err != nil {
-		return fmt.Errorf("pysar init: locate home directory for global skill install: %w", err)
-	}
-	installed, autoRefreshed, refreshed, ambiguous, err := writeClaudeSkills(home, force)
-	if err != nil {
-		return fmt.Errorf("pysar init: %w", err)
-	}
-
-	voiceInstalled, voiceAutoRefreshed, voiceRefreshed, voiceAmbiguous, err := writeVoiceTemplates(home, force)
-	if err != nil {
-		return fmt.Errorf("pysar init: %w", err)
-	}
-	styleInstalled, styleAutoRefreshed, styleRefreshed, styleAmbiguous, err := writeStyleTemplates(home, force)
-	if err != nil {
-		return fmt.Errorf("pysar init: %w", err)
-	}
-	templatesInstalled := append(voiceInstalled, styleInstalled...)
-	templatesAutoRefreshed := append(voiceAutoRefreshed, styleAutoRefreshed...)
-	templatesRefreshed := append(voiceRefreshed, styleRefreshed...)
-	templatesAmbiguous := append(voiceAmbiguous, styleAmbiguous...)
-
-	settingsPath := filepath.Join(dir, ".claude", "settings.json")
-	if err := os.MkdirAll(filepath.Dir(settingsPath), 0o755); err != nil {
-		return fmt.Errorf("pysar init: %w", err)
-	}
-	if _, _, err := writeIfAbsent(settingsPath, claudeSettingsJSON, force); err != nil {
-		return fmt.Errorf("pysar init: %w", err)
-	}
-
-	mcpPath := filepath.Join(dir, ".mcp.json")
-	if _, _, err := writeIfAbsent(mcpPath, claudeMCPJSON, force); err != nil {
-		return fmt.Errorf("pysar init: %w", err)
-	}
-
-	if alreadySetUp {
-		fmt.Printf("pysar init: %s is already set up\n", projectLabel(dir))
-	} else {
-		fmt.Printf("pysar init: %s is set up and ready\n", projectLabel(dir))
-	}
-	if len(installed) > 0 {
-		fmt.Println("pysar init: installed agentic skills (shared across all pysar projects on this machine)")
-	}
-	if len(autoRefreshed) > 0 {
-		fmt.Println("pysar init: updated agentic skills to the current version")
-	}
-	if len(refreshed) > 0 {
-		fmt.Println("pysar init: refreshed agentic skills to the current version (--force)")
-	}
-	if len(templatesInstalled) > 0 {
-		fmt.Println("pysar init: installed built-in templates (shared across all pysar projects on this machine)")
-	}
-	if len(templatesAutoRefreshed) > 0 {
-		fmt.Println("pysar init: updated built-in templates to the current version")
-	}
-	if len(templatesRefreshed) > 0 {
-		fmt.Println("pysar init: refreshed built-in templates to the current version (--force)")
-	}
-	// Skills and templates share one "rerun with --force" nudge: printing it
-	// once when either (or both) look customized says everything the other
-	// copy would have, so a run with both ambiguous never repeats itself.
-	if !force {
-		switch {
-		case len(ambiguous) > 0 && len(templatesAmbiguous) > 0:
-			fmt.Println("pysar init: some agentic skills and built-in templates look customized or from an unrecognized version -- left untouched; rerun with --force to overwrite them")
-		case len(ambiguous) > 0:
-			fmt.Println("pysar init: some agentic skills look customized or from an unrecognized version -- left untouched; rerun with --force to overwrite them")
-		case len(templatesAmbiguous) > 0:
-			fmt.Println("pysar init: some built-in templates look customized or from an unrecognized version -- left untouched; rerun with --force to overwrite them")
-		}
-	}
-	// Deliberately silent, without --force, when a project-local file (CLAUDE.md,
-	// .claude/settings.json, .mcp.json) differs from what pysar would write: with
-	// no update mechanism for those files, "this differs" was a fact the operator
-	// couldn't act on -- pure noise. --force is that mechanism now; see
-	// note-20260719-d883dd47 and note-20260719-82ea61c0. Global skills instead get
-	// automatic per-file refresh (dec-20260719-25712417); the "ambiguous" nudge
-	// above is that mechanism's own deliberately narrow exception.
-	return nil
-}
-
 // skillManifestFile records, per skill file, the hash of the shipped content
-// that pysar itself last wrote there. It lives inside home/.claude/skills/
-// alongside the skills it tracks -- system-owned state for system-owned
-// files, never read or written by an author.
+// that pysar itself last wrote there. It lives inside the host's skills
+// directory alongside the skills it tracks -- system-owned state for
+// system-owned files, never read or written by an author.
 const skillManifestFile = ".pysar-manifest.json"
 
 // skillManifest is the on-disk shape of skillManifestFile. Files maps a
@@ -391,7 +285,7 @@ const (
 //     decided fallback policy is to never guess -- leave it untouched unless
 //     force is set, same as any other force-only overwrite.
 //
-// Shared by writeClaudeSkills and writeVoiceTemplates (dec-20260719-3e36577e
+// Shared by writeHostSkills and writeVoiceTemplates (dec-20260719-3e36577e
 // prediction: the template mechanism reuses this exact logic, not a second
 // implementation) -- two managed directories, one set of rules.
 func syncManagedFile(target string, content []byte, manifest *skillManifest, key string, force bool) (fileSyncOutcome, error) {
@@ -503,22 +397,10 @@ func syncManagedTree(assets fs.FS, embedRoot, targetDir string, force bool) (ins
 	return installed, autoRefreshed, refreshed, ambiguous, nil
 }
 
-// writeClaudeSkills installs every embedded ps-* skill into home/.claude/skills/
-// and keeps them current on every init via per-file content-hash comparison
-// (dec-20260719-25712417) instead of requiring the operator to remember
-// --force. installed lists freshly-written paths (first install);
-// autoRefreshed lists paths safely auto-updated; refreshed lists paths
-// force-updated (--force, including force-overwritten ambiguous files);
-// ambiguous lists paths left untouched pending an explicit --force.
-func writeClaudeSkills(home string, force bool) (installed, autoRefreshed, refreshed, ambiguous []string, err error) {
-	skillsDir := filepath.Join(home, ".claude", "skills")
-	return syncManagedTree(claudeSkillAssets, "assets/claude/skills", skillsDir, force)
-}
-
 // writeVoiceTemplates installs/refreshes every embedded built-in voice
 // template into the operator's cross-project template store
 // (onboarding.TemplatesDir, dec-20260719-3e36577e), using the exact same
-// syncManagedFile mechanism as writeClaudeSkills -- one manifest format, one
+// syncManagedFile mechanism as writeHostSkills -- one manifest format, one
 // set of rules, applied to a second managed directory.
 func writeVoiceTemplates(home string, force bool) (installed, autoRefreshed, refreshed, ambiguous []string, err error) {
 	templatesDir := onboarding.TemplatesDir(home, onboarding.KindVoice)

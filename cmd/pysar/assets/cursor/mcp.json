@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "pysar": {
+      "command": "pysar",
+      "args": [
+        "serve"
+      ],
+      "env": {
+        "PYSAR_PROJECT_ROOT": "${workspaceFolder}"
+      }
+    }
+  }
+}

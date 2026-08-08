@@ -28,10 +28,12 @@ go build -o pysar ./cmd/pysar
 
 ```bash
 pysar init --claude   # scaffold a Claude Code project in the current directory
+pysar init --cursor   # scaffold a Cursor project (.cursor/mcp.json + skills)
 ```
 
-Then open the project in Claude Code (MCP is pre-approved by the scaffolded
-`.claude/settings.json`) and either:
+Then open the project in your host agent (Claude Code: MCP is pre-approved by
+the scaffolded `.claude/settings.json`; Cursor: enable the `pysar` MCP server
+from `.cursor/mcp.json` if prompted) and either:
 
 - Run `/ps-onboard` first to teach Pysar your voice and style (~2 minutes,
   optional — Pysar works with a general-audience default if you skip it), or
