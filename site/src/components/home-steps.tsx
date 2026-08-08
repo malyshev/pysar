@@ -32,7 +32,7 @@ const steps = [
   {
     n: "04",
     title: "Humanize & ship",
-    body: "Strip AI tells, then export. You post — Pysar never does.",
+    body: "Strip AI tells, then export a draft you're ready to share.",
     dark: true,
   },
 ] as const;

@@ -1,4 +1,4 @@
-import { Circle, Sparkles } from "lucide-react";
+import { Circle } from "lucide-react";
 import { homePageSeo } from "@/lib/site";
 
 /**
@@ -29,21 +29,26 @@ export function HomeHero() {
 
             <h1 className="text-center text-hero leading-hero tracking-hero md:text-hero-md lg:text-7xl">
               Bring your take{" "}
-              <span className="inline-flex size-8.5 items-center justify-center rounded-lg bg-primary md:size-13 lg:-translate-y-3">
-                <Sparkles
-                  className="size-hero-sparkle fill-white text-white"
-                  aria-hidden="true"
+              <span
+                className="inline-flex size-8.5 items-center justify-center md:size-13 lg:-translate-y-3"
+                aria-hidden="true"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element -- pixel mark must stay crisp */}
+                <img
+                  src="/logo-mark.svg"
+                  alt=""
+                  width={304}
+                  height={304}
+                  className="pixelated size-full"
                 />
               </span>{" "}
               <span className="text-zinc-500">Ship a piece you trust.</span>
             </h1>
 
             <p>
-              Shape an idea or rough draft into a piece you trust. CLI plus MCP
-              and <span className="text-zinc-950">ps-*</span> skills for{" "}
-              <span className="text-zinc-950">Claude Code</span> and{" "}
-              <span className="text-zinc-950">Cursor</span> — without posting on
-              your behalf.
+              From a half-formed idea or a messy draft to a piece that{" "}
+              <span className="text-zinc-950">sounds like you</span> — shaped
+              with your judgment still in the chair.
             </p>
           </div>
 

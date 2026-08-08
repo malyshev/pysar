@@ -44,8 +44,9 @@ export function HomeFeatures() {
               </h2>
             </div>
             <div className="mx-auto max-w-62 text-center md:me-0 md:place-self-end md:text-end">
-              Author-directed stages — not a chat that{" "}
-              <span className="text-primary-foreground">posts for you</span>.
+              Stages built around how{" "}
+              <span className="text-primary-foreground">you</span> actually
+              write.
             </div>
           </div>
         </div>
@@ -72,7 +73,7 @@ export function HomeFeatures() {
                 Your take stays yours
               </span>
               <p className="max-w-48 text-center text-sm text-primary-foreground/80">
-                CLI + MCP. Local project files. Nothing ships without you.
+                Voice, edits, and drafts live in your project — yours to shape.
               </p>
             </div>
             <CornerTicks className="text-white/35" />

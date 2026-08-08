@@ -74,8 +74,12 @@
   --text-hero-md: 58px;
   --leading-hero: 1.1em;
   --tracking-hero: -0.03em;
-  --size-hero-sparkle: 60%;
   --spacing-hero-blur: 330px;
+
+  /* Boxsi section headings (Integrations / Features / Steps) */
+  --text-section: 36px;
+  --text-section-md: 42px;
+  --text-section-lg: 52px;
 }
 
 :root {

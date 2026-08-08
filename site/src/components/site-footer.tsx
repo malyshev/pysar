@@ -44,7 +44,7 @@ export function SiteFooter() {
         </div>
 
         <div className="flex flex-col gap-1 px-5 py-6 text-sm text-primary-foreground/60 md:flex-row md:items-center md:justify-between">
-          <p>MIT licensed. Bring your take — it does not post on your behalf.</p>
+          <p>MIT licensed. Bring your take.</p>
           <p className="text-xs uppercase tracking-wide">
             © {new Date().getFullYear()} {siteConfig.name}
           </p>

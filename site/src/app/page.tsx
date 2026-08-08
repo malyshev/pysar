@@ -1,6 +1,7 @@
 import { HomeClients } from "@/components/home-clients";
 import { HomeFeatures } from "@/components/home-features";
 import { HomeHero } from "@/components/home-hero";
+import { HomeIntegrations } from "@/components/home-integrations";
 import { HomeSteps } from "@/components/home-steps";
 import { JsonLd } from "@/components/json-ld";
 import { SiteShell } from "@/components/site-shell";
@@ -17,6 +18,7 @@ export default function HomePage() {
       <HomeClients />
       <HomeFeatures />
       <HomeSteps />
+      <HomeIntegrations />
     </SiteShell>
   );
 }

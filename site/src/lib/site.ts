@@ -18,6 +18,6 @@ export const homePageSeo = {
   h1: "Bring your take. Ship a piece you trust.",
   title: "Pysar — author-directed editorial engine for writers",
   description:
-    "Shape an idea or rough draft into a piece you trust. CLI plus MCP and ps-* skills for Claude Code and Cursor — without posting on your behalf.",
+    "From a half-formed idea or a messy draft to a piece that sounds like you — shaped with your judgment still in the chair.",
   eyebrow: "Author-directed editorial engine",
 } as const;
