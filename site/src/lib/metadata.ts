@@ -1,0 +1,91 @@
+import type { Metadata } from "next";
+import { homePageSeo, siteConfig, siteLogo } from "@/lib/site";
+
+const DEFAULT_OG_IMAGE_PATH = "/og-default.svg";
+
+export const DEFAULT_OG_IMAGE_ALT =
+  "Pysar — author-directed editorial engine for writers";
+
+export function getSiteUrl(): string {
+  return siteConfig.url.replace(/\/$/, "");
+}
+
+export function getSiteMetadataBase(): URL {
+  return new URL(`${getSiteUrl()}/`);
+}
+
+function absoluteUrl(path: string): string {
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
+  const base = getSiteUrl();
+  return path.startsWith("/") ? `${base}${path}` : `${base}/${path}`;
+}
+
+export function getDefaultOgImageUrl(): string {
+  return absoluteUrl(DEFAULT_OG_IMAGE_PATH);
+}
+
+export function getLogoUrl(): string {
+  return absoluteUrl(siteLogo.path);
+}
+
+export function buildSiteMetadataDefaults(): Pick<
+  Metadata,
+  "openGraph" | "twitter"
+> {
+  const image = getDefaultOgImageUrl();
+
+  return {
+    openGraph: {
+      siteName: siteConfig.name,
+      locale: "en_US",
+      type: "website",
+      images: [
+        {
+          url: image,
+          alt: DEFAULT_OG_IMAGE_ALT,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      images: [image],
+    },
+  };
+}
+
+export function buildHomeMetadata(): Metadata {
+  const url = getSiteUrl();
+  const image = getDefaultOgImageUrl();
+
+  return {
+    title: {
+      absolute: homePageSeo.title,
+    },
+    description: homePageSeo.description,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      title: homePageSeo.title,
+      description: homePageSeo.description,
+      url,
+      siteName: siteConfig.name,
+      locale: "en_US",
+      type: "website",
+      images: [
+        {
+          url: image,
+          alt: DEFAULT_OG_IMAGE_ALT,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: homePageSeo.title,
+      description: homePageSeo.description,
+      images: [image],
+    },
+  };
+}

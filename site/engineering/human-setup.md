@@ -1,0 +1,127 @@
+# Human setup — getpysar.com
+
+**Contributor-only. Not a public site page.** Lives under `site/engineering/`
+and must never appear on getpysar.com. Do not put real API tokens, Account IDs,
+or secret values into this file or any committed path — only placeholders and
+procedure. Values go in GitHub Actions secrets / your password manager.
+
+Operator checklist (not codebase). Complete once before or alongside scaffold.
+
+When done, engineering needs: three GitHub secrets + confirmation that the
+Pages project and domain exist.
+
+---
+
+## Who owns what
+
+| You (human) | Engineering / agent |
+|---|---|
+| Domain `getpysar.com`, Cloudflare account | `site/` Next app |
+| Pages project (Direct Upload) | `.github/workflows/deploy-getpysar.yml` |
+| API token + GitHub secrets | Docs ingest from `docs/` |
+| DNS / custom domain / redirects | SEO helpers, sitemap, JSON-LD |
+
+---
+
+## Before you start
+
+- [ ] Domain **`getpysar.com`** registered (or you control DNS)
+- [ ] Cloudflare account (free tier is enough for Pages)
+- [ ] GitHub Actions enabled on the Pysar repo
+- [ ] Node 22 + pnpm available locally for preview after scaffold
+
+---
+
+## Step 1 — Cloudflare account ID
+
+Dashboard → Workers & Pages (or Overview) → copy **Account ID**.
+
+```
+CLOUDFLARE_ACCOUNT_ID = ________________________________
+```
+
+---
+
+## Step 2 — Domain on Cloudflare
+
+Best path: DNS managed by Cloudflare.
+
+1. Add site `getpysar.com` (or register there).
+2. Point registrar nameservers at Cloudflare if needed; wait until **Active**.
+3. Decide apex policy (recommend **apex only**; redirect `www` → apex).
+
+---
+
+## Step 3 — Pages project (Direct Upload)
+
+1. Workers & Pages → Create → **Pages** → **Direct Upload** / upload assets.
+2. Project name suggestion: `getpysar` (must match the GitHub secret).
+3. Skip manual first upload if you want — CI will deploy.
+4. **Do not** select Next.js SSR / OpenNext for MVP.
+
+```
+CLOUDFLARE_PROJECT_NAME = getpysar
+```
+
+---
+
+## Step 4 — Custom domain
+
+1. Pages project → Custom domains → `getpysar.com`.
+2. Confirm DNS + SSL **Active**.
+3. Optional: add `www` and 301 to apex.
+4. Bulk Redirect: `getpysar.pages.dev` (and project preview host) → `https://getpysar.com`.
+
+---
+
+## Step 5 — API token
+
+My Profile → API Tokens → Create Custom Token:
+
+| Field | Value |
+|---|---|
+| Permission | Account → Cloudflare Pages → **Edit** |
+| Account resources | Include your account |
+
+Copy once:
+
+```
+CLOUDFLARE_API_TOKEN = ********************************
+```
+
+---
+
+## Step 6 — GitHub secrets
+
+Repo → Settings → Secrets and variables → Actions:
+
+| Secret | Value |
+|---|---|
+| `CLOUDFLARE_API_TOKEN` | from Step 5 |
+| `CLOUDFLARE_ACCOUNT_ID` | from Step 1 |
+| `CLOUDFLARE_PROJECT_NAME` | from Step 3 |
+
+Do not commit these or paste them into chat logs.
+
+---
+
+## Step 7 — After first deploy
+
+- [ ] `https://getpysar.com` serves the motherhome
+- [ ] `https://getpysar.com/sitemap.xml` and `/robots.txt` exist
+- [ ] View-source: one H1, canonical apex, OG tags
+- [ ] Google Search Console property for `https://getpysar.com`; submit sitemap
+- [ ] Confirm `*.pages.dev` redirects to apex
+
+---
+
+## Hand-off checklist
+
+Provide to implementation (or confirm in-thread):
+
+```
+CLOUDFLARE_PROJECT_NAME: ________
+Domain Active on CF:     yes/no
+GitHub secrets set:      yes/no
+Default git branch:      master / main
+```

@@ -24,6 +24,9 @@ go install ./cmd/pysar   # build + install to $(go env GOPATH)/bin
 go test ./...            # run tests
 ```
 
+Public site (getpysar.com) lives under [`site/`](./site/) — Next.js static
+export, separate from the Go tool. See [`site/README.md`](./site/README.md).
+
 Project governance, decision history, and contribution discipline live in
 [CLAUDE.md](./CLAUDE.md) and the `.haft/` directory (this project uses
 [haft](https://github.com/m0n0x41d/haft) for structured decision recording).

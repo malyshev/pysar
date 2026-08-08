@@ -1,0 +1,76 @@
+name: Deploy getpysar.com
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "site/**"
+      - "docs/**"
+      - ".github/workflows/deploy-getpysar.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-getpysar
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    defaults:
+      run:
+        working-directory: site
+    env:
+      NEXT_PUBLIC_SITE_URL: https://getpysar.com
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+          cache-dependency-path: site/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build static site
+        run: pnpm build
+
+      - name: Verify export output
+        run: |
+          test -d out
+          test -f out/index.html
+          test -f out/sitemap.xml
+          test -f out/robots.txt
+
+      - name: Deploy to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PROJECT_NAME: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
+        run: |
+          set -euo pipefail
+          for var in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID CLOUDFLARE_PROJECT_NAME; do
+            if [ -z "${!var}" ]; then
+              echo "::error title=Missing secret::Set ${var} in repo Settings → Secrets → Actions"
+              exit 1
+            fi
+          done
+          pnpm exec wrangler pages deploy out \
+            --project-name="$CLOUDFLARE_PROJECT_NAME" \
+            --branch=main \
+            --commit-dirty=true
