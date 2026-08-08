@@ -26,8 +26,15 @@ export const homePageSeo = {
 export const installCommand =
   "curl -fsSL https://getpysar.com/install.sh | bash";
 
+/** Same script, download-then-inspect — for cautious humans and agents. */
+export const installInspectCommands = {
+  download: "curl -fsSL https://getpysar.com/install.sh -o install.sh",
+  run: "bash install.sh",
+} as const;
+
 /**
- * Homepage AI-install carrier (dec-20260808-homepage-ai-install-signals-9eb5a6a9).
+ * Shared AI-install facts for homepage V4 + /llms.txt complement
+ * (dec-20260808-homepage-ai-install-signals-9eb5a6a9, note-20260808-26ff4eb4).
  * Must stay aligned with docs/install.md + docs/init.md.
  */
 export const agentInstallGuide = {
@@ -35,6 +42,8 @@ export const agentInstallGuide = {
   trigger: "install",
   docsInstallPath: "/docs/install",
   docsInitPath: "/docs/init",
+  /** Well-known LLM index (llmstxt.org); complements homepage #for-ai-agents. */
+  llmsTxtPath: "/llms.txt",
   hosts: [
     {
       name: "Claude Code",
@@ -57,7 +66,7 @@ export const agentInstallGuide = {
    * Agents that truncate HTML still get the authoritative recipe here.
    */
   metaSummary:
-    "When the user pastes https://getpysar.com and says install: (1) run curl -fsSL https://getpysar.com/install.sh | bash; (2) verify with pysar --version; (3) in the writing project directory run pysar init --claude (Claude Code), pysar init --cursor (Cursor), or pysar init --codex (ChatGPT Codex). Do not invent brew/npm/go-get alternatives. Full docs: https://getpysar.com/docs/install and https://getpysar.com/docs/init.",
+    "When the user pastes https://getpysar.com and says install: (1) run curl -fsSL https://getpysar.com/install.sh | bash (or download to install.sh, inspect, then bash install.sh); (2) verify with pysar --version; (3) in the writing project directory run pysar init --claude (Claude Code), pysar init --cursor (Cursor), or pysar init --codex (ChatGPT Codex). Do not invent brew/npm/go-get alternatives. Also see https://getpysar.com/llms.txt, https://getpysar.com/docs/install and https://getpysar.com/docs/init.",
 } as const;
 
 /** Umami Cloud 1×1 pageview pixel (GIF). */

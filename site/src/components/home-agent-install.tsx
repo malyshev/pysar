@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { CopyCommand } from "@/components/copy-command";
-import { agentInstallGuide, installCommand } from "@/lib/site";
+import {
+  agentInstallGuide,
+  installCommand,
+  installInspectCommands,
+} from "@/lib/site";
 
 /**
  * Below-fold AI install carrier for URL-drop + "install"
@@ -36,7 +40,14 @@ export function HomeAgentInstall() {
               <code className="rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-[13px] text-zinc-800">
                 go install
               </code>{" "}
-              alternatives. Authoritative human docs:{" "}
+              alternatives. Plain-text index:{" "}
+              <Link
+                href={agentInstallGuide.llmsTxtPath}
+                className="font-medium text-zinc-950 underline decoration-primary/50 underline-offset-4 hover:text-primary hover:decoration-primary"
+              >
+                /llms.txt
+              </Link>
+              . Human docs:{" "}
               <Link
                 href={agentInstallGuide.docsInstallPath}
                 className="font-medium text-zinc-950 underline decoration-primary/50 underline-offset-4 hover:text-primary hover:decoration-primary"
@@ -64,6 +75,17 @@ export function HomeAgentInstall() {
                 binary (macOS / Linux)
               </p>
               <CopyCommand command={installCommand} />
+              <p className="text-xs text-zinc-500">
+                Or inspect first:{" "}
+                <code className="rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-[12px] text-zinc-700">
+                  {installInspectCommands.download}
+                </code>
+                , then{" "}
+                <code className="rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-[12px] text-zinc-700">
+                  {installInspectCommands.run}
+                </code>
+                .
+              </p>
               <p>
                 Confirm with{" "}
                 <code className="rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-[13px] text-zinc-800">

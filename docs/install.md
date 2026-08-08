@@ -15,6 +15,14 @@ Get the `pysar` binary on your `PATH`, then go to [Init a project](./init.md).
 curl -fsSL https://getpysar.com/install.sh | bash
 ```
 
+Prefer to read the script before running it:
+
+```bash
+curl -fsSL https://getpysar.com/install.sh -o install.sh
+# inspect install.sh, then:
+bash install.sh
+```
+
 The script detects `darwin`/`linux` and `amd64`/`arm64`, downloads the matching
 `.tar.gz` from the
 [latest GitHub release](https://github.com/malyshev/pysar/releases/latest),
