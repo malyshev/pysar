@@ -30,6 +30,9 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          # packageManager field lives under site/, not repo root
+          package_json_file: site/package.json
 
       - name: Setup Node
         uses: actions/setup-node@v4
