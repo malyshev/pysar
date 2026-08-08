@@ -2,16 +2,16 @@ import Link from "next/link";
 import { CornerTicks } from "@/components/corner-ticks";
 import { FooterSubscribe } from "@/components/footer-subscribe";
 import { SiteLogo } from "@/components/site-logo";
-import { siteConfig } from "@/lib/site";
+import { siteConfig, united24Url } from "@/lib/site";
 
 /**
  * Port of Boxsi Footer.tsx — logo | nav | subscribe, dark hatch, bottom bar.
- * Copy/links are Pysar; no invented social networks.
+ * United24 sits in the bottom frame cell (Merchanto-style support link).
  */
 export function SiteFooter() {
   return (
     <footer className="mt-auto size-full overflow-hidden bg-zinc-950 px-4 md:px-5 lg:px-7.5">
-      <div className="relative z-10 mx-auto w-full max-w-250 divide-y-2 divide-zinc-800 border-2 border-zinc-800 py-16 lg:py-30">
+      <div className="relative z-10 mx-auto w-full max-w-250 divide-y-2 divide-zinc-800 border-2 border-zinc-800 pt-16 lg:pt-30">
         <div className="flex flex-wrap divide-y-2 divide-zinc-800 border-t-2 border-b-0 border-zinc-800 md:border-b-2">
           <Link
             href="/"
@@ -69,6 +69,18 @@ export function SiteFooter() {
               >
                 Haft
               </a>
+              <span className="mx-2.5 text-zinc-600" aria-hidden="true">
+                |
+              </span>
+              <a
+                href="https://qorym.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#44E5FE]"
+              >
+                Quorum
+              </a>{" "}
+              Partner
             </p>
           </div>
 
@@ -90,6 +102,28 @@ export function SiteFooter() {
               © {new Date().getFullYear()} {siteConfig.name}
             </p>
           </div>
+        </div>
+
+        <div className="flex justify-center border-b-2 border-zinc-800 px-7.5 py-10 md:py-12">
+          <a
+            href={united24Url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex flex-col items-center gap-2.5 transition-opacity duration-300 hover:opacity-85"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element -- official U24 wordmark */}
+            <img
+              src="/united24.svg"
+              alt="United24"
+              width={422}
+              height={40}
+              className="h-6 w-auto md:h-7"
+              loading="lazy"
+            />
+            <span className="text-xs text-zinc-400 uppercase transition-colors group-hover:text-white">
+              Support for Ukraine
+            </span>
+          </a>
         </div>
       </div>
     </footer>

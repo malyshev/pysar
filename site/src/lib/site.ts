@@ -29,6 +29,9 @@ export const installCommand =
 /** Umami Cloud 1×1 pageview pixel (GIF). */
 export const umamiPixelSrc = "https://cloud.umami.is/p/4IWutlpOL";
 
+/** Official UNITED24 fundraising platform (President of Ukraine initiative). */
+export const united24Url = "https://u24.gov.ua/";
+
 /**
  * Buttondown newsletter username (public). Override with NEXT_PUBLIC_BUTTONDOWN_USERNAME.
  * Embed docs: https://docs.buttondown.com/building-your-subscriber-base
