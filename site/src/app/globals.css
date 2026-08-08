@@ -5,13 +5,21 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+  Design tokens — Pysar motherhome
+  Visual language adopted from the licensed Boxsi/Unifato template,
+  tuned for Vyshyvanka-red accent + geometric frame (not a template dump).
+*/
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-source-serif), ui-serif, Georgia, serif;
+  /* Match licensed Boxsi stack: Geist body + Roboto headings */
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-roboto), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  --font-heading: var(--font-source-serif), ui-serif, Georgia, serif;
+  --font-heading: var(--font-roboto), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -37,10 +45,14 @@
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-frame: var(--frame);
+  --color-ink: var(--ink);
+  --color-corner: var(--corner);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -48,52 +60,88 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --max-width-shell: var(--shell-max);
+  --background-image-stripe: var(--stripe-fill);
+  /*
+    Lockup — optical match to Boxsi logo-light.svg (100×22 @ h-5.5).
+    SVG letters fill ~17px of that 22px; HTML needs text-2xl for same cap-height.
+  */
+  --text-logo: var(--text-2xl);
+  --tracking-logo: -0.03em;
+  --size-logo-mark: calc(var(--spacing) * 6); /* size-6 — mark padding eats ~10% */
 }
 
 :root {
+  /* Cloth / ink — light ground, near-black type */
   --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --foreground: oklch(0.141 0.004 285.8);
+  --ink: oklch(0.141 0.004 285.8);
+
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.141 0.004 285.8);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.141 0.004 285.8);
+
+  /* Vyshyvanka red — licensed template primary #fc432b */
+  --primary: oklch(0.655 0.224 30.9);
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --primary-hover: oklch(0.577 0.215 29.2);
+
+  --secondary: oklch(0.967 0.001 286.4);
+  --secondary-foreground: oklch(0.141 0.004 285.8);
+  --muted: oklch(0.967 0.001 286.4);
+  --muted-foreground: oklch(0.552 0.014 285.9);
+  --accent: oklch(0.967 0.001 286.4);
+  --accent-foreground: oklch(0.141 0.004 285.8);
+
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
+  --border: oklch(0.92 0.004 286.3);
+  --input: oklch(0.92 0.004 286.3);
+  --ring: oklch(0.655 0.224 30.9);
+
+  /* Frame shell (template bordered container language) */
+  --frame: oklch(0.92 0.004 286.3);
+  --corner: oklch(0.552 0.014 285.9);
+  --shell-max: 62.5rem; /* ~1000px, template container max-w-250 */
+  --stripe-fill: repeating-linear-gradient(
+    45deg,
+    oklch(0.967 0.001 286.4) 0,
+    oklch(0.967 0.001 286.4) 1px,
+    transparent 0,
+    transparent 50%
+  );
+  --stripe-size: 12px 12px;
+
+  --chart-1: oklch(0.655 0.224 30.9);
+  --chart-2: oklch(0.552 0.014 285.9);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
+
+  /* Slightly tighter radius — geometric embroidery, not soft SaaS pills */
+  --radius: 0.35rem;
+
   --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.141 0.004 285.8);
+  --sidebar-primary: oklch(0.655 0.224 30.9);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar-accent: oklch(0.967 0.001 286.4);
+  --sidebar-accent-foreground: oklch(0.141 0.004 285.8);
+  --sidebar-border: oklch(0.92 0.004 286.3);
+  --sidebar-ring: oklch(0.655 0.224 30.9);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
+  --background: oklch(0.141 0.004 285.8);
   --foreground: oklch(0.985 0 0);
+  --ink: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  --primary: oklch(0.72 0.2 32);
+  --primary-foreground: oklch(0.141 0.004 285.8);
+  --primary-hover: oklch(0.78 0.18 32);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -101,32 +149,162 @@
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
+  --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
+  --ring: oklch(0.72 0.2 32);
+  --frame: oklch(1 0 0 / 12%);
+  --corner: oklch(0.708 0 0);
+  --stripe-fill: repeating-linear-gradient(
+    45deg,
+    oklch(1 0 0 / 8%) 0,
+    oklch(1 0 0 / 8%) 1px,
+    transparent 0,
+    transparent 50%
+  );
+  --chart-1: oklch(0.72 0.2 32);
+  --chart-2: oklch(0.708 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.72 0.2 32);
+  --sidebar-primary-foreground: oklch(0.141 0.004 285.8);
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-ring: oklch(0.72 0.2 32);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
   html {
-    @apply font-sans;
+    @apply w-full scroll-smooth;
+  }
+  body {
+    @apply overflow-x-clip bg-background font-sans text-[15px] font-medium leading-[1.3] text-muted-foreground md:text-[15px];
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading font-bold leading-[1.1] text-ink;
+  }
+}
+
+/* Template container: bordered column */
+@utility site-container {
+  margin-inline: auto;
+  width: 100%;
+  max-width: var(--shell-max);
+  border-inline-width: 2px;
+  border-color: var(--frame);
+}
+
+/* Style primitives — frame language + restrained motion */
+@layer utilities {
+  .bg-stripe {
+    background-image: var(--stripe-fill);
+    background-size: var(--stripe-size);
+  }
+
+  .pixelated {
+    image-rendering: pixelated;
+  }
+
+  .decoration {
+    @apply pointer-events-none absolute inset-0 z-10 text-corner;
+  }
+
+  .decoration span {
+    @apply before:absolute after:absolute before:size-1.5 after:size-1.5 before:border-current after:border-current;
+  }
+
+  .decoration-top {
+    @apply before:-top-0.5 before:-left-0.5 before:border-t-2 before:border-l-2 after:-top-0.5 after:-right-0.5 after:border-t-2 after:border-r-2;
+  }
+
+  .decoration-bottom {
+    @apply before:-bottom-0.5 before:-left-0.5 before:border-b-2 before:border-l-2 after:-bottom-0.5 after:-right-0.5 after:border-b-2 after:border-r-2;
+  }
+
+  .motion-hero-pattern {
+    animation: pysar-pattern-presence 22s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+
+  .motion-hero-rise {
+    animation: pysar-hero-rise 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .motion-hero-rise-delay-1 {
+    animation-delay: 0.1s;
+  }
+
+  .motion-hero-rise-delay-2 {
+    animation-delay: 0.2s;
+  }
+
+  .motion-hero-rise-delay-3 {
+    animation-delay: 0.32s;
+  }
+
+  .motion-cta {
+    @apply transition-[transform,box-shadow,background-color,border-color] duration-300 ease-out;
+  }
+
+  .motion-cta:hover {
+    transform: translateY(-2px);
+  }
+
+  .motion-cta-primary:hover {
+    box-shadow: 0 10px 28px -16px oklch(0.141 0.004 285.8 / 55%);
+  }
+
+  .motion-cta-dot {
+    @apply transition-transform duration-300 ease-out;
+  }
+
+  .group\/cta:hover .motion-cta-dot {
+    transform: scale(1.35);
+  }
+}
+
+@keyframes pysar-pattern-presence {
+  from {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.06) translate3d(-1.25%, -0.75%, 0);
+  }
+}
+
+@keyframes pysar-hero-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1.25rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-hero-pattern,
+  .motion-hero-rise,
+  .motion-hero-rise-delay-1,
+  .motion-hero-rise-delay-2,
+  .motion-hero-rise-delay-3 {
+    animation: none !important;
+  }
+
+  .motion-cta:hover,
+  .group\/cta:hover .motion-cta-dot {
+    transform: none;
   }
 }

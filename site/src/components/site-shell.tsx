@@ -1,13 +1,26 @@
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
-export function SiteShell({ children }: { children: React.ReactNode }) {
+export function SiteShell({
+  children,
+  framed = true,
+}: {
+  children: React.ReactNode;
+  /** Docs keep framed main; home uses template section containers. */
+  framed?: boolean;
+}) {
   return (
     <div className="flex min-h-full flex-1 flex-col">
       <SiteHeader />
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-12 md:px-6 md:py-16">
-        {children}
-      </main>
+      {framed ? (
+        <main className="grow px-4 pt-24 md:px-5 lg:px-7.5">
+          <div className="site-container flex-1 px-5 py-12 md:px-8 md:py-16">
+            {children}
+          </div>
+        </main>
+      ) : (
+        <main className="grow">{children}</main>
+      )}
       <SiteFooter />
     </div>
   );

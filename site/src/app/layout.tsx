@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
-import { Source_Sans_3, Source_Serif_4 } from "next/font/google";
+import { Geist, Roboto } from "next/font/google";
 import { buildSiteMetadataDefaults } from "@/lib/metadata";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
 
-const sourceSans = Source_Sans_3({
-  variable: "--font-source-sans",
+const geist = Geist({
   subsets: ["latin"],
+  variable: "--font-geist",
+  weight: ["400", "500", "600", "700", "800", "900"],
 });
 
-const sourceSerif = Source_Serif_4({
-  variable: "--font-source-serif",
+const roboto = Roboto({
   subsets: ["latin"],
+  variable: "--font-roboto",
+  weight: ["400", "500", "700", "900"],
 });
 
 export const metadata: Metadata = {
@@ -28,7 +30,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${sourceSans.variable} ${sourceSerif.variable} h-full antialiased`}
+      className={`${geist.variable} ${roboto.variable} h-full antialiased`}
+      data-scroll-behavior="smooth"
     >
       <body className="flex min-h-full flex-col font-sans">{children}</body>
     </html>

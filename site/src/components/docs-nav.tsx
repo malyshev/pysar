@@ -9,8 +9,14 @@ type DocsNavProps = {
 
 export function DocsNav({ docs, currentSlug }: DocsNavProps) {
   return (
-    <nav aria-label="Documentation" className="mb-10 border-b border-border pb-4">
-      <ul className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
+    <nav
+      aria-label="Documentation"
+      className="mb-10 border-b-2 border-frame pb-5"
+    >
+      <p className="mb-3 text-[0.65rem] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+        Documentation
+      </p>
+      <ul className="flex flex-wrap gap-x-1 gap-y-2">
         {docs.map((doc) => {
           const active = doc.slug === currentSlug;
           return (
@@ -18,12 +24,19 @@ export function DocsNav({ docs, currentSlug }: DocsNavProps) {
               <Link
                 href={doc.href}
                 className={cn(
-                  "transition-colors hover:text-foreground",
+                  "inline-flex items-center gap-2 px-3 py-2 text-xs font-medium uppercase tracking-wide transition-colors",
                   active
-                    ? "font-medium text-foreground"
-                    : "text-muted-foreground",
+                    ? "bg-muted text-ink"
+                    : "text-muted-foreground hover:text-primary",
                 )}
+                aria-current={active ? "page" : undefined}
               >
+                {active ? (
+                  <span
+                    className="size-1.5 shrink-0 rounded-full bg-primary"
+                    aria-hidden="true"
+                  />
+                ) : null}
                 {doc.slug === "index" ? "Guide" : doc.title}
               </Link>
             </li>
