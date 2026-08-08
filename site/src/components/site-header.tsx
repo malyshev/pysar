@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { docsRepoUrl } from "@/lib/site";
 
 export function SiteHeader() {
   return (
@@ -12,12 +11,9 @@ export function SiteHeader() {
           Pysar
         </Link>
         <nav className="flex items-center gap-6 text-sm text-muted-foreground">
-          <a
-            href={docsRepoUrl}
-            className="transition-colors hover:text-foreground"
-          >
+          <Link href="/docs" className="transition-colors hover:text-foreground">
             Docs
-          </a>
+          </Link>
           <a
             href="https://github.com/malyshev/pysar"
             className="transition-colors hover:text-foreground"

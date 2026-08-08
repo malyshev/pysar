@@ -18,10 +18,3 @@ export const homePageSeo = {
   description:
     "Shape an idea or rough draft into a piece you trust. CLI plus MCP and ps-* skills for Claude Code and Cursor — without posting on your behalf.",
 } as const;
-
-/** Temporary until /docs ingest lands — public product docs live in repo-root docs/. */
-export const docsRepoUrl =
-  "https://github.com/malyshev/pysar/tree/master/docs";
-
-export const installDocsUrl =
-  "https://github.com/malyshev/pysar/blob/master/docs/install.md";

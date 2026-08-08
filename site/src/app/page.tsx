@@ -1,9 +1,10 @@
+import Link from "next/link";
 import { JsonLd } from "@/components/json-ld";
 import { SiteShell } from "@/components/site-shell";
 import { buttonVariants } from "@/components/ui/button";
 import { buildHomeJsonLd } from "@/lib/json-ld";
 import { buildHomeMetadata } from "@/lib/metadata";
-import { docsRepoUrl, homePageSeo, installDocsUrl } from "@/lib/site";
+import { homePageSeo } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 export const metadata = buildHomeMetadata();
@@ -28,18 +29,18 @@ export default function HomePage() {
           skills for Claude Code and Cursor. It does not post on your behalf.
         </p>
         <div className="flex flex-wrap items-center gap-3 pt-2">
-          <a
-            href={installDocsUrl}
+          <Link
+            href="/docs/install"
             className={cn(buttonVariants({ size: "lg" }))}
           >
             Install
-          </a>
-          <a
-            href={docsRepoUrl}
+          </Link>
+          <Link
+            href="/docs"
             className={cn(buttonVariants({ variant: "outline", size: "lg" }))}
           >
             Read the docs
-          </a>
+          </Link>
         </div>
       </section>
     </SiteShell>

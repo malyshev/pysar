@@ -25,12 +25,14 @@ Set `NEXT_PUBLIC_SITE_URL` for non-default origins (CI uses
 |---|---|
 | `src/app` | Public routes (SSG) |
 | `src/components` | Shell + shadcn `ui/` |
-| `src/lib` | siteConfig, metadata, JSON-LD |
+| `src/lib` | siteConfig, metadata, JSON-LD, docs ingest |
+| `src/app/docs` | Public docs routes (SSG from repo-root `docs/`) |
 | `public/` | logo, OG defaults |
 | `engineering/` | Contributor ops — **never** a public route |
 
-Repo-root [`docs/`](../docs/) is the public product docs corpus (ingest later).
-Docs nav currently links to GitHub until `/docs` routes land.
+Repo-root [`docs/`](../docs/) is the public product docs corpus. Build-time
+ingest (`src/lib/docs`) reads it from `../docs` — never copy under `site/`
+and never publish `engineering/`.
 
 ## Deploy
 

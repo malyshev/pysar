@@ -65,12 +65,18 @@ CLOUDFLARE_PROJECT_NAME = getpysar
 
 ---
 
-## Step 4 — Custom domain
+## Step 4 — Custom domain (required — DNS alone is not enough)
 
-1. Pages project → Custom domains → `getpysar.com`.
-2. Confirm DNS + SSL **Active**.
-3. Optional: add `www` and 301 to apex.
-4. Bulk Redirect: `getpysar.pages.dev` (and project preview host) → `https://getpysar.com`.
+Adding zone DNS records is **not** the same as attaching the hostname to the
+Pages project. Until the domain is under **Pages → getpysar → Custom domains**,
+proxied DNS often yields **522** / unreachable apex while `*.pages.dev` works.
+
+1. Pages project **getpysar** → **Custom domains** → set up `getpysar.com`
+   (and optionally `www.getpysar.com`).
+2. Wait until status is **Active** (certificate issued). Zone must already be
+   on Cloudflare (`status: active` nameservers).
+3. Optional: 301 `www` → apex in Cloudflare Rules.
+4. Bulk Redirect: `getpysar.pages.dev` → `https://getpysar.com`.
 
 ---
 
