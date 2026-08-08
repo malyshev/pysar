@@ -92,12 +92,14 @@ export function SiteFooter() {
             >
               GitHub
             </a>
-            <Link
-              href="/docs"
+            <a
+              href={siteConfig.linkedin}
               className="p-5 text-xs text-white uppercase transition-colors duration-300 hover:bg-zinc-800 md:p-7.5"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              Docs
-            </Link>
+              LinkedIn
+            </a>
             <p className="p-5 text-xs text-white uppercase md:p-7.5">
               © {new Date().getFullYear()} {siteConfig.name}
             </p>

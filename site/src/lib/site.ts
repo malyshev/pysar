@@ -2,8 +2,9 @@ export const siteConfig = {
   name: "Pysar",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://getpysar.com",
   description:
-    "From a half-formed idea or a messy draft to a piece that sounds like you — you stay in charge; Pysar never posts for you.",
+    "Real editorial help, without the overhead — Pysar helps shape the work, not take it over.",
   github: "https://github.com/malyshev/pysar",
+  linkedin: "https://www.linkedin.com/in/serhiimalyshev/",
 } as const;
 
 /** Square mark-on-ink asset for JSON-LD / social. Wordmarks live at /logo.svg and /logo-dark.svg. */
@@ -13,14 +14,18 @@ export const siteLogo = {
   height: 512,
 } as const;
 
-/** Homepage SERP + social copy. Keep aligned with the hero subhead. */
+/** Homepage SERP + social copy. Keep aligned with the hero (pysar-promo locked stack). */
 export const homePageSeo = {
-  h1: "Bring your take. Ship a piece you trust.",
-  title: "Pysar — writing help that keeps you in charge",
+  h1: "Your idea. An article you're ready to stand behind.",
+  title: "Pysar — your idea, an article you're ready to stand behind",
   description:
-    "From a half-formed idea or a messy draft to a piece that sounds like you — you stay in charge; Pysar never posts for you.",
-  eyebrow: "You keep the final say",
+    "Real editorial help, without the overhead — Pysar helps shape the work, not take it over.",
+  eyebrow: "Idea in your head. No editor on call.",
 } as const;
+
+/** Hero How CTA — paste into Claude / Cursor / Codex (no extra typing). */
+export const heroInstallPrompt =
+  `Install Pysar from ${siteConfig.url.replace(/\/$/, "")} using the official instructions.` as const;
 
 /** Recommended macOS/Linux install — served from getpysar.com via stage-install. */
 export const installCommand =
