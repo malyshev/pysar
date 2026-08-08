@@ -1,14 +1,14 @@
 ---
 id: dec-20260808-journey-docs-corpus-e8b5483b
 kind: DecisionRecord
-version: 4
+version: 5
 status: active
 title: Journey-first docs/ tree with SSG-ready frontmatter
 context: docs
 mode: standard
 valid_until: 2026-11-08T00:00:00Z
 created_at: 2026-08-08T11:37:16Z
-updated_at: 2026-08-08T11:39:13Z
+updated_at: 2026-08-08T13:15:40Z
 links:
   - ref: prob-20260808-39f48c3d
     type: based_on
@@ -129,3 +129,24 @@ All three predictions held. Docs tree + README pointer present with six aspect p
 - docs pages: 7 (index + 6 aspects); README links docs/index.md
 - frontmatter key coverage: 100% (threshold ≥90%); nav_order 0..60 step 10
 - cold-path: pysar init --cursor exit 0 in scratch dir; .pysar/project + .cursor/mcp.json + global ps skill; zero .go reads
+
+## Impact Measurement (2026-08-08)
+
+**Verdict:** accepted
+
+**Findings:**
+All three DRR predictions still hold after motherhome-related drift. Journey docs corpus intact (7/7 pages, README pointer, 100% frontmatter keys). Cold-path Cursor init from docs steps succeeds in scratch. Drift is incidental site/deploy churn from dec-20260808-da785647; docs/*.md unchanged. Single-corpus invariant strengthened: getpysar.com/docs ingests this tree without a parallel website-only docs source. Re-baseline after measure.
+
+**Criteria met:**
+- [x] Dedicated docs tree with journey index and six aspect pages
+- [x] README points to docs as user-guide entry
+- [x] Frontmatter uniform for static ingest (≥90%)
+- [x] Cold-path install confirm + Cursor init from docs alone
+- [x] Single corpus: no parallel website-only docs tree
+
+**Measurements:**
+- docs inventory: index + 6 aspects; README → docs/index.md — PASS
+- frontmatter title/slug/nav_order/section: 7/7 (100%) — PASS
+- cold-path: pysar init --cursor scratch exit 0; .pysar + .cursor/mcp.json + skills — PASS
+- drift: site/motherhome + README baseline hash; docs/ clean vs HEAD — incidental
+- dual-use: https://getpysar.com/docs and /docs/install → 200 from same corpus — PASS (bonus vs out-of-scope SSG)
