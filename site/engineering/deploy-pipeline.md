@@ -20,9 +20,10 @@ sequenceDiagram
   participant CF as Cloudflare Pages
   participant User as Visitor
 
-  Dev->>Repo: push site/** and/or docs/**
+  Dev->>Repo: push site/** and/or docs/** and/or install.sh
   Repo->>GHA: deploy-getpysar workflow
   GHA->>GHA: pnpm install + check + build (cwd site/)
+  Note over GHA: prebuild stages repo-root install.sh → public/install.sh → out/install.sh
   GHA->>CF: wrangler pages deploy site/out
   CF->>User: getpysar.com
 ```
@@ -31,6 +32,7 @@ sequenceDiagram
 |---|---|
 | Motherhome + ingest code | `site/` |
 | User docs prose | repo-root `docs/` |
+| Install script (`/install.sh`) | repo-root `install.sh` (staged at build) |
 | Static HTML | GitHub Actions (`pnpm build` in `site/`) |
 | CDN / TLS / domain | Cloudflare Pages |
 

@@ -12,7 +12,7 @@ Get the `pysar` binary on your `PATH`, then go to [Init a project](./init.md).
 ## Recommended: install script (macOS / Linux)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/malyshev/pysar/master/install.sh | bash
+curl -fsSL https://getpysar.com/install.sh | bash
 ```
 
 The script detects `darwin`/`linux` and `amd64`/`arm64`, downloads the matching

@@ -11,7 +11,7 @@ skills for Claude Code, Cursor, and Codex.
 (install → init → pipeline → MCP/skills → export → troubleshooting).
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/malyshev/pysar/master/install.sh | bash
+curl -fsSL https://getpysar.com/install.sh | bash
 pysar init          # Claude Code (default)
 pysar init --cursor # Cursor
 pysar init --codex  # Codex CLI / App

@@ -4,13 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "predev": "node scripts/stage-install.mjs",
+    "prebuild": "node scripts/stage-install.mjs",
     "build": "next build",
     "preview": "pnpm build && pnpm dlx serve out -p 4321",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run --passWithNoTests",
     "check": "pnpm lint && pnpm test",
-    "icons:generate": "node scripts/generate-icons.mjs"
+    "icons:generate": "node scripts/generate-icons.mjs",
+    "stage:install": "node scripts/stage-install.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

@@ -17,6 +17,9 @@
 /.next/
 /out/
 
+# staged from repo-root install.sh (see scripts/stage-install.mjs)
+/public/install.sh
+
 # production
 /build
 

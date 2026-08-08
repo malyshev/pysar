@@ -6,6 +6,7 @@ on:
     paths:
       - "site/**"
       - "docs/**"
+      - "install.sh"
       - ".github/workflows/deploy-getpysar.yml"
   workflow_dispatch:
 
@@ -59,9 +60,11 @@ jobs:
           test -f out/index.html
           test -f out/sitemap.xml
           test -f out/robots.txt
+          test -f out/install.sh
           test -f out/docs.html -o -f out/docs/index.html
           test -f out/docs/install.html -o -f out/docs/install/index.html
           grep -q 'https://getpysar.com/docs' out/sitemap.xml
+          grep -q 'malyshev/pysar' out/install.sh
 
       - name: Deploy to Cloudflare Pages
         env:

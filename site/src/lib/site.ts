@@ -21,3 +21,7 @@ export const homePageSeo = {
     "From a half-formed idea or a messy draft to a piece that sounds like you — shaped with your judgment still in the chair.",
   eyebrow: "Author-directed editorial engine",
 } as const;
+
+/** Recommended macOS/Linux install — served from getpysar.com via stage-install. */
+export const installCommand =
+  "curl -fsSL https://getpysar.com/install.sh | bash";

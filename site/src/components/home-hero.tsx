@@ -1,9 +1,10 @@
-import { Circle } from "lucide-react";
-import { homePageSeo } from "@/lib/site";
+import { Check, Circle } from "lucide-react";
+import { CopyCommand } from "@/components/copy-command";
+import { homePageSeo, installCommand } from "@/lib/site";
 
 /**
  * Port of Boxsi (home)/components/Hero.tsx — same structure, paddings, blur, pattern.
- * Copy is Pysar; sizes/colors follow the template (zinc + hero theme tokens).
+ * Quick-start block: env-sentinel.dev pattern (label → command+Copy → what this does).
  */
 export function HomeHero() {
   return (
@@ -50,6 +51,54 @@ export function HomeHero() {
               <span className="text-zinc-950">sounds like you</span> — shaped
               with your judgment still in the chair.
             </p>
+
+            <div className="mx-auto w-full max-w-xl space-y-4 pt-3 text-left">
+              <p className="text-center text-sm text-zinc-500">
+                Run this command to install Pysar:
+              </p>
+
+              <CopyCommand command={installCommand} />
+
+              <div className="space-y-2">
+                <p className="text-sm font-semibold text-zinc-800">
+                  What this does:
+                </p>
+                <ul className="space-y-1.5 text-sm text-zinc-600">
+                  <li className="flex items-start gap-2">
+                    <Check
+                      className="mt-0.5 size-4 shrink-0 text-primary"
+                      aria-hidden="true"
+                    />
+                    <span>
+                      Installs{" "}
+                      <code className="rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-[13px] text-zinc-800">
+                        pysar
+                      </code>{" "}
+                      on your PATH
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check
+                      className="mt-0.5 size-4 shrink-0 text-primary"
+                      aria-hidden="true"
+                    />
+                    <span>macOS and Linux (amd64 / arm64)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check
+                      className="mt-0.5 size-4 shrink-0 text-primary"
+                      aria-hidden="true"
+                    />
+                    <span>
+                      Then run{" "}
+                      <code className="rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-[13px] text-zinc-800">
+                        pysar init
+                      </code>
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
 
           <div

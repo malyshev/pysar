@@ -5,7 +5,7 @@
 # After installation, run `pysar init` in your writing project.
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/malyshev/pysar/master/install.sh | bash
+#   curl -fsSL https://getpysar.com/install.sh | bash
 
 set -e
 

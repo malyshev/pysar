@@ -57,7 +57,7 @@ release:
     ### Install
 
     ```bash
-    curl -fsSL https://raw.githubusercontent.com/malyshev/pysar/master/install.sh | bash
+    curl -fsSL https://getpysar.com/install.sh | bash
     ```
 
     See [README](https://github.com/malyshev/pysar/blob/master/README.md) for setup and usage.
