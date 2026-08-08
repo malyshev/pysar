@@ -45,6 +45,10 @@ changelog:
   use: github-native
 
 release:
+  # Only reached when the workflow gate allows publish (including explicit
+  # workflow_dispatch force). Lets force-republish replace colliding assets
+  # instead of failing with GitHub 422 already_exists.
+  replace_existing_artifacts: true
   header: |
     ## Pysar {{ .Tag }}
 

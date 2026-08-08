@@ -3,16 +3,110 @@ name: Release
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to (re)publish (e.g. v0.1.0)'
+        required: true
+        type: string
+      force:
+        description: 'Force republish even if Release assets already exist'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
 
 jobs:
+  gate:
+    name: Release preflight
+    runs-on: ubuntu-latest
+    outputs:
+      should_publish: ${{ steps.decide.outputs.should_publish }}
+      tag: ${{ steps.meta.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Resolve tag
+        id: meta
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG="${{ inputs.tag }}"
+          else
+            TAG="${GITHUB_REF_NAME}"
+          fi
+          case "$TAG" in
+            v*) ;;
+            *)
+              echo "Tag must match v* (got: $TAG)" >&2
+              exit 1
+              ;;
+          esac
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Check out requested tag
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.meta.outputs.tag }}"
+          git fetch --force --tags origin
+          git checkout "refs/tags/${TAG}"
+
+      - name: Decide whether to publish
+        id: decide
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.meta.outputs.tag }}
+          FORCE: ${{ github.event_name == 'workflow_dispatch' && inputs.force }}
+        run: |
+          set -euo pipefail
+
+          if [ "$FORCE" = "true" ]; then
+            echo "Force republish requested for ${TAG}"
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Already-published skip: any pysar archive or checksums on the Release → green no-op.
+          if assets="$(gh release view "$TAG" --json assets --jq '.assets[].name' 2>/dev/null)"; then
+            if printf '%s\n' "$assets" | grep -qE '^(pysar-|checksums\.txt$)'; then
+              echo "Release ${TAG} already has assets; skipping publish"
+              echo "should_publish=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          fi
+
+          # Previous version tag (semver-ish v*), excluding the tag being published.
+          PREV="$(git tag --list 'v*' --sort=-v:refname | grep -vxF "$TAG" | head -n1 || true)"
+          if [ -n "$PREV" ]; then
+            RANGE="${PREV}..${TAG}"
+          else
+            RANGE="$TAG"
+          fi
+
+          # release-it-style: feat|feature|fix with conventional delimiter.
+          if git log --format='%s' "$RANGE" | grep -qE '^(feat|feature|fix)(\(|:|!)'; then
+            echo "Ship-worthy conventional commit found in ${RANGE}; publishing ${TAG}"
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "No feat|feature|fix conventional commits in ${RANGE}; skipping publish"
+          echo "should_publish=false" >> "$GITHUB_OUTPUT"
+
   test:
     name: Pre-release tests
+    needs: [gate]
+    if: needs.gate.outputs.should_publish == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.gate.outputs.tag }}
       - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
@@ -21,12 +115,14 @@ jobs:
 
   release:
     name: Build and publish release
-    needs: [test]
+    needs: [gate, test]
+    if: needs.gate.outputs.should_publish == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          ref: ${{ needs.gate.outputs.tag }}
       - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
