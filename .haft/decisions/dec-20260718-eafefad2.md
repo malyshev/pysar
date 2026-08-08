@@ -1,13 +1,13 @@
 ---
 id: dec-20260718-eafefad2
 kind: DecisionRecord
-version: 10
+version: 14
 status: active
 title: Typed-field discipline -- reuse haft's existing congruence_level / counterargument / why_not_others fields as the enforcement surface
 mode: standard
-valid_until: 2026-11-06T07:50:07Z
+valid_until: 2026-11-06T09:33:08Z
 created_at: 2026-07-18T06:19:46Z
-updated_at: 2026-08-08T07:50:51Z
+updated_at: 2026-08-08T09:48:31Z
 links:
   - ref: prob-20260718-7b559d43
     type: based_on
@@ -125,3 +125,40 @@ Real evidence gathered 2026-08-08: read dec-20260718-239680d4 directly -- title 
 
 **Measurements:**
 - dec-20260718-239680d4 title/why_selected text read directly: matches required correction
+
+## Impact Measurement (2026-08-08)
+
+**Verdict:** accepted
+
+**Findings:**
+Typed-field discipline correction on the Go distribution DRR still holds in the projection.
+
+**Criteria met:**
+- [x] Title no longer haft-mirroring
+- [x] binary_distribution_fit reasoning preserved
+
+**Measurements:**
+- dec-20260718-239680d4 title/selection_policy checked on disk
+
+## Waiver (2026-08-08)
+
+**Extended until:** 2026-11-06T09:33:08Z
+**Reason:** Claim claim-001 verified against current master on 2026-08-08 (code/tests/binary). Decision remains in force; extending validity after accepted measure.
+**Evidence:** measure verdict=accepted + evid attached this session
+
+## Impact Measurement (2026-08-08)
+
+**Verdict:** accepted
+
+**Findings:**
+Target decision text no longer uses haft-mirroring as primary justification; binary_distribution_fit preserved. Longer-horizon claim-002 not due yet.
+
+**Criteria met:**
+- [x] claim-001 corrected framing on 239680d4
+
+**Criteria NOT met:**
+- [ ] claim-002 two-month audit — verify_after 2026-09-18
+
+**Measurements:**
+- 239680d4 title=Go single static binary
+- why_selected focuses binary_distribution_fit
