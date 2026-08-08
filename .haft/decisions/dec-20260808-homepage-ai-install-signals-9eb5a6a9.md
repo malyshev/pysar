@@ -1,14 +1,14 @@
 ---
 id: dec-20260808-homepage-ai-install-signals-9eb5a6a9
 kind: DecisionRecord
-version: 1
+version: 3
 status: active
 title: Homepage / HTML-first signals (meta, visible AI block, JSON-LD)
 context: site
 mode: standard
 valid_until: 2026-11-08T00:00:00Z
 created_at: 2026-08-08T16:50:09Z
-updated_at: 2026-08-08T16:50:09Z
+updated_at: 2026-08-08T16:58:13Z
 links:
   - ref: prob-20260808-cabd5795
     type: based_on
@@ -98,3 +98,24 @@ Blast radius: site homepage components, metadata in layout/page, possible robots
 - Homepage redesign removes or buries the AI signal
 
 **Affected files:** site/src/app/page.tsx, site/src/app/layout.tsx, site/src/components, site/src/lib/site.ts
+
+## Impact Measurement (2026-08-08)
+
+**Verdict:** partial
+
+**Findings:**
+Bundle /h-verify after deploy b9ee84b: prediction 2 holds — live homepage has secondary #for-ai-agents block below hero plus meta/JSON-LD HowTo; brand/hero remains primary. Prediction 1 not met yet — carrier is published on getpysar.com but Claude/Cursor/Codex URL-drop+install agent smokes (>=2 of 3) have not been run within the 14-day window.
+
+**Criteria met:**
+- [x] Homepage AI install signal secondary to hero (live + page composition)
+- [x] Carrier co-located on https://getpysar.com (meta, HowTo JSON-LD, visible block) matching install.sh path
+
+**Criteria NOT met:**
+- [ ] Live host agent smoke: agent uses getpysar.com/install.sh in >=2 of 3 hosts
+
+**Measurements:**
+- deploy b9ee84b success
+- live meta pysar:agent-install + trigger=install
+- JSON-LD HowTo+SoftwareApplication present
+- visible for-ai-agents after H1
+- host smoke transcripts: 0/3

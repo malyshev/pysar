@@ -1,14 +1,14 @@
 ---
 id: dec-20260808-footer-subscribe-host-form-598699a0
 kind: DecisionRecord
-version: 7
+version: 9
 status: active
 title: Newsletter host form POST (Buttondown / ConvertKit)
 context: site
 mode: standard
 valid_until: 2026-11-08
 created_at: 2026-08-08T15:36:27Z
-updated_at: 2026-08-08T16:43:37Z
+updated_at: 2026-08-08T16:58:14Z
 links:
   - ref: prob-20260808-c0712044
     type: based_on
@@ -153,3 +153,19 @@ Both predictions hold. Static export + Pages path unchanged. Operator confirmed 
 - output:export + wrangler pages deploy out
 - no site/src/app/api
 - E2E list capture: prior operator Buttondown success (not re-run)
+
+## Impact Measurement (2026-08-08)
+
+**Verdict:** accepted
+
+**Findings:**
+Bundle drift verify: both predictions hold. Live Buttondown form intact; static Pages path intact. Drift from homepage AI site.ts/home-agent-install is incidental.
+
+**Criteria met:**
+- [x] E2E capture (prior operator) + live form wired
+- [x] Static export + Pages Direct Upload unchanged
+
+**Measurements:**
+- live embed-subscribe/malyshev
+- output:export + wrangler pages deploy
+- deploy b9ee84b success

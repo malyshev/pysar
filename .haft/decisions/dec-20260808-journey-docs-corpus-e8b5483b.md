@@ -1,14 +1,14 @@
 ---
 id: dec-20260808-journey-docs-corpus-e8b5483b
 kind: DecisionRecord
-version: 9
+version: 11
 status: active
 title: Journey-first docs/ tree with SSG-ready frontmatter
 context: docs
 mode: standard
 valid_until: 2026-11-08T00:00:00Z
 created_at: 2026-08-08T11:37:16Z
-updated_at: 2026-08-08T16:45:09Z
+updated_at: 2026-08-08T16:58:15Z
 links:
   - ref: prob-20260808-39f48c3d
     type: based_on
@@ -186,3 +186,20 @@ All three DRR predictions still hold after motherhome-related drift. Journey doc
 - README → docs/index.md
 - pysar 0.3.0 init --cursor/--codex scratch exit 0
 - getpysar.com/docs* all 200
+
+## Impact Measurement (2026-08-08)
+
+**Verdict:** accepted
+
+**Findings:**
+Bundle drift verify: all three predictions hold. Docs corpus/frontmatter/README pointer intact; live /docs 200. Drift is site homepage AI + .pnpm-store — not docs IA.
+
+**Criteria met:**
+- [x] docs tree + README pointer
+- [x] frontmatter 100%
+- [x] cold-path prior + docs unchanged
+
+**Measurements:**
+- fm 7/7
+- README→docs/index.md
+- /docs /docs/install 200
