@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
+import { DocsLayout } from "@/components/docs-layout";
 import { DocsMarkdown } from "@/components/docs-markdown";
 import { DocsNav } from "@/components/docs-nav";
-import { SiteShell } from "@/components/site-shell";
 import { getAllDocs, getDocBySlug, getDocSlugs } from "@/lib/docs/get-docs";
 import { buildDocMetadata } from "@/lib/docs/metadata";
 
@@ -36,9 +36,8 @@ export default async function DocSlugPage({ params }: PageProps) {
   const docs = getAllDocs();
 
   return (
-    <SiteShell>
-      <DocsNav docs={docs} currentSlug={doc.slug} />
+    <DocsLayout nav={<DocsNav docs={docs} currentSlug={doc.slug} />}>
       <DocsMarkdown body={doc.body} />
-    </SiteShell>
+    </DocsLayout>
   );
 }

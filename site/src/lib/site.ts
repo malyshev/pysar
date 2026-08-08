@@ -25,3 +25,14 @@ export const homePageSeo = {
 /** Recommended macOS/Linux install — served from getpysar.com via stage-install. */
 export const installCommand =
   "curl -fsSL https://getpysar.com/install.sh | bash";
+
+/**
+ * Buttondown newsletter username (public). Override with NEXT_PUBLIC_BUTTONDOWN_USERNAME.
+ * Embed docs: https://docs.buttondown.com/building-your-subscriber-base
+ */
+export const buttondownUsername =
+  process.env.NEXT_PUBLIC_BUTTONDOWN_USERNAME ?? "malyshev";
+
+/** Public embed-subscribe form action — no API key (dec-20260808-footer-subscribe-host-form-598699a0). */
+export const buttondownSubscribeAction =
+  `https://buttondown.com/api/emails/embed-subscribe/${buttondownUsername}` as const;

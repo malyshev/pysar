@@ -111,7 +111,26 @@ Do not commit these or paste them into chat logs.
 
 ---
 
-## Step 7 — After first deploy
+## Step 7 — Footer subscribe (Buttondown)
+
+Footer Subscribe uses Buttondown’s public embed form POST
+(`dec-20260808-footer-subscribe-host-form-598699a0`) — no API key in the site.
+
+| Item | Value |
+|---|---|
+| Username | `malyshev` (override: `NEXT_PUBLIC_BUTTONDOWN_USERNAME`) |
+| Action URL | `https://buttondown.com/api/emails/embed-subscribe/malyshev` |
+| Tag on signup | `getpysar` |
+| Dashboard | [buttondown.com/settings/embedding](https://buttondown.com/settings/embedding) |
+
+Submit leaves getpysar.com and lands on Buttondown’s confirm / double-opt-in page
+(honest host acknowledgment). Enable double opt-in in Buttondown if you want it.
+
+- [ ] Submit a real test address from the live footer; confirm pending/active in Buttondown
+
+---
+
+## Step 8 — After first deploy
 
 - [ ] `https://getpysar.com` serves the motherhome
 - [ ] `https://getpysar.com/sitemap.xml` and `/robots.txt` exist

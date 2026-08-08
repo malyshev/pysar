@@ -7,16 +7,14 @@ type DocsNavProps = {
   currentSlug: string;
 };
 
+/** Journey strip on the docs rail — Boxsi uppercase nav language. */
 export function DocsNav({ docs, currentSlug }: DocsNavProps) {
   return (
     <nav
       aria-label="Documentation"
-      className="mb-10 border-b-2 border-frame pb-5"
+      className="border-b-2 border-zinc-100 px-5 py-5"
     >
-      <p className="mb-3 text-[0.65rem] font-medium uppercase tracking-[0.14em] text-muted-foreground">
-        Documentation
-      </p>
-      <ul className="flex flex-wrap gap-x-1 gap-y-2">
+      <ul className="flex flex-wrap items-center justify-center gap-x-1 gap-y-2">
         {docs.map((doc) => {
           const active = doc.slug === currentSlug;
           return (
@@ -24,10 +22,10 @@ export function DocsNav({ docs, currentSlug }: DocsNavProps) {
               <Link
                 href={doc.href}
                 className={cn(
-                  "inline-flex items-center gap-2 px-3 py-2 text-xs font-medium uppercase tracking-wide transition-colors",
+                  "inline-flex items-center gap-2 px-3 py-2 text-xs font-medium uppercase tracking-wide transition-colors duration-300",
                   active
-                    ? "bg-muted text-ink"
-                    : "text-muted-foreground hover:text-primary",
+                    ? "text-zinc-950"
+                    : "text-zinc-500 hover:text-primary",
                 )}
                 aria-current={active ? "page" : undefined}
               >

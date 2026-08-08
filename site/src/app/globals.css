@@ -216,6 +216,18 @@
   background-size: 12px 12px;
 }
 
+/* Boxsi Footer hatch — same geometry as bg-stripe, zinc-800 on dark bar. */
+@utility bg-stripe-dark {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--color-zinc-800) 0,
+    var(--color-zinc-800) 1px,
+    transparent 0,
+    transparent 50%
+  );
+  background-size: 12px 12px;
+}
+
 /* Style primitives — frame language + restrained motion */
 @layer utilities {
   .pixelated {

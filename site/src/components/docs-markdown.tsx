@@ -1,26 +1,27 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { CopyCommand } from "@/components/copy-command";
 import { rewriteDocHref } from "@/lib/docs/links";
+import { reactChildrenText } from "@/lib/react-children-text";
 
 type DocsMarkdownProps = {
   body: string;
 };
 
+/** Prose on the About-style reading column — zinc / primary; fenced code = CopyCommand. */
 export function DocsMarkdown({ body }: DocsMarkdownProps) {
   return (
     <div
       className={[
         "prose max-w-none",
-        "prose-neutral",
-        "prose-headings:font-heading prose-headings:font-bold prose-headings:tracking-[-0.02em] prose-headings:text-ink",
-        "prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-ink",
-        "prose-a:font-medium prose-a:text-ink prose-a:underline prose-a:decoration-primary/50 prose-a:underline-offset-4 prose-a:transition-colors hover:prose-a:text-primary hover:prose-a:decoration-primary",
-        "prose-code:rounded-sm prose-code:border prose-code:border-frame prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:text-ink prose-code:before:content-none prose-code:after:content-none",
-        "prose-pre:border-2 prose-pre:border-frame prose-pre:bg-ink prose-pre:text-primary-foreground",
-        "prose-pre:code:border-0 prose-pre:code:bg-transparent prose-pre:code:text-inherit",
-        "prose-hr:border-frame",
-        "prose-blockquote:border-primary prose-blockquote:text-muted-foreground",
+        "prose-headings:font-heading prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-zinc-950",
+        "prose-p:text-zinc-600 prose-li:text-zinc-600 prose-strong:text-zinc-950",
+        "prose-a:font-medium prose-a:text-zinc-950 prose-a:underline prose-a:decoration-primary/50 prose-a:underline-offset-4 prose-a:transition-colors hover:prose-a:text-primary hover:prose-a:decoration-primary",
+        "prose-code:rounded-sm prose-code:border prose-code:border-zinc-200 prose-code:bg-zinc-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-zinc-950 prose-code:before:content-none prose-code:after:content-none",
+        "prose-hr:border-zinc-100",
+        "prose-blockquote:border-primary prose-blockquote:text-zinc-600",
       ].join(" ")}
     >
       <ReactMarkdown
@@ -42,6 +43,14 @@ export function DocsMarkdown({ body }: DocsMarkdownProps) {
             }
 
             return <Link href={nextHref}>{children}</Link>;
+          },
+          // Fenced blocks: soft Copy bar (same chrome as home quick start).
+          pre: ({ children }) => {
+            const command = reactChildrenText(children as ReactNode).replace(
+              /\n$/,
+              "",
+            );
+            return <CopyCommand command={command} className="my-5" />;
           },
         }}
       >
