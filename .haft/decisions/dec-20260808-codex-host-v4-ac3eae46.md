@@ -1,13 +1,13 @@
 ---
 id: dec-20260808-codex-host-v4-ac3eae46
 kind: DecisionRecord
-version: 11
+version: 13
 status: active
 title: Full Codex dialect including openai.yaml / invocation policy
 mode: standard
 valid_until: 2026-11-08T00:00:00Z
 created_at: 2026-08-08T13:28:55Z
-updated_at: 2026-08-08T16:58:16Z
+updated_at: 2026-08-08T17:40:26Z
 links:
   - ref: prob-20260808-7ba11dda
     type: based_on
@@ -200,3 +200,18 @@ Bundle drift verify: both predictions hold. init --codex + approve dial intact; 
 - scratch init --codex exit 0
 - approve in assets/codex/config.toml
 - pysar 0.3.0
+
+## Impact Measurement (2026-08-08)
+
+**Verdict:** accepted
+
+**Findings:**
+Both predictions hold. Drift is undeployed site/llms.txt only — incidental.
+
+**Criteria met:**
+- [x] init --codex scaffolds
+- [x] prior live Codex smoke
+
+**Measurements:**
+- scratch init --codex exit 0
+- approve in config.toml

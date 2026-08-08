@@ -1,14 +1,14 @@
 ---
 id: dec-20260808-journey-docs-corpus-e8b5483b
 kind: DecisionRecord
-version: 11
+version: 13
 status: active
 title: Journey-first docs/ tree with SSG-ready frontmatter
 context: docs
 mode: standard
 valid_until: 2026-11-08T00:00:00Z
 created_at: 2026-08-08T11:37:16Z
-updated_at: 2026-08-08T16:58:15Z
+updated_at: 2026-08-08T17:40:25Z
 links:
   - ref: prob-20260808-39f48c3d
     type: based_on
@@ -203,3 +203,20 @@ Bundle drift verify: all three predictions hold. Docs corpus/frontmatter/README 
 - fm 7/7
 - README→docs/index.md
 - /docs /docs/install 200
+
+## Impact Measurement (2026-08-08)
+
+**Verdict:** accepted
+
+**Findings:**
+All three predictions hold. install.md inspectable path is same-corpus content improvement; frontmatter/README/live docs intact.
+
+**Criteria met:**
+- [x] docs tree + README
+- [x] frontmatter 100%
+- [x] cold-path install+init
+
+**Measurements:**
+- fm 7/7
+- live /docs /docs/install 200
+- install.md adds download-then-bash

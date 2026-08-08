@@ -1,14 +1,14 @@
 ---
 id: dec-20260808-homepage-ai-install-signals-9eb5a6a9
 kind: DecisionRecord
-version: 3
+version: 5
 status: active
 title: Homepage / HTML-first signals (meta, visible AI block, JSON-LD)
 context: site
 mode: standard
 valid_until: 2026-11-08T00:00:00Z
 created_at: 2026-08-08T16:50:09Z
-updated_at: 2026-08-08T16:58:13Z
+updated_at: 2026-08-08T17:40:22Z
 links:
   - ref: prob-20260808-cabd5795
     type: based_on
@@ -119,3 +119,22 @@ Bundle /h-verify after deploy b9ee84b: prediction 2 holds — live homepage has 
 - JSON-LD HowTo+SoftwareApplication present
 - visible for-ai-agents after H1
 - host smoke transcripts: 0/3
+
+## Impact Measurement (2026-08-08)
+
+**Verdict:** partial
+
+**Findings:**
+Bundle /h-verify: pred2 holds on live getpysar.com (secondary #for-ai-agents + meta/HowTo). Pred1 still unmet — 0/3 host URL-drop install smokes. Working-tree /llms.txt complement (note-20260808-26ff4eb4) builds locally and tests pass but is undeployed (prod 404); per note it complements V4 and does not replace homepage co-location.
+
+**Criteria met:**
+- [x] Homepage AI signal secondary to hero
+- [x] Carrier co-located on homepage URL
+
+**Criteria NOT met:**
+- [ ] Live host agent smoke >=2 of 3 using install.sh
+
+**Measurements:**
+- live for-ai-agents+meta+HowTo after H1
+- host smokes 0/3
+- prod /llms.txt 404; site/out/llms.txt + vitest ok locally
