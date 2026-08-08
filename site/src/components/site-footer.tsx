@@ -78,7 +78,7 @@ export function SiteFooter() {
                 rel="noopener noreferrer"
                 className="text-[#44E5FE]"
               >
-                Quorum
+                Qorym
               </a>{" "}
               Partner
             </p>
