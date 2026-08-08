@@ -1,14 +1,14 @@
 ---
 id: dec-20260808-journey-docs-corpus-e8b5483b
 kind: DecisionRecord
-version: 5
+version: 7
 status: active
 title: Journey-first docs/ tree with SSG-ready frontmatter
 context: docs
 mode: standard
 valid_until: 2026-11-08T00:00:00Z
 created_at: 2026-08-08T11:37:16Z
-updated_at: 2026-08-08T13:15:40Z
+updated_at: 2026-08-08T14:40:19Z
 links:
   - ref: prob-20260808-39f48c3d
     type: based_on
@@ -150,3 +150,21 @@ All three DRR predictions still hold after motherhome-related drift. Journey doc
 - cold-path: pysar init --cursor scratch exit 0; .pysar + .cursor/mcp.json + skills — PASS
 - drift: site/motherhome + README baseline hash; docs/ clean vs HEAD — incidental
 - dual-use: https://getpysar.com/docs and /docs/install → 200 from same corpus — PASS (bonus vs out-of-scope SSG)
+
+## Impact Measurement (2026-08-08)
+
+**Verdict:** accepted
+
+**Findings:**
+/h-verify: all three predictions hold. Tree+README pointer intact; frontmatter 100%; cold-path Cursor and Codex init succeed from docs steps without .go reads. Drift is same-corpus content updates (Codex approve dial) plus site packaging — incidental/expected refresh, not dual-corpus divergence. Soft note: docs/index journey blurb still says Claude or Cursor (Codex covered in init/mcp pages) — cosmetic IA copy lag, not prediction failure.
+
+**Criteria met:**
+- [x] docs tree with index + six aspect pages; README pointer
+- [x] cold-path init from docs alone
+- [x] frontmatter uniform ≥90%
+
+**Measurements:**
+- 7/7 pages; frontmatter 100%; nav_order 0..60
+- README → docs/index.md
+- init --cursor and --codex scratch exit 0
+- getpysar.com/docs + /docs/install 200

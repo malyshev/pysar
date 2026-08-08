@@ -18,10 +18,6 @@ section: journey
 Release installs often land in `~/.local/bin`. A `go install` binary may land
 in `$(go env GOPATH)/bin`. Whichever directory appears first on `PATH` wins.
 
-## `pysar init --codex` fails
-
-Expected: Codex is not yet supported. Use `--claude` (default) or `--cursor`.
-
 ## Host flags rejected together
 
 `--claude`, `--cursor`, and `--codex` are mutually exclusive. Pass only one.
@@ -32,11 +28,27 @@ Expected: Codex is not yet supported. Use `--claude` (default) or `--cursor`.
 2. Claude: check project `.mcp.json` and that Claude Code loaded the server.
 3. Cursor: check `.cursor/mcp.json`, enable the `pysar` server if prompted, and
    confirm `PYSAR_PROJECT_ROOT` is `${workspaceFolder}`.
-4. From the project directory, you can smoke-test the binary with
+4. Codex: check `.codex/config.toml` for `[mcp_servers.pysar]`,
+   `PYSAR_PROJECT_ROOT = "."`, and `default_tools_approval_mode = "approve"`.
+5. From the project directory, you can smoke-test the binary with
    `pysar --help` (stdio MCP is started by the host, not by a long-running
    daemon you manage yourself).
 
-## Skills missing (`/ps` unknown)
+## Codex keeps asking to allow pysar MCP tools
+
+Shipped Codex config sets `default_tools_approval_mode = "approve"` (Codex
+skip-review dial for `pysar` MCP tools; `auto` is not enough when tools lack
+annotations). Refresh with:
+
+```bash
+pysar init --codex --force
+```
+
+Project `.codex/config.toml` applies only when Codex treats the project as
+**trusted**. If prompts continue after refresh, trust the project in Codex and
+retry. Untrusted projects may still prompt per tool.
+
+## Skills missing (`/ps` or `$ps` unknown)
 
 Re-run init with `--force` for your host so global skills refresh:
 
@@ -44,10 +56,11 @@ Re-run init with `--force` for your host so global skills refresh:
 pysar init --force
 # or
 pysar init --cursor --force
+pysar init --codex --force
 ```
 
-Restart the host agent after skill install so it rediscovers `~/.claude/skills`
-or `~/.cursor/skills`.
+Restart the host agent after skill install so it rediscovers `~/.claude/skills`,
+`~/.cursor/skills`, or `~/.agents/skills` (Codex).
 
 ## Cursor keeps asking to approve MCP tools
 

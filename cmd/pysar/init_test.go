@@ -850,17 +850,113 @@ func TestInitClaudeAndCursorSkillsShareCorpus(t *testing.T) {
 	}
 }
 
-func TestInitCodexNotYetSupported(t *testing.T) {
-	withFakeHome(t)
+func TestInitCodexScaffoldsMCPAndSkills(t *testing.T) {
+	fakeHome := withFakeHome(t)
 	dir := t.TempDir()
 	cmd := newRootCmd()
 	cmd.SetArgs([]string{"init", "--codex", dir})
-	if err := cmd.Execute(); err == nil {
-		t.Fatal("expected --codex to fail")
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("init --codex failed: %v", err)
 	}
-	entries, _ := os.ReadDir(dir)
-	if len(entries) != 0 {
-		t.Fatalf("expected no files written for --codex, got %v", entries)
+
+	mcpPath := filepath.Join(dir, ".codex", "config.toml")
+	content, err := os.ReadFile(mcpPath)
+	if err != nil {
+		t.Fatalf("expected .codex/config.toml: %v", err)
+	}
+	got := string(content)
+	if !strings.Contains(got, `command = "pysar"`) ||
+		!strings.Contains(got, `[mcp_servers.pysar]`) ||
+		!strings.Contains(got, `PYSAR_PROJECT_ROOT = "."`) ||
+		!strings.Contains(got, `default_tools_approval_mode = "approve"`) {
+		t.Fatalf(".codex/config.toml missing expected pysar MCP block, got: %s", got)
+	}
+
+	manifestPath := filepath.Join(dir, ".pysar", "project")
+	data, err := os.ReadFile(manifestPath)
+	if err != nil {
+		t.Fatalf("read manifest: %v", err)
+	}
+	var m projectManifest
+	if err := json.Unmarshal(data, &m); err != nil {
+		t.Fatalf("parse manifest: %v", err)
+	}
+	if m.Host != "codex" {
+		t.Fatalf("manifest host = %q, want codex", m.Host)
+	}
+
+	skillPath := filepath.Join(fakeHome, ".agents", "skills", "ps", "SKILL.md")
+	skillBody, err := os.ReadFile(skillPath)
+	if err != nil {
+		t.Fatalf("expected $ps skill under ~/.agents/skills: %v", err)
+	}
+	if strings.Contains(string(skillBody), "/ps") {
+		t.Fatalf("codex skill still contains /ps slash form:\n%s", skillBody[:min(len(skillBody), 400)])
+	}
+	if !strings.Contains(string(skillBody), "$ps") {
+		t.Fatalf("codex skill missing $ps rewrite")
+	}
+
+	psPolicy, err := os.ReadFile(filepath.Join(fakeHome, ".agents", "skills", "ps", "agents", "openai.yaml"))
+	if err != nil {
+		t.Fatalf("expected ps openai.yaml: %v", err)
+	}
+	if string(psPolicy) != "policy:\n  allow_implicit_invocation: true\n" {
+		t.Fatalf("ps policy = %q", psPolicy)
+	}
+	intakePolicy, err := os.ReadFile(filepath.Join(fakeHome, ".agents", "skills", "ps-intake", "agents", "openai.yaml"))
+	if err != nil {
+		t.Fatalf("expected ps-intake openai.yaml: %v", err)
+	}
+	if string(intakePolicy) != "policy:\n  allow_implicit_invocation: false\n" {
+		t.Fatalf("ps-intake policy = %q", intakePolicy)
+	}
+
+	// Codex init must not write Claude/Cursor project files.
+	if _, err := os.Stat(filepath.Join(dir, "CLAUDE.md")); !os.IsNotExist(err) {
+		t.Fatalf("codex init should not write CLAUDE.md, err=%v", err)
+	}
+	if _, err := os.Stat(filepath.Join(dir, ".mcp.json")); !os.IsNotExist(err) {
+		t.Fatalf("codex init should not write root .mcp.json, err=%v", err)
+	}
+	if _, err := os.Stat(filepath.Join(dir, ".cursor")); !os.IsNotExist(err) {
+		t.Fatalf("codex init should not write .cursor/, err=%v", err)
+	}
+}
+
+func TestInitCodexSkillsShareCorpusEditorialWithClaude(t *testing.T) {
+	fakeHome := withFakeHome(t)
+	claudeDir := t.TempDir()
+	codexDir := t.TempDir()
+
+	cmd := newRootCmd()
+	cmd.SetArgs([]string{"init", "--claude", claudeDir})
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("init --claude: %v", err)
+	}
+	cmd = newRootCmd()
+	cmd.SetArgs([]string{"init", "--codex", codexDir})
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("init --codex: %v", err)
+	}
+
+	claudeSkill, err := os.ReadFile(filepath.Join(fakeHome, ".claude", "skills", "ps-intake", "SKILL.md"))
+	if err != nil {
+		t.Fatalf("read claude skill: %v", err)
+	}
+	codexSkill, err := os.ReadFile(filepath.Join(fakeHome, ".agents", "skills", "ps-intake", "SKILL.md"))
+	if err != nil {
+		t.Fatalf("read codex skill: %v", err)
+	}
+	// Packaging differs (slash vs $), but both come from the same embed corpus.
+	if !strings.Contains(string(claudeSkill), "/ps-intake") {
+		t.Fatal("claude skill lost /ps-intake form")
+	}
+	if !strings.Contains(string(codexSkill), "$ps-intake") {
+		t.Fatal("codex skill missing $ps-intake packaging")
+	}
+	if string(claudeSkill) == string(codexSkill) {
+		t.Fatal("codex skill was not packaging-transformed — identical to claude install")
 	}
 }
 

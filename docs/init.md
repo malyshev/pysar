@@ -8,7 +8,7 @@ section: journey
 # Init a project
 
 `pysar init` scaffolds a writing project for a host agent. Default host is
-Claude Code. Cursor is supported. Codex is not yet supported.
+Claude Code. Cursor and Codex CLI/App are also supported.
 
 ## Claude Code (default)
 
@@ -56,13 +56,36 @@ Open the folder in Cursor and enable the `pysar` MCP server if prompted.
 Cursor does not ship a Claude-style settings allowlist; you may see
 permission prompts for MCP tools on first use.
 
+## Codex CLI / App
+
+```bash
+mkdir my-piece && cd my-piece
+pysar init --codex
+```
+
+Typical layout:
+
+| Path | Role |
+|------|------|
+| `.pysar/project` | Project manifest |
+| `.codex/config.toml` | MCP server entry that runs `pysar serve` (`default_tools_approval_mode = "approve"`) |
+| Skills under `~/.agents/skills/ps-*` | Same shared skill corpus, Codex-packaged (`$ps-*` + `agents/openai.yaml`) |
+
+Only the orchestrator skill (`ps`) allows implicit invocation; stage skills are
+explicit (`$ps-intake`, …). Open the folder in Codex after init.
+
+Project `.codex/config.toml` MCP settings (including tool approval mode) apply
+when Codex treats the project as **trusted**. If you still see per-tool
+“Allow the pysar MCP server…” prompts, trust the project and re-run
+`pysar init --codex --force`.
+
 ## Flags
 
 | Flag | Meaning |
 |------|---------|
 | `--claude` | Scaffold for Claude Code (default if no host flag) |
 | `--cursor` | Scaffold for Cursor |
-| `--codex` | Not yet supported (exits with an error) |
+| `--codex` | Scaffold for Codex CLI / App |
 | `--force` | Refresh host project files, skills, and MCP/settings to the shipped version — **never** overwrites `.pysar/` piece data |
 
 Host flags are mutually exclusive.

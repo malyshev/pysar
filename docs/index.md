@@ -26,7 +26,7 @@ The binary is a small CLI. The writing workflow runs inside a host agent
 ## What you need
 
 - macOS or Linux for the install script (Windows: download a release zip)
-- A host agent: **Claude Code** (default) or **Cursor**
+- A host agent: **Claude Code** (default), **Cursor**, or **Codex**
 - Network only for install and optional research/fact-check steps the agent runs
 
 Contributor build, tests, and release mechanics stay in the repo

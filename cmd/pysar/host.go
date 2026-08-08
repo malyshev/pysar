@@ -20,6 +20,7 @@ type hostAdapter interface {
 var hostRegistry = map[string]hostAdapter{
 	"claude": claudeHost{},
 	"cursor": cursorHost{},
+	"codex":  codexHost{},
 }
 
 func resolveHost(claude, cursor, codex bool) (hostAdapter, error) {
@@ -27,7 +28,7 @@ func resolveHost(claude, cursor, codex bool) (hostAdapter, error) {
 	case cursor:
 		return hostRegistry["cursor"], nil
 	case codex:
-		return nil, fmt.Errorf("pysar init --codex: not yet supported")
+		return hostRegistry["codex"], nil
 	default:
 		// --claude and no-flag both resolve here (dec-20260718-8278c494).
 		_ = claude
@@ -112,6 +113,45 @@ func (cursorHost) Scaffold(dir string, force bool) error {
 		return fmt.Errorf("pysar init: %w", err)
 	}
 	if _, _, err := writeIfAbsent(mcpPath, cursorMCPJSON, force); err != nil {
+		return fmt.Errorf("pysar init: %w", err)
+	}
+
+	printInitSummary(dir, alreadySetUp, skillOut, templateOut, force)
+	return nil
+}
+
+// codexHost scaffolds OpenAI Codex CLI/App (dec-20260808-codex-host-v4-ac3eae46):
+// project .codex/config.toml, shared corpus under ~/.agents/skills with
+// Codex packaging ($ps- rewrite + agents/openai.yaml).
+type codexHost struct{}
+
+func (codexHost) Name() string { return "codex" }
+
+func (codexHost) Scaffold(dir string, force bool) error {
+	alreadySetUp, err := writeProjectManifest(dir, "codex")
+	if err != nil {
+		return fmt.Errorf("pysar init: %w", err)
+	}
+
+	home, err := homeDir()
+	if err != nil {
+		return fmt.Errorf("pysar init: locate home directory for global skill install: %w", err)
+	}
+
+	skillOut, err := writeCodexSkills(home, force)
+	if err != nil {
+		return fmt.Errorf("pysar init: %w", err)
+	}
+	templateOut, err := writeBuiltinTemplates(home, force)
+	if err != nil {
+		return fmt.Errorf("pysar init: %w", err)
+	}
+
+	mcpPath := filepath.Join(dir, ".codex", "config.toml")
+	if err := os.MkdirAll(filepath.Dir(mcpPath), 0o755); err != nil {
+		return fmt.Errorf("pysar init: %w", err)
+	}
+	if _, _, err := writeIfAbsent(mcpPath, codexMCPTOML, force); err != nil {
 		return fmt.Errorf("pysar init: %w", err)
 	}
 

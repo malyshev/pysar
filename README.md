@@ -5,7 +5,7 @@ An author-directed editorial engine for your writing projects.
 Bring your take — an idea or a rough draft. Pysar helps you shape it into a
 piece you trust, without forcing pipeline jargon on you and without posting
 on your behalf. It runs as a CLI plus an MCP server and a set of `ps-*`
-skills for Claude Code and Cursor.
+skills for Claude Code, Cursor, and Codex.
 
 **User guide:** start at [docs/index.md](./docs/index.md)
 (install → init → pipeline → MCP/skills → export → troubleshooting).
@@ -14,6 +14,7 @@ skills for Claude Code and Cursor.
 curl -fsSL https://raw.githubusercontent.com/malyshev/pysar/master/install.sh | bash
 pysar init          # Claude Code (default)
 pysar init --cursor # Cursor
+pysar init --codex  # Codex CLI / App
 ```
 
 ## Development

@@ -31,7 +31,9 @@ provisional and may change as Pysar's Claude Code integration develops.
 `
 
 // skillAssets is the host-neutral ps-* skill corpus (dec-20260808-f3001106).
-// Host adapters install these bytes into Claude/Cursor skill directories; new
+// Host adapters install these bytes into Claude/Cursor skill directories; Codex
+// applies an install-time packaging transform ($ps- rewrite + openai.yaml)
+// without forking the corpus (dec-20260808-codex-host-v4-ac3eae46). New
 // skills need only a directory under assets/skills -- no per-host wiring.
 //
 //go:embed assets/skills
@@ -60,6 +62,12 @@ var claudeMCPJSON string
 //
 //go:embed assets/cursor/mcp.json
 var cursorMCPJSON string
+
+// codexMCPTOML registers pysar serve for Codex CLI/App (haft CL1 path shape:
+// project .codex/config.toml; dec-20260808-codex-host-v4-ac3eae46).
+//
+//go:embed assets/codex/config.toml
+var codexMCPTOML string
 
 // templateAssets holds every built-in reusable content template (starting
 // with the one "generic" voice default), seeded into the operator's
@@ -97,6 +105,7 @@ separate host-agent surface when installed; they are not invoked by typing pysar
 		Example: `  pysar init              # scaffold a Claude Code project in .
   pysar init --claude ./my-piece
   pysar init --cursor ./my-piece
+  pysar init --codex ./my-piece
   pysar --version`,
 		Version:      version,
 		SilenceUsage: true,
@@ -129,7 +138,7 @@ func newInitCmd() *cobra.Command {
 
 	cmd.Flags().BoolVar(&claude, "claude", false, "scaffold for Claude Code (default)")
 	cmd.Flags().BoolVar(&cursor, "cursor", false, "scaffold for Cursor")
-	cmd.Flags().BoolVar(&codex, "codex", false, "scaffold for Codex (not yet supported)")
+	cmd.Flags().BoolVar(&codex, "codex", false, "scaffold for Codex CLI / App")
 	cmd.Flags().BoolVar(&force, "force", false, "refresh host project files, agentic skills, and permission/MCP config to the current shipped version, even if already installed -- never touches .pysar/ project data")
 	cmd.MarkFlagsMutuallyExclusive("claude", "cursor", "codex")
 
