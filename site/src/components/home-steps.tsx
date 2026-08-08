@@ -4,35 +4,35 @@ import { CornerTicks } from "@/components/corner-ticks";
 const steps = [
   {
     n: "01",
-    title: "Intake the idea",
+    title: "Start with the idea",
     body: (
       <>
-        Scaffold brief, outline, angles — or drop a{" "}
+        Turn a half-formed thought into a clear brief — or drop in a{" "}
         <span className="text-ink">rough draft</span> and keep going.
       </>
     ),
   },
   {
     n: "02",
-    title: "Draft the piece",
+    title: "Get a full draft",
     body: (
       <>
-        Channel-agnostic <span className="text-ink">draft.md</span> from what
-        you already decided — not a blank chat.
+        A complete piece from what you already decided — not a blank chat
+        guessing your point.
       </>
     ),
     muted: true,
   },
   {
     n: "03",
-    title: "Edit & sharpen",
-    body: "Staff-edit, then reader-experience pass. Separate files so the first draft stays.",
+    title: "Tighten what matters",
+    body: "Structure, stakes, and wording get a hard look. Earlier versions stay, so nothing useful is lost.",
     primary: true,
   },
   {
     n: "04",
-    title: "Humanize & ship",
-    body: "Strip AI tells, then export a draft you're ready to share.",
+    title: "Make it sound human",
+    body: "Strip the AI tells, then export a draft you're ready to share yourself.",
     dark: true,
   },
 ] as const;
@@ -46,7 +46,7 @@ export function HomeSteps() {
           <div className="grid gap-5 md:grid-cols-2">
             <div className="space-y-2.5 text-center md:text-start">
               <div className="inline-flex items-center justify-center rounded-full border-2 border-frame px-4 py-1.5 text-xs font-semibold uppercase text-primary">
-                Pipeline, not a prompt
+                One step at a time
               </div>
               <h2 className="text-[36px] md:text-[42px] lg:text-[52px]">
                 From idea to a piece{" "}
@@ -54,9 +54,8 @@ export function HomeSteps() {
               </h2>
             </div>
             <div className="mx-auto max-w-62 text-center md:me-0 md:place-self-end md:text-end">
-              Stages write to{" "}
-              <span className="text-ink">.pysar/pieces/</span> — reviewable,
-              reversible, yours.
+              Each step leaves a version you can open and change —{" "}
+              <span className="text-ink">nothing ships until you say so</span>.
             </div>
           </div>
         </div>

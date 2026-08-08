@@ -4,23 +4,23 @@ import { CornerTicks } from "@/components/corner-ticks";
 const features = [
   {
     icon: FilePenLine,
-    title: "Full editorial pipeline",
-    body: "Intake → draft → staff-edit → sharpen → humanize. Same stages, separate files — your first draft stays intact.",
+    title: "From idea to a draft you can judge",
+    body: "Start with a half-formed thought or a messy draft. Pysar helps you shape the piece step by step — and keeps earlier versions so you can compare.",
   },
   {
     icon: MicVocal,
-    title: "Voice & style profiles",
-    body: "Capture how you sound and how you structure — then every pass writes against that, not a generic default.",
+    title: "Sounds like you, not a generic bot",
+    body: "Capture how you write once. Later drafts follow that voice and structure — not a default AI tone.",
   },
   {
     icon: Languages,
-    title: "Host-agnostic skills",
-    body: "ps-* skills for Claude Code and Cursor, plus MCP tools that persist pieces into .pysar/.",
+    title: "Works in the editor you already use",
+    body: "Claude Code, Cursor, or ChatGPT Codex — same writing help, in the place you already work.",
   },
   {
     icon: RefreshCw,
-    title: "Factcheck when it matters",
-    body: "Ground claims that need real sources. No invented citations dressed up as research.",
+    title: "Real sources when a claim needs them",
+    body: "When something should be checked, Pysar looks for real sources — not invented citations dressed up as research.",
   },
 ] as const;
 
@@ -36,17 +36,17 @@ export function HomeFeatures() {
           <div className="grid gap-5 md:grid-cols-2">
             <div className="space-y-2.5 text-center md:text-start">
               <div className="inline-flex items-center justify-center rounded-full border border-white/15 px-4 py-1.5 text-xs font-semibold uppercase text-primary">
-                Write with direction
+                What you get
               </div>
               <h2 className="text-[36px] text-primary-foreground md:text-[42px] lg:text-[52px]">
-                What Pysar actually{" "}
-                <span className="text-white/40">does for a piece</span>
+                Help that improves a piece{" "}
+                <span className="text-white/40">without taking it over</span>
               </h2>
             </div>
             <div className="mx-auto max-w-62 text-center md:me-0 md:place-self-end md:text-end">
-              Stages built around how{" "}
+              Built around how{" "}
               <span className="text-primary-foreground">you</span> actually
-              write.
+              write — and when you say a piece is ready.
             </div>
           </div>
         </div>
@@ -74,6 +74,7 @@ export function HomeFeatures() {
               </span>
               <p className="max-w-48 text-center text-sm text-primary-foreground/80">
                 Voice, edits, and drafts live in your project — yours to shape.
+                Nothing publishes until you do.
               </p>
             </div>
             <CornerTicks className="text-white/35" />

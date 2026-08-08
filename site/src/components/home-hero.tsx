@@ -48,13 +48,14 @@ export function HomeHero() {
 
             <p>
               From a half-formed idea or a messy draft to a piece that{" "}
-              <span className="text-zinc-950">sounds like you</span> — shaped
-              with your judgment still in the chair.
+              <span className="text-zinc-950">sounds like you</span> — you stay
+              in charge; Pysar never posts for you.
             </p>
 
             <div className="mx-auto w-full max-w-xl space-y-4 pt-3 text-left">
               <p className="text-center text-sm text-zinc-500">
-                Run this command to install Pysar:
+                macOS or Linux — install, then open your writing project in
+                Claude Code, Cursor, or Codex:
               </p>
 
               <CopyCommand command={installCommand} />
@@ -67,7 +68,7 @@ export function HomeHero() {
                 >
                   {siteConfig.url.replace(/^https?:\/\//, "")}
                 </a>{" "}
-                into Claude Code, Cursor, or Codex and say{" "}
+                into that editor and say{" "}
                 <span className="font-medium text-zinc-800">install</span>.
               </p>
             </div>

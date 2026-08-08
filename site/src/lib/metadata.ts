@@ -4,7 +4,7 @@ import { agentInstallGuide, homePageSeo, siteConfig, siteLogo } from "@/lib/site
 const DEFAULT_OG_IMAGE_PATH = "/og-default.png";
 
 export const DEFAULT_OG_IMAGE_ALT =
-  "Pysar — author-directed editorial engine for writers";
+  "Pysar — writing help that keeps you in charge";
 
 export function getSiteUrl(): string {
   return siteConfig.url.replace(/\/$/, "");

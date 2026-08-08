@@ -2,7 +2,7 @@ export const siteConfig = {
   name: "Pysar",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://getpysar.com",
   description:
-    "An author-directed editorial engine for your writing projects.",
+    "From a half-formed idea or a messy draft to a piece that sounds like you — you stay in charge; Pysar never posts for you.",
   github: "https://github.com/malyshev/pysar",
 } as const;
 
@@ -13,13 +13,13 @@ export const siteLogo = {
   height: 512,
 } as const;
 
-/** Homepage SERP + social copy. Does not replace siteConfig.description elsewhere. */
+/** Homepage SERP + social copy. Keep aligned with the hero subhead. */
 export const homePageSeo = {
   h1: "Bring your take. Ship a piece you trust.",
-  title: "Pysar — author-directed editorial engine for writers",
+  title: "Pysar — writing help that keeps you in charge",
   description:
-    "From a half-formed idea or a messy draft to a piece that sounds like you — shaped with your judgment still in the chair.",
-  eyebrow: "Author-directed editorial engine",
+    "From a half-formed idea or a messy draft to a piece that sounds like you — you stay in charge; Pysar never posts for you.",
+  eyebrow: "You keep the final say",
 } as const;
 
 /** Recommended macOS/Linux install — served from getpysar.com via stage-install. */

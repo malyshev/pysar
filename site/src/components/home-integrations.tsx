@@ -63,7 +63,7 @@ export function HomeIntegrations() {
         <div className="mx-auto mb-12.5 max-w-135 px-12.5">
           <div className="mb-10 space-y-2.5 text-center">
             <div className="inline-flex items-center justify-center rounded-full border-2 border-zinc-200 px-4 py-1.5 text-xs font-semibold uppercase text-primary">
-              Seamlessly Connected
+              Where you write
             </div>
 
             <h2 className="mb-2.5 text-section md:text-section-md lg:text-section-lg">
