@@ -49,10 +49,10 @@ func randomSuffixHex(n int) (string, error) {
 const (
 	// MaxPieceNameLength caps the whole piece directory name (readable
 	// prefix + random suffix). 60 total (47 for the prefix) matches
-	// real-world slug convention -- Medium's own "docker-for-developers-
-	// who-just-need-it-to-work" is 46 characters -- rather than the prior
-	// 120, which was technically correct but still an unreadable wall of
-	// text for what's supposed to be a recognizable directory name.
+	// real-world slug convention -- e.g. "docker-for-developers-who-just-
+	// need-it-to-work" is 46 characters -- rather than the prior 120, which
+	// was technically correct but still an unreadable wall of text for
+	// what's supposed to be a recognizable directory name.
 	MaxPieceNameLength = 60
 	suffixHexLen       = 12 // randomSuffixHex(6) always produces 12 hex chars
 )

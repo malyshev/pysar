@@ -1,7 +1,6 @@
 // Package intake validates and persists intake scaffolding for a piece
-// (dec-20260725-35fa2d24). Content shape is inspired by a prior writing POC
-// (brief/outline/angles/sources-stub) at CL1 only — Author fields and
-// --length caps are deliberately absent.
+// (dec-20260725-35fa2d24). Content shape is brief/outline/angles/
+// sources-stub; Author fields and --length caps are deliberately absent.
 package intake
 
 import (
@@ -31,9 +30,7 @@ const (
 
 // KillerSection is a section where the piece has a genuine informational
 // edge over existing coverage. Edge and Example are required, not optional
-// color -- a bare title gives a drafter nothing to write from. Shape
-// inspired by a prior writing POC's brief-assembly contract (CL1), adapted
-// here without its author/length fields.
+// color -- a bare title gives a drafter nothing to write from.
 type KillerSection struct {
 	Title   string `json:"title"`
 	Edge    string `json:"edge"`    // why this beats existing/competing coverage

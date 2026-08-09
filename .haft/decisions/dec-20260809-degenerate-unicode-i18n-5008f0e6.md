@@ -1,14 +1,14 @@
 ---
 id: dec-20260809-degenerate-unicode-i18n-5008f0e6
 kind: DecisionRecord
-version: 7
+version: 9
 status: active
 title: Unicode letters + Unicode word split (not only Fields)
 context: intake
 mode: standard
 valid_until: 2026-11-09
 created_at: 2026-08-09T08:20:27Z
-updated_at: 2026-08-09T09:53:26Z
+updated_at: 2026-08-09T14:38:11Z
 links:
   - ref: prob-20260809-976cff71
     type: based_on
@@ -156,3 +156,18 @@ Drift on bundle_test.go is incidental test additions from slug/und work. claim-0
 **Measurements:**
 - claim-001: TestDegenerate PASS
 - claim-002: TestValidateUkrainianIdeaNotDegenerateError PASS
+
+## Impact Measurement (2026-08-09)
+
+**Verdict:** accepted
+
+**Findings:**
+Drift on internal/intake/bundle.go is package-doc comment scrub only. Degenerate Unicode behavior and Validate path still hold — intake tests PASS.
+
+**Criteria met:**
+- [x] Ukrainian/CJK Degenerate contracts still hold
+- [x] Validate path still green
+
+**Measurements:**
+- claim-001: Degenerate Unicode fixtures still covered by passing intake tests
+- claim-002: Validate/save path still PASS; no new degenerate false positives from comment edit

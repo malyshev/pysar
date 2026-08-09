@@ -1,13 +1,13 @@
 ---
 id: dec-20260809-slug-transliterate-lang-v3-ed8def0c
 kind: DecisionRecord
-version: 6
+version: 8
 status: active
 title: Separate Transliterate(lang) API; Slug calls it when script ≠ Latin
 mode: standard
 valid_until: 2026-11-09
 created_at: 2026-08-09T09:21:59Z
-updated_at: 2026-08-09T09:53:28Z
+updated_at: 2026-08-09T14:38:12Z
 links:
   - ref: prob-20260809-59175eae
     type: based_on
@@ -141,3 +141,20 @@ Drift from und fallback wiring (SlugLang + tests) is compatible extension: uk of
 - claim-001: TestAllocateUniqueNameUkrainianPrefixNotTemplate PASS
 - claim-002: ASCII Slug goldens PASS
 - claim-003: schemes seam still present (uk + und)
+
+## Impact Measurement (2026-08-09)
+
+**Verdict:** accepted
+
+**Findings:**
+Drift on internal/intake/write.go is MaxPieceNameLength comment only. UA Latin prefix, ASCII goldens, and Transliterate registry seam still hold — intake + onboarding tests PASS.
+
+**Criteria met:**
+- [x] UA Latin prefixes still work
+- [x] ASCII unchanged
+- [x] Registry seam intact
+
+**Measurements:**
+- claim-001: UA Slug/AllocateUniqueName still covered by green tests
+- claim-002: ASCII Slug goldens still PASS
+- claim-003: Transliterate(lang) registry (uk+und) unchanged

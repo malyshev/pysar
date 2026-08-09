@@ -16,14 +16,11 @@
 // one of them has been resolved into a real [anchor](url) link, or the
 // pass isn't done.
 //
-// Adapted from a prior writing POC's SEO-optimizer discipline (citation
-// resolution, title/subtitle as two distinct jobs -- CTR vs. read-
-// completion --, scannability, outbound-link authority floor) but not
-// mirrored: that POC's checklist is Medium-specific (a rigid 5-slot tag
-// strategy, Medium's own SEO/curator model). Pysar targets more than one
-// platform, so the checklist here is platform-neutral -- tags and meta
-// fields the author can hand to whatever platform they're posting to,
-// with no forced slot count or platform-specific field names.
+// Owns citation resolution, title/subtitle as two distinct jobs (CTR vs.
+// read-completion), scannability, and an outbound-link authority floor.
+// The checklist is platform-neutral -- tags and meta fields the author can
+// hand to whatever platform they're posting to, with no forced slot count
+// or platform-specific field names.
 package seo
 
 import (
@@ -65,7 +62,7 @@ type Bundle struct {
 	Mode string `json:"mode,omitempty"`
 
 	// Tags is >=1 discovery keyword/topic tag for whatever platform the
-	// piece is headed to -- no fixed slot count or Medium-specific
+	// piece is headed to -- no fixed slot count or platform-specific
 	// taxonomy, unlike the reference implementation this is adapted from.
 	Tags []string `json:"tags"`
 

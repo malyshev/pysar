@@ -12,15 +12,12 @@ description: |
   the later pass undo the earlier one (dec-20260804-e3234e50). Writes the
   revision to a separate seo.md plus seo-checklist.md -- earlier stages
   (draft.md, staff-edit.md, sharpen.md) are never touched, same reasoning
-  as every other pass keeping its own file. Adapted from a prior writing
-  POC's SEO-optimizer discipline (citation resolution, title/subtitle as
-  two distinct jobs, outbound-link authority floor) but not mirrored:
-  that POC's checklist is Medium-specific (a rigid 5-slot tag taxonomy,
-  Medium's own SEO/curator model); this pass targets whatever platform the
-  author is posting to, with no forced slot count or platform-specific
-  field names. Opt-in only -- most pieces never need this; it exists for
-  pieces headed to a blog/web surface where search and link-preview
-  discovery matter.
+  as every other pass keeping its own file. Citation resolution,
+  title/subtitle as two distinct jobs, outbound-link authority floor;
+  platform-neutral checklist only -- no forced tag-slot count or
+  platform-specific field names. Opt-in only -- most pieces never need
+  this; it exists for pieces headed to a blog/web surface where search
+  and link-preview discovery matter.
 when_to_use: |
   Operator runs /ps-seo, says "make it discoverable" or "I need this to
   rank," or wants citations resolved into real links and a discoverability
@@ -67,12 +64,11 @@ This skill is **host-agnostic**. Prefer pysar MCP tools for anything
 mechanical (profile defaults, citation checking, disk writes, run-log). Do
 **not** use Bash/`ls`/`cat` or raw Write for piece files.
 
-Prior writing POCs are inspiration only (CL1); do not copy their Medium-
-specific 5-slot tag taxonomy, curator-eligibility framing, or FAQ-schema
-tricks. This project has no author registry -- `voice.md`/`style.md` (via
-`read_author_defaults`) is the whole mechanism, and title/subtitle tuning
-must preserve whatever voice forms it already encodes, not flatten them
-into generic SEO-template phrasing.
+Do not force a rigid tag-slot count, platform eligibility framing, or
+FAQ-schema tricks. This project has no author registry -- `voice.md`/
+`style.md` (via `read_author_defaults`) is the whole mechanism, and
+title/subtitle tuning must preserve whatever voice forms it already
+encodes, not flatten them into generic SEO-template phrasing.
 
 ## Args
 
@@ -160,7 +156,7 @@ markers -- that's this pass's one non-negotiable floor.
 
 ## Step 4 -- the checklist fields
 
-Fill in, platform-neutral (no fixed slot count, no Medium-specific
+Fill in, platform-neutral (no fixed slot count, no platform-specific
 taxonomy):
 
 - **`tags`** -- >=1 discovery keyword/topic tag, whatever actually helps

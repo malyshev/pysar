@@ -1,14 +1,14 @@
 ---
 id: dec-20260808-homepage-ai-install-signals-9eb5a6a9
 kind: DecisionRecord
-version: 7
+version: 9
 status: active
 title: Homepage / HTML-first signals (meta, visible AI block, JSON-LD)
 context: site
 mode: standard
 valid_until: 2026-11-08T00:00:00Z
 created_at: 2026-08-08T16:50:09Z
-updated_at: 2026-08-09T09:56:28Z
+updated_at: 2026-08-09T14:39:58Z
 links:
   - ref: prob-20260808-cabd5795
     type: based_on
@@ -151,3 +151,21 @@ Install.sh AI instruction still in site.ts; vitest green. Live multi-host paste 
 
 **Measurements:**
 - claim-001/002: site.ts install path + vitest 7/7
+
+## Impact Measurement (2026-08-09)
+
+**Verdict:** partial
+
+**Findings:**
+site.ts drift incidental (Cursor plugin CTA on shared file). claim-002 holds — AI install not in hero. claim-001 still unmet: no fresh >=2/3 host URL-drop install smokes this pass; carrier path still published.
+
+**Criteria met:**
+- [x] Homepage AI signal secondary to hero
+- [x] install.sh carrier still co-located in site.ts
+
+**Criteria NOT met:**
+- [ ] Live host agent smoke >=2 of 3 using install.sh
+
+**Measurements:**
+- claim-002: home-hero brand-first; install in metaSummary
+- claim-001: host smokes not re-run (threshold unmet)

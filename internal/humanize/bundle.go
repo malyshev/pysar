@@ -4,23 +4,20 @@
 // ran) is touched -- each stage keeps its own file, same reasoning as
 // staffedit and sharpen.
 //
-// Adapted from a prior writing POC's text-humanizer discipline: hedge-
-// stack removal, stock-transition and throat-clearing strip, section/
-// paragraph/bullet symmetry variance, sentence-rhythm variance -- these
-// are genuine writing-quality tells regardless of whether the draft came
-// from a person or a model, so removing them is legitimate editorial
-// craft, not detection evasion.
+// Hedge-stack removal, stock-transition and throat-clearing strip, section/
+// paragraph/bullet symmetry variance, sentence-rhythm variance -- these are
+// genuine writing-quality tells regardless of whether the draft came from a
+// person or a model, so removing them is legitimate editorial craft, not
+// detection evasion.
 //
-// Deliberately excludes the parts of that POC's own aggressive framing
-// (and a since-declined draft prompt with the same shape) that serve no
-// reader and exist only to defeat AI-detection classifiers: no deliberate
-// grammar-breaking, no leaving thoughts incomplete, no "embracing
-// messiness" as a goal, no skipping explanations for effect. The POC's own
-// default mode already rules these out ("no deliberate grammar-breaking");
-// this package doesn't implement them even as an opt-in mode. The
-// author-facing goal is "sounds like you, not the machine" -- voice
-// authenticity, not statistical fingerprint scrambling -- and that goal
-// does not require making the prose worse to read.
+// Deliberately excludes techniques (including a since-declined draft prompt
+// with that shape) that serve no reader and exist only to defeat
+// AI-detection classifiers: no deliberate grammar-breaking, no leaving
+// thoughts incomplete, no "embracing messiness" as a goal, no skipping
+// explanations for effect -- not even as an opt-in. The author-facing goal
+// is "sounds like you, not the machine" -- voice authenticity, not
+// statistical fingerprint scrambling -- and that goal does not require
+// making the prose worse to read.
 package humanize
 
 import (

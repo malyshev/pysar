@@ -1,13 +1,13 @@
 ---
 id: dec-20260718-eafefad2
 kind: DecisionRecord
-version: 14
+version: 15
 status: active
 title: Typed-field discipline -- reuse haft's existing congruence_level / counterargument / why_not_others fields as the enforcement surface
 mode: standard
 valid_until: 2026-11-06T09:33:08Z
 created_at: 2026-07-18T06:19:46Z
-updated_at: 2026-08-08T09:48:31Z
+updated_at: 2026-08-09T14:39:56Z
 links:
   - ref: prob-20260718-7b559d43
     type: based_on
@@ -162,3 +162,21 @@ Target decision text no longer uses haft-mirroring as primary justification; bin
 **Measurements:**
 - 239680d4 title=Go single static binary
 - why_selected focuses binary_distribution_fit
+
+## Impact Measurement (2026-08-09)
+
+**Verdict:** partial
+
+**Findings:**
+Drift on dec-20260718-239680d4.md is Medium brand scrub; claim-001 still holds (no haft-mirroring title; binary_distribution_fit preserved). claim-002 interim audit clean through 2026-08-09 but verify_after is 2026-09-18 — not final window close.
+
+**Criteria met:**
+- [x] 239680d4 framing still corrected
+- [x] Interim reference-agnosticism audit clean
+
+**Criteria NOT met:**
+- [ ] Full two-month claim-002 window through 2026-09-18
+
+**Measurements:**
+- claim-001: title/rationale still non-haft-mirroring after scrub
+- claim-002: interim — zero Medium brand; no new sole-reference why_selected above CL1

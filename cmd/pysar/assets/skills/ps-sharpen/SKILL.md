@@ -13,16 +13,13 @@ description: |
   satisfying prose, not necessarily better writing). Writes the revision
   to a separate sharpen.md -- earlier stages (draft.md, staff-edit.md) are
   never touched, same reasoning as staff-edit keeping its own file.
-  Deliberately narrower than a prior writing POC's SHARPEN phase: that
-  POC's "consumability" audits (metaphor budget, paragraph density) and
-  opener concreteness already live in this project's /ps-staff-edit
-  (water/filler + readability + stakes checks); that POC's numeric rhythm
-  floor is explicitly not reproduced here, replaced by the expression
-  check above. Agent-agnostic: no author registry. SEO/citation-resolution/
+  Consumability audits (metaphor budget, paragraph density) and opener
+  concreteness already live in /ps-staff-edit; this pass does not add a
+  numeric rhythm floor -- the expression check above replaces that kind of
+  quota. Agent-agnostic: no author registry. SEO/citation-resolution/
   title-for-search tuning is a separate, opt-in pass (/ps-seo, runs after
   this one) -- not this pass's job. No AI-detection-evasion rhythm-breaking
-  (that POC's HUMANIZE phase -- not built, and not a goal this project has
-  any interest in).
+  (not a goal this project has any interest in).
 when_to_use: |
   Operator runs /ps-sharpen, says "the intro doesn't land," or wants a
   final reader-experience pass before calling a piece complete.

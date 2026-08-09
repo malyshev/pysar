@@ -1,12 +1,11 @@
 // Package draft validates and persists /ps-draft output: the first full
-// draft.md for an existing piece. Content craft (voice, structure, citation
-// hygiene, consumability, worked-example rule) is adapted from a prior
-// writing POC's article-writer discipline (CL1) -- author-registry
-// resolution and Medium-specific publish ceremony (SEO fields, tags, cover
-// image, Boost optimization, cross-article variance scanning) are
+// draft.md for an existing piece. Content craft covers voice, structure,
+// citation hygiene, consumability, and the worked-example rule.
+// Author-registry resolution and platform-specific publish ceremony (SEO
+// fields, tags, cover image, cross-article variance scanning) are
 // deliberately absent: this project has no author registry (voice.md/
 // style.md via /ps-onboard is the whole mechanism) and targets more than
-// one surface, so it doesn't own Medium's UI checklist.
+// one surface, so it doesn't own a platform publish checklist.
 //
 // draft.md is channel-agnostic writing, not a finished channel artifact --
 // its [^shortname] markers stay unresolved here on purpose. Resolving them
@@ -86,7 +85,7 @@ func StripCode(body string) string {
 // are properties of a *blog-shaped* target surface, and this project also
 // targets SurfaceLetter (internal/editorial/state.go), which has no
 // heading hierarchy at all. A mechanical "exactly one H1" gate here would
-// just be Medium's own structural constraint re-smuggled in as "universal"
+// just be a blog-surface structural constraint re-smuggled in as "universal"
 // -- the same class of surface-specific ceremony this package's own doc
 // comment says is deliberately excluded. Heading structure for blog-shaped
 // pieces is SKILL.md-level guidance instead, same tier as the

@@ -8,15 +8,14 @@ description: |
   draft.md is never touched, so the first draft and the edited version can
   be compared (or shown side by side in a future UI), the same reasoning
   that keeps brief/outline/angles/draft as separate files instead of one
-  evolving document. Runs after /ps-draft. Adapted from a prior writing
-  POC's staff-editor discipline, folded together with what that POC splits
-  into a separate downstream engagement pass (consumability, sentence
-  rhythm), since this project's pipeline has no such second pass yet --
-  readability is one of this pass's own checks, not a future command.
-  Preserves [^shortname] citation markers (never resolves them to links);
-  never touches brief.md/outline.md/angles.md/sources.md/draft.md.
-  Agent-agnostic: no author registry, no Medium-specific publish ceremony,
-  no cross-article corpus-variance scanning.
+  evolving document. Runs after /ps-draft. Stakes, brief alignment, failure
+  modes, honest scope, close memorability, technical sanity, water/filler,
+  and readability (including consumability and sentence rhythm) live here
+  as this pass's own checks. Preserves [^shortname] citation markers
+  (never resolves them to links); never touches
+  brief.md/outline.md/angles.md/sources.md/draft.md. Agent-agnostic: no
+  author registry, no platform-specific publish ceremony, no cross-article
+  corpus-variance scanning.
 when_to_use: |
   Operator runs /ps-staff-edit, asks "is this argument sound?", or wants a
   senior-editor pass on an existing draft before calling it done.
@@ -38,9 +37,8 @@ someone with editorial judgment reads the whole thing end to end and either
 signs off or fixes it. Readability is part of that signoff, not a separate
 later command: a piece that's substantively sound but reads like a washing-
 machine manual — flat, enumerated, no rhythm — hasn't actually passed staff
-edit. This project's pipeline has no separate downstream engagement pass
-(no SHARPEN/HUMANIZE equivalent), so the readability check that a prior
-writing POC splits into a later phase lives here instead.
+edit. Readability is part of this signoff, not deferred to a later
+engagement-only pass.
 
 **The revision goes to `staff-edit.md`, not `draft.md`.** Every other piece
 file is named for its content, not overwritten in place as it evolves —
@@ -54,14 +52,13 @@ This skill is **host-agnostic**. Prefer pysar MCP tools for anything
 mechanical (profile defaults, citation checking, disk writes, run-log). Do
 **not** use Bash/`ls`/`cat` or raw Write for piece files.
 
-Prior writing POCs are inspiration only (CL1); do not copy their author
-registry or Medium-specific publish ceremony. This project has no author
-registry — `voice.md`/`style.md` (via `read_author_defaults`, the same tool
-`/ps-draft` and `/ps-intake` use) is the whole mechanism, including its own
-`banned_phrases` — reuse those, don't hardcode a different list. No
-cross-piece corpus-variance scanning (opener/closing forbiddance windows
-against recent pieces) — no such mechanism exists here; edit each piece on
-its own merits.
+Do not invent an author registry or a platform publish checklist. This
+project has no author registry — `voice.md`/`style.md` (via
+`read_author_defaults`, the same tool `/ps-draft` and `/ps-intake` use) is
+the whole mechanism, including its own `banned_phrases` — reuse those,
+don't hardcode a different list. No cross-piece corpus-variance scanning
+(opener/closing forbiddance windows against recent pieces) — no such
+mechanism exists here; edit each piece on its own merits.
 
 ## Args
 
@@ -258,7 +255,7 @@ jargon, no permission theater. Stop.
   `style.md` via `read_author_defaults`
 - Build or reuse an author registry, or scan a cross-piece corpus for
   opener/closing variance — neither mechanism exists in this project
-- Write a Medium-specific status field or publish checklist — this project
+- Write a platform-specific status field or publish checklist — this project
   has neither
 - Touch `brief.md`, `outline.md`, `angles.md`, or `sources.md`
 - Treat readability or water/filler removal as optional or defer either to

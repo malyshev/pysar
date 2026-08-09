@@ -3,22 +3,19 @@
 // why. Neither draft.md nor staff-edit.md (if present) is touched -- each
 // stage keeps its own file, same reasoning as staffedit.
 //
-// Adapted from a prior writing POC's engagement-editor discipline (opener
-// hook, key-insight elevation, edge-section expansion, worked-example
-// check, thesis/arc consistency) -- deliberately narrower than that POC's
-// own SHARPEN phase, since this project's /ps-staff-edit already absorbed
-// what that POC calls "consumability" (metaphor budget, paragraph density,
-// rhythm) and opener concreteness. What's left here is the piece's reader-
-// experience arc specifically: does the opening hook, are the pieces's own
-// best findings elevated instead of buried, does the ending resolve what
-// the opening promised -- staff-edit already established that the argument
-// is sound; this pass checks that it lands as a read.
+// Opener hook, key-insight elevation, edge-section expansion, worked-example
+// check, thesis/arc consistency. Consumability (metaphor budget, paragraph
+// density, rhythm) and opener concreteness already live in /ps-staff-edit;
+// what's left here is the piece's reader-experience arc specifically: does
+// the opening hook, are the piece's own best findings elevated instead of
+// buried, does the ending resolve what the opening promised -- staff-edit
+// already established that the argument is sound; this pass checks that it
+// lands as a read.
 //
 // Also deliberately absent here: SEO/citation-resolution/title-for-search
-// tuning (a prior writing POC's OPTIMIZE phase) -- that's internal/seo's
-// job now, a separate opt-in pass that runs after this one, never this
-// pass's. AI-detection-evasion rhythm-breaking (that POC's HUMANIZE phase)
-// remains unbuilt -- not a quality goal this project has any interest in.
+// tuning -- that's internal/seo's job, a separate opt-in pass that runs
+// after this one. AI-detection-evasion rhythm-breaking is not a quality
+// goal this project has any interest in.
 package sharpen
 
 import (

@@ -8,14 +8,12 @@ description: |
   citations go through [^shortname] markers matching real sources from
   ps-research and stay unresolved; turning those into inline links (or any
   other channel-specific packaging: SEO metadata, a formatted letter) is a
-  later, optional, separate concern this skill doesn't own. Adapted from a
-  prior writing POC's article-writer discipline (citation hygiene,
-  consumability, worked-example rule, thesis-consistency), agent-agnostic:
+  later, optional, separate concern this skill doesn't own. Agent-agnostic:
+  citation hygiene, consumability, worked-example rule, thesis-consistency;
   no author registry (reuses this project's own voice.md/style.md via
-  read_author_defaults), no Medium-specific publish ceremony (SEO fields,
-  tags, cover image, Boost optimization, cross-article corpus-variance
-  scanning) -- this project targets more than one surface and doesn't own
-  that ceremony.
+  read_author_defaults), no platform-specific publish ceremony (SEO fields,
+  tags, cover image, cross-article corpus-variance scanning) -- this project
+  targets more than one surface and doesn't own that ceremony.
 when_to_use: |
   Operator runs /ps-draft, points at an existing piece to write its first
   full draft, or says "write it from the brief" / gives a rough brief
@@ -44,14 +42,13 @@ mechanical (profile defaults, citation checking, disk writes, run-log). Do
 **not** use Bash/`ls`/`cat` or raw Write for piece files — that burns tokens
 and triggers permission prompts the MCP tools exist to avoid.
 
-Prior writing POCs are inspiration only (CL1); do not copy their author
-registry or Medium-specific publish ceremony. This project has no author
-registry — `voice.md`/`style.md` (via `read_author_defaults`, the same tool
-`/ps-intake` uses) is the whole mechanism. This project also targets more
-than one surface (blog, letter, and future kinds) — it doesn't own a
-Medium-UI checklist (SEO title, tags, cover image, member-only flag,
-distribution target) or a cross-piece corpus-variance scanner; neither is
-built here.
+Do not invent an author registry or a platform publish checklist. This
+project has no author registry — `voice.md`/`style.md` (via
+`read_author_defaults`, the same tool `/ps-intake` uses) is the whole
+mechanism. This project also targets more than one surface (blog, letter,
+and future kinds) — it doesn't own a publish checklist (SEO title, tags,
+cover image, distribution target) or a cross-piece corpus-variance
+scanner; neither is built here.
 
 ## Two modes
 
@@ -107,7 +104,7 @@ the operator's own profile doesn't have.
 ## Step 2 — front-load the hook
 
 **Heading shape depends on the piece's target surface — this project isn't
-Medium-only, so this isn't one fixed rule.** For a blog-shaped piece: line 1
+platform-only, so this isn't one fixed rule.** For a blog-shaped piece: line 1
 is the title (`# `), the line right under it is an italic subtitle (`*...*`)
 that sets the stake, not a restatement of the title. For a piece with no
 heading hierarchy at all (e.g. a letter), skip this entirely — don't impose
@@ -194,9 +191,9 @@ Stop.
   doesn't have — use `voice.md`/`style.md` via `read_author_defaults`, the
   same source `/ps-intake` already reads
 - Build or reuse an author registry — this project has none
-- Write a Medium-specific publish checklist (SEO title, tags, cover image,
-  member-only flag, distribution target) — this project targets more than
-  one surface and doesn't own that ceremony
+- Write a platform-specific publish checklist (SEO title, tags, cover image,
+  distribution target) — this project targets more than one surface and
+  doesn't own that ceremony
 - Scan a cross-piece corpus for opener/closing variance — no such mechanism
   exists here; draft each piece on its own merits
 - Put a raw URL in prose — cite via `[^shortname]`

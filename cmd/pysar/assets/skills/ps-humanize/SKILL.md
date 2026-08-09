@@ -9,18 +9,15 @@ description: |
   revision to a separate humanize.md -- earlier stages are never touched,
   same reasoning as staff-edit, sharpen, and seo. When seo.md exists, its
   resolved [anchor](url) links are preserved verbatim -- this pass edits
-  prose around them, never inside them. Adapted from a prior writing POC's
-  text-humanizer discipline, deliberately excluding the parts of that
-  POC's own aggressive framing (and a since-declined prompt with the same
-  shape) that serve no reader and exist only to defeat AI-detection
-  classifiers: no deliberate grammar-breaking, no leaving thoughts
-  incomplete, no "embracing messiness" as a goal, no skipping explanations
-  for effect. That POC's own default mode already rules these out; this
-  skill doesn't implement them even as an opt-in. The goal is voice
-  authenticity, not statistical fingerprint scrambling, and it doesn't
-  require making the prose worse to read. Agent-agnostic: reuses the
-  operator's own voice.md/style.md banned_phrases instead of a hardcoded
-  list, no Medium-specific curator-eligibility framing.
+  prose around them, never inside them. Deliberately excludes techniques
+  that serve no reader and exist only to defeat AI-detection classifiers
+  (including a since-declined prompt with that shape): no deliberate
+  grammar-breaking, no leaving thoughts incomplete, no "embracing
+  messiness" as a goal, no skipping explanations for effect -- not even
+  as an opt-in. The goal is voice authenticity, not statistical
+  fingerprint scrambling, and it doesn't require making the prose worse
+  to read. Agent-agnostic: reuses the operator's own voice.md/style.md
+  banned_phrases instead of a hardcoded list.
 when_to_use: |
   Operator runs /ps-humanize, says "it reads like AI," or wants a final
   voice-authenticity pass before calling a piece done.
@@ -39,11 +36,11 @@ model output — hedge stacks, stock connective tissue, suspiciously uniform
 structure — that make a piece sound like nobody in particular wrote it.
 
 **What this is not.** This is not an AI-detector-evasion tool, and it will
-not become one. A prior writing POC's own HUMANIZE phase — and a draft
-prompt this project considered and declined — both lean toward techniques
-whose only function is confusing detection classifiers: deliberately
-broken grammar, incomplete thoughts, "embracing messiness." None of that
-serves a reader; broken grammar reads worse regardless of who wrote it.
+not become one. A draft prompt this project considered and declined leaned
+toward techniques whose only function is confusing detection classifiers:
+deliberately broken grammar, incomplete thoughts, "embracing messiness."
+None of that serves a reader; broken grammar reads worse regardless of who
+wrote it.
 This skill fixes things that are genuinely bad writing independent of
 source — a hedge stack (*"may potentially"*) is weak whether a nervous
 human or a model wrote it — and stops there. If the operator's own voice
@@ -220,6 +217,6 @@ theater. Stop.
   sanity, water/filler, readability, opener hook, key-insight elevation,
   killer-section weight, worked examples, or arc completion — that's
   `/ps-staff-edit`'s and `/ps-sharpen`'s job
-- Build or reuse a Medium-specific curator-eligibility density gate — no
-  such mechanism exists in this project
+- Build or reuse a platform-eligibility density gate — no such mechanism
+  exists in this project
 - Call a piece path a "slug"

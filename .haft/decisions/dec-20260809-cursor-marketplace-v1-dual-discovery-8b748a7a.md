@@ -1,14 +1,14 @@
 ---
 id: dec-20260809-cursor-marketplace-v1-dual-discovery-8b748a7a
 kind: DecisionRecord
-version: 5
+version: 6
 status: active
 title: In-monorepo Cursor Plugin package (skills+MCP), binary preinstalled
 context: cursor-marketplace
 mode: standard
 valid_until: 2026-11-09T00:00:00Z
 created_at: 2026-08-09T09:20:30Z
-updated_at: 2026-08-09T11:30:48Z
+updated_at: 2026-08-09T14:40:00Z
 links:
   - ref: prob-20260809-d4ae8601
     type: based_on
@@ -163,3 +163,20 @@ Local dogfood prediction holds after real-directory copy into ~/.cursor/plugins/
 - MCPs: pysar Plugin connected
 - draft ~1200 words then editorial pass
 - Try in chat responded with Pysar overview + workflow intent
+
+## Impact Measurement (2026-08-09)
+
+**Verdict:** accepted
+
+**Findings:**
+site.ts drift incidental. claim-001 closed by note-20260809-839bb4dd local dogfood (Plugin MCP connected; editorial workflow via plugin skills+MCP). claim-002/003: single plugins/pysar package identity matches site CTA.
+
+**Criteria met:**
+- [x] Local Plugin MCP dogfood without hand mcp.json
+- [x] Single V1 package
+- [x] Site CTA same identity
+
+**Measurements:**
+- claim-001: local plugin dogfood succeeded (note-20260809-839bb4dd)
+- claim-002: single package path plugins/pysar
+- claim-003: site cursorPlugin.name=pysar

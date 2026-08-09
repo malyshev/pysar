@@ -1,10 +1,9 @@
 // Package research validates and persists /ps-research output: real,
 // tiered sources added to an existing piece, or gathered standalone before
 // a piece exists. Source tiers, the authority floor, citation hygiene, and
-// the stop criterion are adapted from a prior writing POC's
-// research-sourcing discipline (CL1) -- kept as proven, not watered down.
-// Never touches thesis/killer_sections/counterintuitive: "we found
-// sources; your take stayed yours."
+// the stop criterion are first-class contracts here. Never touches
+// thesis/killer_sections/counterintuitive: "we found sources; your take
+// stayed yours."
 package research
 
 import (
@@ -67,8 +66,8 @@ type Bundle struct {
 	// ExpertLens is the discipline/practitioner viewpoint judging source
 	// authority tier for this topic -- reused from the piece's own
 	// brief.md when PiecePath is set, determined fresh otherwise. This
-	// is the agent-agnostic replacement for a prior POC's fixed
-	// per-topic-family authority table.
+	// is how this package stays agent-agnostic about authority standards
+	// instead of shipping a fixed per-topic-family table.
 	ExpertLens string `json:"expert_lens"`
 
 	// TopicFamilyNote is set only when ExpertLens doesn't map cleanly to

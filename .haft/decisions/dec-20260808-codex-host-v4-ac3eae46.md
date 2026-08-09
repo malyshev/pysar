@@ -26,7 +26,7 @@ links:
 - Extend existing hostAdapter registry from dec-20260808-f3001106 — do not invent a third dispatch shape
 - One host-neutral skill corpus remains the source of truth; Codex packaging may differ (paths, MCP TOML/dialect, skill install dir) but editorial skill bodies must not fork into Codex-only prose
 - Piece I/O remains via pysar MCP (dec-20260719-fa0366dd) — no regression to agent Write/Bash for .pysar/**
-- Codex packaging must be grounded in verified Codex/haft CL1 conventions (paths, config format) before inventing a dialect — no Medium copy-paste, no guess-from-memory
+- Codex packaging must be grounded in verified Codex/haft CL1 conventions (paths, config format) before inventing a dialect — no prior-POC copy-paste, no guess-from-memory
 - Do not change editorial Pass semantics, piece file formats, or Claude/Cursor golden init behavior
 
 **Acceptance:** From a clean scratch directory, `pysar init --codex` exits 0 and writes a Codex-host project such that: (1) Codex can launch `pysar serve` as an MCP server for that project without hand-editing config (using Codex's native config dialect, not Claude's .mcp.json or Cursor's .cursor/mcp.json); (2) the operator can invoke an agentic entry equivalent to Claude/Cursor /ps (and at least stage skills intake through humanize + onboarding) with instructions that match the host-agnostic skill bodies already shipped; (3) piece persistence still goes through pysar MCP tools (not raw Write/Bash for .pysar/**); (4) `pysar init --claude` and `pysar init --cursor` behavior is unchanged; (5) a short smoke: open/run the project in Codex with a one-sentence idea and observe a provisional piece directory under .pysar/pieces/ with brief.md written via MCP.

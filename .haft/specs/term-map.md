@@ -97,7 +97,7 @@ entries:
       authorial voice -- a distinct voice means a distinct initialized
       project, never a role or persona assigned within one project. There
       is no cross-project author/persona registry (dec-20260718-e84221af).
-      Unlike Medium's POC, which assigns per-article authors from a shared
+      Unlike a prior writing POC, which assigns per-article authors from a shared
       authors/ registry serving many personas on one platform, Pysar serves
       one author's voice per initialized project -- a cross-project registry
       would be redundant scope, not a missing feature.
