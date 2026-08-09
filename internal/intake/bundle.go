@@ -7,6 +7,7 @@ package intake
 import (
 	"fmt"
 	"strings"
+	"unicode"
 	"unicode/utf8"
 
 	"pysar/internal/validation"
@@ -100,11 +101,13 @@ type Bundle struct {
 type ValidationError = validation.Error
 
 // Degenerate reports mechanical cases where intake must block (empty,
-// whitespace-only, a single word regardless of length, or no extractable
-// letters). An idea is supposed to be a sentence or short paragraph; a
-// single token never qualifies, long or short. Broader semantic emptiness /
-// self-contradiction remains an agent judgment before calling
-// save_intake_bundle.
+// whitespace-only, a single word-like unit, or too few extractable letters).
+// Letter detection is Unicode-wide (dec-20260809-degenerate-unicode-i18n-5008f0e6),
+// not ASCII a–z. Word-like units are whitespace-separated letter runs for
+// alphabetic scripts, and each Han/Hiragana/Katakana/Hangul letter for
+// scriptio continua — so Japanese/Chinese without spaces are not false
+// rejects. Broader semantic emptiness / self-contradiction remains an agent
+// judgment before calling save_intake_bundle.
 func Degenerate(idea string) bool {
 	trimmed := strings.TrimSpace(idea)
 	if trimmed == "" {
@@ -113,17 +116,46 @@ func Degenerate(idea string) bool {
 	if utf8.RuneCountInString(trimmed) < 3 {
 		return true
 	}
-	fields := strings.Fields(trimmed)
-	if len(fields) == 1 {
-		return true
-	}
 	letters := 0
 	for _, r := range trimmed {
-		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') {
+		if unicode.IsLetter(r) {
 			letters++
 		}
 	}
-	return letters < 3
+	if letters < 3 {
+		return true
+	}
+	return ideaUnits(trimmed) < 2
+}
+
+// scriptioContinuaLetter is true for scripts that commonly write without
+// spaces between words. Each such letter counts as its own idea unit.
+func scriptioContinuaLetter(r rune) bool {
+	return unicode.Is(unicode.Han, r) ||
+		unicode.Is(unicode.Hiragana, r) ||
+		unicode.Is(unicode.Katakana, r) ||
+		unicode.Is(unicode.Hangul, r)
+}
+
+// ideaUnits counts mechanical word-like units (dec-20260809-degenerate-unicode-i18n-5008f0e6).
+func ideaUnits(s string) int {
+	units := 0
+	inAlphabetic := false
+	for _, r := range s {
+		switch {
+		case scriptioContinuaLetter(r):
+			units++
+			inAlphabetic = false
+		case unicode.IsLetter(r):
+			if !inAlphabetic {
+				units++
+				inAlphabetic = true
+			}
+		default:
+			inAlphabetic = false
+		}
+	}
+	return units
 }
 
 // Validate checks completeness for a durable intake write. Name is

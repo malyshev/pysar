@@ -19,11 +19,51 @@ func TestDegenerate(t *testing.T) {
 		{"xyz", true},
 		{"asdfasdfasdfasdf", true},
 		{"write something about AI security for parents", false},
+		// Cyrillic: ASCII letter count used to false-reject these.
+		{"привет", true}, // single alphabetic unit
+		{"привет мир", false},
+		{"Напиши статтю про звичку деплоїти щодня", false},
+		{"ок да", false},
+		// Japanese without ASCII spaces: each kana/kanji is a unit.
+		{"これはテストです", false},
+		{"あいう", false}, // three kana units, three letters
+		{"あい", true},    // only two letters/units
+		// Mixed CJK + Latin still accepted.
+		{"写一篇关于 AI 的文章", false},
 	}
 	for _, tc := range cases {
 		if got := Degenerate(tc.in); got != tc.want {
 			t.Fatalf("Degenerate(%q)=%v want %v", tc.in, got, tc.want)
 		}
+	}
+}
+
+func TestIdeaUnitsScriptioContinua(t *testing.T) {
+	if got := ideaUnits("これはテストです"); got < 2 {
+		t.Fatalf("ideaUnits(japanese)=%d want >= 2", got)
+	}
+	if got := ideaUnits("привет"); got != 1 {
+		t.Fatalf("ideaUnits(cyrillic single)=%d want 1", got)
+	}
+	if got := ideaUnits("привет мир"); got != 2 {
+		t.Fatalf("ideaUnits(cyrillic two)=%d want 2", got)
+	}
+}
+
+func TestValidateUkrainianIdeaNotDegenerateError(t *testing.T) {
+	// Prediction 2 of dec-20260809-degenerate-unicode-i18n-5008f0e6: Validate
+	// (MCP save path) must not report degenerate for a real Ukrainian idea.
+	b := Bundle{
+		Idea:      "Напиши статтю про звичку деплоїти щодня",
+		EntryMode: EntryIdea,
+		POVSource: POVAuthorPractitioner,
+	}
+	err := Validate(b)
+	if err == nil {
+		t.Fatal("expected missing-field errors, got nil")
+	}
+	if strings.Contains(err.Error(), "degenerate") {
+		t.Fatalf("Ukrainian idea should not be degenerate, got: %v", err)
 	}
 }
 
@@ -45,6 +85,46 @@ func TestAllocateUniqueNameCapsLengthWithoutShorteningTheSuffix(t *testing.T) {
 	suffix := name[len(name)-suffixHexLen:]
 	if _, err := hex.DecodeString(suffix); err != nil {
 		t.Fatalf("expected the trailing %d chars to be an intact hex suffix, got %q", suffixHexLen, suffix)
+	}
+}
+
+func TestAllocateUniqueNameUkrainianPrefixNotTemplate(t *testing.T) {
+	// Prediction 1 of dec-20260809-slug-transliterate-lang-v3-ed8def0c.
+	root := t.TempDir()
+	name, err := AllocateUniqueName(root, "Напиши статтю про звичку деплоїти щодня")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.HasPrefix(name, "template-") || name == "template" {
+		t.Fatalf("Ukrainian idea allocated opaque name %q", name)
+	}
+	if !strings.HasPrefix(name, "napyshy-stattiu-pro-zvychku-deploity-shchodnia-") {
+		t.Fatalf("allocated name %q missing expected Latin prefix", name)
+	}
+}
+
+func TestAllocateUniqueNameJapaneseAndArabicNotTemplate(t *testing.T) {
+	// Predictions of dec-20260809-slug-und-fallback-v2-249eddce.
+	cases := []struct {
+		title  string
+		prefix string
+	}{
+		{"これはテストです", "korehatesutodesu-"},
+		{"東京の習慣", "dong-jing-noxi-guan-"},
+		{"مقال عن العادات", "mql-n-l-dt-"},
+	}
+	root := t.TempDir()
+	for _, tc := range cases {
+		name, err := AllocateUniqueName(root, tc.title)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if strings.HasPrefix(name, "template-") || name == "template" {
+			t.Fatalf("%q allocated opaque name %q", tc.title, name)
+		}
+		if !strings.HasPrefix(name, tc.prefix) {
+			t.Fatalf("allocated name %q missing prefix %q", name, tc.prefix)
+		}
 	}
 }
 

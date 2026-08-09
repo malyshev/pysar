@@ -137,11 +137,41 @@ func TemplatesDir(home string, kind ProfileKind) string {
 	return filepath.Join(home, ".pysar", "templates", string(kind))
 }
 
-// Slug turns an arbitrary template display name (e.g. "Measured plain
-// English -- speakable, understated, general audience") into a safe
-// filename stem: lowercased, runs of non [a-z0-9] characters collapsed to a
-// single '-', leading/trailing '-' trimmed. Never returns an empty string.
+// Slug turns an arbitrary display name into a safe filename stem: non-Latin
+// letters are transliterated when a scheme is known (see Transliterate), then
+// lowercased with runs of non [a-z0-9] collapsed to '-', leading/trailing
+// '-' trimmed. Never returns an empty string.
+//
+// Callers omit language; Cyrillic selects "uk" (CMU №55). Other non-Latin
+// scripts fall back to the non-official "und" approximator. Latin-only inputs
+// keep the prior ASCII collapse behavior
+// (dec-20260809-slug-transliterate-lang-v3-ed8def0c,
+// dec-20260809-slug-und-fallback-v2-249eddce).
 func Slug(name string) string {
+	return SlugLang(name, "")
+}
+
+// SlugLang is Slug with an explicit language tag for Transliterate. Empty lang
+// uses detectTransliterationLang, then "und" if non-Latin letters remain.
+// An explicit unknown lang stays identity (no und) so callers cannot invent
+// officialness by accident.
+func SlugLang(name, lang string) string {
+	explicit := strings.TrimSpace(lang) != ""
+	if hasNonLatinLetter(name) {
+		if !explicit {
+			lang = detectTransliterationLang(name)
+		}
+		if lang != "" {
+			name = Transliterate(name, lang)
+		}
+		if !explicit && hasNonLatinLetter(name) {
+			name = Transliterate(name, "und")
+		}
+	}
+	return asciiSlug(name)
+}
+
+func asciiSlug(name string) string {
 	var b strings.Builder
 	lastDash := true // suppresses a leading '-'
 	for _, r := range strings.ToLower(name) {
