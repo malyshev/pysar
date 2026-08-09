@@ -1,14 +1,14 @@
 ---
 id: dec-20260809-cursor-marketplace-v1-dual-discovery-8b748a7a
 kind: DecisionRecord
-version: 3
+version: 5
 status: active
 title: In-monorepo Cursor Plugin package (skills+MCP), binary preinstalled
 context: cursor-marketplace
 mode: standard
 valid_until: 2026-11-09T00:00:00Z
 created_at: 2026-08-09T09:20:30Z
-updated_at: 2026-08-09T09:56:30Z
+updated_at: 2026-08-09T11:30:48Z
 links:
   - ref: prob-20260809-d4ae8601
     type: based_on
@@ -140,3 +140,26 @@ claim-002 single V1 package + plugin tests PASS. claim-003 site CTA identity poi
 **Measurements:**
 - claim-002/003: package + site CURSOR_PLUGIN identity
 - claim-001: no fresh live plugin smoke
+
+## Impact Measurement (2026-08-09)
+
+**Verdict:** partial
+
+**Findings:**
+Local dogfood prediction holds after real-directory copy into ~/.cursor/plugins/local/pysar (symlink rejected by Cursor). Plugins lists Pysar; MCPs shows pysar Plugin tag green/connected; editorial workflow produced first full draft (~1200 words) and continued to editorial pass; Try in chat overview worked. Marketplace submit and site full-plugin Install deeplink still open.
+
+**Criteria met:**
+- [x] Local ~/.cursor/plugins/local dogfood: Connected Plugin MCP + writing workflow via skills/MCP
+- [x] Same V1 package shape used for dogfood (plugins/pysar content)
+
+**Criteria NOT met:**
+- [ ] Package submitted to cursor.com/marketplace/publish
+- [ ] getpysar.com Install in Cursor as same full plugin install path (not only MCP deeplink)
+
+**Measurements:**
+- note-20260809-839bb4dd dogfood success
+- note-20260809-dbc1ffcf symlink rejection
+- Plugins UI: Pysar installed
+- MCPs: pysar Plugin connected
+- draft ~1200 words then editorial pass
+- Try in chat responded with Pysar overview + workflow intent

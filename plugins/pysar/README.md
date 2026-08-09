@@ -36,15 +36,24 @@ different products.
 
 ### Local dogfood (`~/.cursor/plugins/local`)
 
-From a clone of this repository:
+From the **pysar monorepo root** (not a writing project):
 
 ```bash
 mkdir -p ~/.cursor/plugins/local
-ln -sfn "$(pwd)/plugins/pysar" ~/.cursor/plugins/local/pysar
+rsync -a --delete "$(pwd)/plugins/pysar/" ~/.cursor/plugins/local/pysar/
 ```
 
-Reload Cursor (**Developer: Reload Window**). Enable **pysar** under Customize
-→ Connected / Plugins if prompted. Then run `/ps` with a one-sentence idea.
+Cursor currently **rejects** symlinks whose target is outside
+`~/.cursor/plugins/local` (silent skip; Plugins log:
+`loadUserLocalPlugin pysar rejected: symlink target … is outside …/local`).
+Use a real copy for dogfood; re-run `rsync` after skill sync.
+
+Reload Cursor (**Developer: Reload Window**). **Customize → Plugins** should
+list **Pysar** (Installed). Enable if prompted. Then check **MCPs** for Plugin
+MCP `pysar`, and run `/ps` with a one-sentence idea.
+
+Note: `pysar init --cursor` prints an MCP deeplink that only installs the
+stdio server — that is **not** the same as loading this plugin package.
 
 ### Marketplace
 
