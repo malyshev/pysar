@@ -19,7 +19,8 @@ export function DocsMarkdown({ body }: DocsMarkdownProps) {
         "prose-headings:font-heading prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-zinc-950",
         "prose-p:text-zinc-600 prose-li:text-zinc-600 prose-strong:text-zinc-950",
         "prose-a:font-medium prose-a:text-zinc-950 prose-a:underline prose-a:decoration-primary/50 prose-a:underline-offset-4 prose-a:transition-colors hover:prose-a:text-primary hover:prose-a:decoration-primary",
-        "prose-code:rounded-sm prose-code:border prose-code:border-zinc-200 prose-code:bg-zinc-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-zinc-950 prose-code:before:content-none prose-code:after:content-none",
+        "prose-code:rounded-sm prose-code:border prose-code:border-zinc-200 prose-code:bg-zinc-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:whitespace-nowrap prose-code:text-zinc-950 prose-code:before:content-none prose-code:after:content-none",
+        "prose-th:px-3 prose-th:py-2 prose-th:text-left prose-td:px-3 prose-td:py-2 prose-td:align-top prose-td:text-zinc-600",
         "prose-hr:border-zinc-100",
         "prose-blockquote:border-primary prose-blockquote:text-zinc-600",
       ].join(" ")}
@@ -44,6 +45,12 @@ export function DocsMarkdown({ body }: DocsMarkdownProps) {
 
             return <Link href={nextHref}>{children}</Link>;
           },
+          // Keep flag columns from wrapping mid-token (e.g. `--` / `review`).
+          table: ({ children }) => (
+            <div className="my-5 overflow-x-auto">
+              <table>{children}</table>
+            </div>
+          ),
           // Fenced blocks: soft Copy bar (same chrome as home quick start).
           pre: ({ children }) => {
             const command = reactChildrenText(children as ReactNode).replace(
