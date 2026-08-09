@@ -100,6 +100,21 @@ export function SiteFooter() {
             >
               LinkedIn
             </a>
+            <a
+              href={siteConfig.x}
+              className="inline-flex items-center justify-center p-5 text-white transition-colors duration-300 hover:bg-zinc-800 md:p-7.5"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="X"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className="size-3.5 fill-current"
+              >
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
+            </a>
             <p className="p-5 text-xs text-white uppercase md:p-7.5">
               © {new Date().getFullYear()} {siteConfig.name}
             </p>

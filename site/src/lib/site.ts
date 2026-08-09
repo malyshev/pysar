@@ -5,6 +5,7 @@ export const siteConfig = {
     "Real editorial help, without the overhead — Pysar helps shape the work, not take it over.",
   github: "https://github.com/malyshev/pysar",
   linkedin: "https://www.linkedin.com/in/serhiimalyshev/",
+  x: "https://x.com/s_malyshev",
 } as const;
 
 /** Square mark-on-ink asset for JSON-LD / social. Wordmarks live at /logo.svg and /logo-dark.svg. */
