@@ -1,7 +1,8 @@
 {
   "name": "pysar",
   "owner": {
-    "name": "Serhii Malyshev"
+    "name": "Serhii Malyshev",
+    "email": "malyshev.php@gmail.com"
   },
   "metadata": {
     "description": "Pysar Cursor Marketplace — canonical plugin package for skills + MCP",
