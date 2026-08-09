@@ -39,22 +39,34 @@ Open the folder in Claude Code. MCP is pre-approved by the scaffolded settings.
 
 ## Cursor
 
+Install the Pysar binary first (`~/.local/bin/pysar`), then install the
+**Pysar Cursor plugin** (skills + MCP). Marketplace and getpysar.com
+**Install in Cursor** are two discovery paths onto the same package
+(`plugins/pysar` in the repo) — not two products.
+
 ```bash
 mkdir my-piece && cd my-piece
 pysar init --cursor
 ```
 
-Typical layout:
+Typical layout after init:
 
 | Path | Role |
 |------|------|
 | `.pysar/project` | Project manifest |
-| `.cursor/mcp.json` | MCP server with `PYSAR_PROJECT_ROOT=${workspaceFolder}` |
-| Skills under `~/.cursor/skills/ps-*` | Same shared skill corpus as Claude |
+| `.cursor/mcp.json` | MCP server (`command` = `${userHome}/.local/bin/pysar`, `PYSAR_PROJECT_ROOT=${workspaceFolder}`) — same spawn contract as the plugin |
 
-Open the folder in Cursor and enable the `pysar` MCP server if prompted.
-Cursor does not ship a Claude-style settings allowlist; you may see
-permission prompts for MCP tools on first use.
+`/ps` skills come from the Cursor plugin, not from `~/.cursor/skills`.
+
+**Plugin install options**
+
+1. **Marketplace** — Customize → search **pysar** (after the listing is live), or submit via [cursor.com/marketplace/publish](https://cursor.com/marketplace/publish).
+2. **Install in Cursor** — use the deeplink on [getpysar.com](https://getpysar.com) (MCP config matches `plugins/pysar/mcp.json`).
+3. **Local dogfood** — from a clone: `ln -sfn "$(pwd)/plugins/pysar" ~/.cursor/plugins/local/pysar`, then reload Cursor.
+
+`pysar init --cursor` also registers user-scope MCP (`~/.cursor/mcp.json`) for
+Customize → Connected while the plugin path settles. Reload MCP or restart
+Cursor once, then open the project folder.
 
 ## Codex CLI / App
 

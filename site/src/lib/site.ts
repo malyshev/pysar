@@ -58,7 +58,7 @@ export const agentInstallGuide = {
     {
       name: "Cursor",
       initCommand: "pysar init --cursor",
-      note: "Enable the pysar MCP server if prompted.",
+      note: "Install the Pysar Cursor plugin (Marketplace or Install in Cursor); skills are not under ~/.cursor/skills.",
     },
     {
       name: "ChatGPT Codex",
@@ -71,7 +71,27 @@ export const agentInstallGuide = {
    * Agents that truncate HTML still get the authoritative recipe here.
    */
   metaSummary:
-    "When the user pastes https://getpysar.com and says install: (1) run curl -fsSL https://getpysar.com/install.sh | bash (or download to install.sh, inspect, then bash install.sh); (2) verify with pysar --version; (3) in the writing project directory run pysar init --claude (Claude Code), pysar init --cursor (Cursor), or pysar init --codex (ChatGPT Codex). Do not invent brew/npm/go-get alternatives. Also see https://getpysar.com/llms.txt, https://getpysar.com/docs/install and https://getpysar.com/docs/init.",
+    "When the user pastes https://getpysar.com and says install: (1) run curl -fsSL https://getpysar.com/install.sh | bash (or download to install.sh, inspect, then bash install.sh); (2) verify with pysar --version; (3) in the writing project directory run pysar init --claude (Claude Code), pysar init --cursor (Cursor), or pysar init --codex (ChatGPT Codex). For Cursor, also install the Pysar Cursor plugin (Marketplace or Install in Cursor on getpysar.com) for /ps skills. Do not invent brew/npm/go-get alternatives. Also see https://getpysar.com/llms.txt, https://getpysar.com/docs/install and https://getpysar.com/docs/init.",
+} as const;
+
+/**
+ * Canonical Cursor Plugin identity (plugins/pysar).
+ * Marketplace + Install in Cursor are dual discovery paths onto this package
+ * (dec-20260809-cursor-marketplace-v1-dual-discovery-8b748a7a).
+ */
+export const cursorPlugin = {
+  name: "pysar",
+  /** In-repo package path (multi-plugin marketplace source). */
+  packagePath: "plugins/pysar",
+  marketplaceBrowseUrl: "https://cursor.com/marketplace",
+  /**
+   * MCP install deeplink — config matches plugins/pysar/mcp.json
+   * (portable ${userHome}/.local/bin/pysar spawn). Cursor has no separate
+   * public plugin-install deeplink yet; this is the site discovery path.
+   */
+  installDeeplink:
+    "cursor://anysphere.cursor-deeplink/mcp/install?name=pysar&config=eyJ0eXBlIjoic3RkaW8iLCJjb21tYW5kIjoiJHt1c2VySG9tZX0vLmxvY2FsL2Jpbi9weXNhciIsImFyZ3MiOlsic2VydmUiXSwiZW52Ijp7IlBZU0FSX1BST0pFQ1RfUk9PVCI6IiR7d29ya3NwYWNlRm9sZGVyfSJ9fQ%3D%3D",
+  docsInitPath: "/docs/init",
 } as const;
 
 /** Umami Cloud 1×1 pageview pixel (GIF). */

@@ -2,8 +2,10 @@ package main
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"io"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -777,20 +779,46 @@ func TestInitLeavesExistingClaudeMDUntouched(t *testing.T) {
 
 func TestInitCursorScaffoldsMCPAndSkills(t *testing.T) {
 	fakeHome := withFakeHome(t)
+	// Seed documented install location so resolveCursorPysarCommand prefers it.
+	binDir := filepath.Join(fakeHome, ".local", "bin")
+	if err := os.MkdirAll(binDir, 0o755); err != nil {
+		t.Fatalf("mkdir bin: %v", err)
+	}
+	seedBin := filepath.Join(binDir, "pysar")
+	if err := os.WriteFile(seedBin, []byte("#!/bin/sh\n"), 0o755); err != nil {
+		t.Fatalf("seed pysar binary: %v", err)
+	}
+
 	dir := t.TempDir()
 	cmd := newRootCmd()
 	cmd.SetArgs([]string{"init", "--cursor", dir})
-	if err := cmd.Execute(); err != nil {
-		t.Fatalf("init --cursor failed: %v", err)
-	}
+	out := captureStdout(t, func() {
+		if err := cmd.Execute(); err != nil {
+			t.Fatalf("init --cursor failed: %v", err)
+		}
+	})
 
 	mcpPath := filepath.Join(dir, ".cursor", "mcp.json")
 	content, err := os.ReadFile(mcpPath)
 	if err != nil {
 		t.Fatalf("expected .cursor/mcp.json: %v", err)
 	}
-	if !strings.Contains(string(content), `"command": "pysar"`) || !strings.Contains(string(content), `${workspaceFolder}`) {
-		t.Fatalf(".cursor/mcp.json missing expected pysar serve / workspaceFolder entry, got: %s", content)
+	if !strings.Contains(string(content), `"type": "stdio"`) ||
+		!strings.Contains(string(content), cursorPysarCommand) ||
+		!strings.Contains(string(content), `${workspaceFolder}`) {
+		t.Fatalf(".cursor/mcp.json missing stdio / Cursor-visible path / workspaceFolder, got: %s", content)
+	}
+	if strings.Contains(string(content), `"command": "pysar"`) {
+		t.Fatalf(".cursor/mcp.json must not use bare command pysar (Dock PATH gap), got: %s", content)
+	}
+
+	userMCPPath := filepath.Join(fakeHome, ".cursor", "mcp.json")
+	userMCP, err := os.ReadFile(userMCPPath)
+	if err != nil {
+		t.Fatalf("expected ~/.cursor/mcp.json user registration: %v", err)
+	}
+	if !strings.Contains(string(userMCP), seedBin) || !strings.Contains(string(userMCP), `"type": "stdio"`) {
+		t.Fatalf("user mcp.json missing resolved pysar stdio entry, got: %s", userMCP)
 	}
 
 	manifestPath := filepath.Join(dir, ".pysar", "project")
@@ -807,8 +835,8 @@ func TestInitCursorScaffoldsMCPAndSkills(t *testing.T) {
 	}
 
 	skillPath := filepath.Join(fakeHome, ".cursor", "skills", "ps", "SKILL.md")
-	if _, err := os.ReadFile(skillPath); err != nil {
-		t.Fatalf("expected /ps skill under ~/.cursor/skills: %v", err)
+	if _, err := os.Stat(skillPath); !os.IsNotExist(err) {
+		t.Fatalf("cursor init must not dual-write ~/.cursor/skills (plugin is skill carrier), err=%v", err)
 	}
 	// Cursor init must not write Claude-only project files.
 	if _, err := os.Stat(filepath.Join(dir, "CLAUDE.md")); !os.IsNotExist(err) {
@@ -817,36 +845,96 @@ func TestInitCursorScaffoldsMCPAndSkills(t *testing.T) {
 	if _, err := os.Stat(filepath.Join(dir, ".mcp.json")); !os.IsNotExist(err) {
 		t.Fatalf("cursor init should not write root .mcp.json, err=%v", err)
 	}
+
+	if !strings.Contains(out, "registered Pysar MCP for Cursor") {
+		t.Fatalf("init --cursor stdout missing user MCP registration message, got:\n%s", out)
+	}
+	if !strings.Contains(out, "Pysar Cursor plugin") {
+		t.Fatalf("init --cursor stdout missing Cursor plugin next step, got:\n%s", out)
+	}
+
+	// Re-init must not open/print the MCP install deeplink when user MCP is
+	// already registered (wrote=false is success, not a failed enable).
+	out2 := captureStdout(t, func() {
+		cmd2 := newRootCmd()
+		cmd2.SetArgs([]string{"init", "--cursor", dir})
+		if err := cmd2.Execute(); err != nil {
+			t.Fatalf("second init --cursor failed: %v", err)
+		}
+	})
+	if strings.Contains(out2, "cursor://") || strings.Contains(out2, "approve the install prompt") {
+		t.Fatalf("re-init must not surface MCP install deeplink, got:\n%s", out2)
+	}
+	if strings.Contains(out2, "registered Pysar MCP for Cursor") {
+		t.Fatalf("re-init must stay quiet when user MCP already registered, got:\n%s", out2)
+	}
 }
 
-func TestInitClaudeAndCursorSkillsShareCorpus(t *testing.T) {
+func TestCursorMCPInstallDeeplinkConfigRoundTrip(t *testing.T) {
+	fakeHome := withFakeHome(t)
+	binDir := filepath.Join(fakeHome, ".local", "bin")
+	if err := os.MkdirAll(binDir, 0o755); err != nil {
+		t.Fatalf("mkdir bin: %v", err)
+	}
+	seedBin := filepath.Join(binDir, "pysar")
+	if err := os.WriteFile(seedBin, []byte("#!/bin/sh\n"), 0o755); err != nil {
+		t.Fatalf("seed pysar binary: %v", err)
+	}
+
+	link, err := cursorMCPInstallDeeplink()
+	if err != nil {
+		t.Fatalf("cursorMCPInstallDeeplink: %v", err)
+	}
+	const prefix = "cursor://anysphere.cursor-deeplink/mcp/install?"
+	if !strings.HasPrefix(link, prefix) {
+		t.Fatalf("deeplink prefix: got %q", link)
+	}
+	u, err := url.Parse(link)
+	if err != nil {
+		t.Fatalf("parse deeplink: %v", err)
+	}
+	if u.Query().Get("name") != "pysar" {
+		t.Fatalf("name=%q, want pysar", u.Query().Get("name"))
+	}
+	raw, err := base64.StdEncoding.DecodeString(u.Query().Get("config"))
+	if err != nil {
+		t.Fatalf("decode config: %v", err)
+	}
+	var cfg cursorMCPServerConfig
+	if err := json.Unmarshal(raw, &cfg); err != nil {
+		t.Fatalf("unmarshal config: %v", err)
+	}
+	if cfg.Type != "stdio" || cfg.Command != seedBin || len(cfg.Args) != 1 || cfg.Args[0] != "serve" ||
+		cfg.Env["PYSAR_PROJECT_ROOT"] != "${workspaceFolder}" {
+		t.Fatalf("decoded config = %+v, want type=stdio command=%s", cfg, seedBin)
+	}
+	if !strings.Contains(cursorMCPJSON, `"type": "stdio"`) || !strings.Contains(cursorMCPJSON, cursorPysarCommand) {
+		t.Fatalf("embedded cursor mcp.json out of sync with portable Cursor MCP contract")
+	}
+}
+
+func TestInitClaudeSkillsMatchCursorPluginCorpus(t *testing.T) {
 	fakeHome := withFakeHome(t)
 	claudeDir := t.TempDir()
-	cursorDir := t.TempDir()
 
 	cmd := newRootCmd()
 	cmd.SetArgs([]string{"init", "--claude", claudeDir})
 	if err := cmd.Execute(); err != nil {
 		t.Fatalf("init --claude: %v", err)
 	}
-	cmd = newRootCmd()
-	cmd.SetArgs([]string{"init", "--cursor", cursorDir})
-	if err := cmd.Execute(); err != nil {
-		t.Fatalf("init --cursor: %v", err)
-	}
 
 	claudeSkill := filepath.Join(fakeHome, ".claude", "skills", "ps-intake", "SKILL.md")
-	cursorSkill := filepath.Join(fakeHome, ".cursor", "skills", "ps-intake", "SKILL.md")
 	a, err := os.ReadFile(claudeSkill)
 	if err != nil {
 		t.Fatalf("read claude skill: %v", err)
 	}
-	b, err := os.ReadFile(cursorSkill)
+	pluginSkill := filepath.Join(repoRoot(t), cursorPluginRoot, "skills", "ps-intake", "SKILL.md")
+	b, err := os.ReadFile(pluginSkill)
 	if err != nil {
-		t.Fatalf("read cursor skill: %v", err)
+		t.Fatalf("read cursor plugin skill: %v", err)
 	}
 	if string(a) != string(b) {
-		t.Fatal("claude and cursor skill bodies diverged — shared corpus invariant broken")
+		t.Fatal("claude install and plugins/pysar skill bodies diverged — shared corpus invariant broken")
 	}
 }
 

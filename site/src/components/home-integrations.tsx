@@ -1,6 +1,7 @@
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { CornerTicks } from "@/components/corner-ticks";
+import { cursorPlugin } from "@/lib/site";
 
 type Node = {
   src: string;
@@ -71,15 +72,24 @@ export function HomeIntegrations() {
               <span className="text-zinc-500">you already use</span>
             </h2>
 
-            <div className="relative inline-flex p-1.5">
-              <Link
-                href="/docs/install"
-                className="inline-flex items-center justify-center gap-2 rounded bg-primary px-4 py-3 text-xs font-medium uppercase text-white transition-all duration-500 hover:bg-primary-hover"
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <div className="relative inline-flex p-1.5">
+                <Link
+                  href="/docs/install"
+                  className="inline-flex items-center justify-center gap-2 rounded bg-primary px-4 py-3 text-xs font-medium uppercase text-white transition-all duration-500 hover:bg-primary-hover"
+                >
+                  Install
+                  <ChevronRight className="size-4" aria-hidden="true" />
+                </Link>
+                <CornerTicks className="text-zinc-500" />
+              </div>
+              <a
+                href={cursorPlugin.installDeeplink}
+                className="inline-flex items-center justify-center gap-2 rounded border-2 border-zinc-200 px-4 py-3 text-xs font-medium uppercase text-primary transition-all duration-500 hover:border-primary"
               >
-                Install
+                Install in Cursor
                 <ChevronRight className="size-4" aria-hidden="true" />
-              </Link>
-              <CornerTicks className="text-zinc-500" />
+              </a>
             </div>
           </div>
         </div>

@@ -23,11 +23,15 @@ pysar serve
 
 with the project root set so piece I/O lands in that project’s `.pysar/`.
 
-| Host | Config file | Project root env |
-|------|-------------|------------------|
-| Claude Code | `.mcp.json` at project root | `PYSAR_PROJECT_ROOT=${PWD:-.}` |
-| Cursor | `.cursor/mcp.json` | `PYSAR_PROJECT_ROOT=${workspaceFolder}` |
-| Codex CLI / App | `.codex/config.toml` | `PYSAR_PROJECT_ROOT = "."` (`default_tools_approval_mode = "approve"`) |
+| Host | Config file | Command / project root |
+|------|-------------|------------------------|
+| Claude Code | `.mcp.json` at project root | `pysar` / `PYSAR_PROJECT_ROOT=${PWD:-.}` |
+| Cursor | `.cursor/mcp.json` | `${userHome}/.local/bin/pysar` / `PYSAR_PROJECT_ROOT=${workspaceFolder}` |
+| Codex CLI / App | `.codex/config.toml` | `pysar` / `PYSAR_PROJECT_ROOT = "."` (`default_tools_approval_mode = "approve"`) |
+
+Cursor uses `${userHome}/.local/bin/pysar` so Dock-launched Cursor can spawn the
+server without inheriting your shell `PATH`. `pysar init --cursor` also prints a
+one-step Cursor install link to enable the server in Customize → MCPs.
 
 Claude pre-approves `mcp__pysar__*` via `.claude/settings.json`. Codex uses
 `default_tools_approval_mode = "approve"` on the MCP server block for the same
@@ -39,17 +43,18 @@ the host agent starts it as an MCP server.
 
 ## Skills install location
 
-`pysar init` installs the shared skill corpus globally:
+Editorial skill bodies share one host-neutral corpus (`cmd/pysar/assets/skills`).
+How each host receives them differs:
 
-| Host | Skills directory |
-|------|------------------|
-| Claude Code | `~/.claude/skills/ps-*` |
-| Cursor | `~/.cursor/skills/ps-*` |
-| Codex CLI / App | `~/.agents/skills/ps-*` (Codex packaging: `$ps-*` + `agents/openai.yaml`) |
+| Host | Skills carrier |
+|------|----------------|
+| Claude Code | `pysar init` → `~/.claude/skills/ps-*` |
+| Cursor | **Pysar Cursor plugin** (`plugins/pysar`) via Marketplace, getpysar.com Install in Cursor, or `~/.cursor/plugins/local/pysar` — not `~/.cursor/skills` |
+| Codex CLI / App | `pysar init --codex` → `~/.agents/skills/ps-*` (Codex packaging: `$ps-*` + `agents/openai.yaml`) |
 
-Editorial skill bodies share one corpus. Claude/Cursor install the corpus
-bytes as-is; Codex applies an install-time packaging transform. Only paths,
-MCP/settings, and that packaging differ.
+Claude installs corpus bytes as-is. Cursor loads the same bytes from the
+plugin package (kept in sync via `scripts/sync-cursor-plugin-skills.sh`).
+Codex applies an install-time packaging transform.
 
 Refresh skills and host config without touching piece data:
 

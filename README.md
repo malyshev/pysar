@@ -1,3 +1,12 @@
+<p align="center">
+  <img src="./plugins/pysar/assets/pysar-logo-mark-512.png" width="160" alt="Pysar logo">
+</p>
+
+<p align="center">
+  <a href="https://getpysar.com"><img src="https://img.shields.io/website?down_color=red&down_message=offline&style=flat&url=https%3A%2F%2Fgetpysar.com" alt="Website Status"></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/github/license/malyshev/pysar" alt="License"></a>
+</p>
+
 # Pysar
 
 An author-directed editorial engine for your writing projects.
@@ -13,9 +22,12 @@ skills for Claude Code, Cursor, and Codex.
 ```bash
 curl -fsSL https://getpysar.com/install.sh | bash
 pysar init          # Claude Code (default)
-pysar init --cursor # Cursor
+pysar init --cursor # Cursor (project scaffold; install the Pysar Cursor plugin for /ps skills)
 pysar init --codex  # Codex CLI / App
 ```
+
+Cursor plugin package (Marketplace / Install in Cursor / local dogfood):
+[`plugins/pysar`](./plugins/pysar/).
 
 ## Development
 

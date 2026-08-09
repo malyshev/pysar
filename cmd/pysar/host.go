@@ -94,15 +94,13 @@ func (cursorHost) Scaffold(dir string, force bool) error {
 
 	home, err := homeDir()
 	if err != nil {
-		return fmt.Errorf("pysar init: locate home directory for global skill install: %w", err)
+		return fmt.Errorf("pysar init: locate home directory for template install: %w", err)
 	}
 
-	// Same skill corpus as Claude; Cursor discovers skills under ~/.cursor/skills
-	// (haft CL1 / dec-20260808-f3001106).
-	skillOut, err := writeHostSkills(home, filepath.Join(".cursor", "skills"), force)
-	if err != nil {
-		return fmt.Errorf("pysar init: %w", err)
-	}
+	// Cursor skills ship only via the canonical Cursor Plugin (plugins/pysar) —
+	// Marketplace / local ~/.cursor/plugins/local / site Install in Cursor —
+	// not a second copy under ~/.cursor/skills
+	// (dec-20260809-cursor-marketplace-v1-dual-discovery-8b748a7a).
 	templateOut, err := writeBuiltinTemplates(home, force)
 	if err != nil {
 		return fmt.Errorf("pysar init: %w", err)
@@ -116,7 +114,18 @@ func (cursorHost) Scaffold(dir string, force bool) error {
 		return fmt.Errorf("pysar init: %w", err)
 	}
 
-	printInitSummary(dir, alreadySetUp, skillOut, templateOut, force)
+	// User-scope MCP so Customize → Connected can see pysar before/alongside the
+	// plugin (Cursor 3.15 leaves project-only servers disconnected/invisible —
+	// dec-20260809-cursor-cold-path-phased-v1v5-then-v2-de2fc11a). Spawn config
+	// matches plugins/pysar/mcp.json.
+	userMCPWrote, err := ensureUserCursorMCP(home)
+	if err != nil {
+		return fmt.Errorf("pysar init: register Cursor user MCP: %w", err)
+	}
+
+	printInitSummary(dir, alreadySetUp, syncResult{}, templateOut, force)
+	printCursorMCPNextStep(userMCPWrote)
+	printCursorPluginNextStep()
 	return nil
 }
 

@@ -59,6 +59,8 @@ var claudeMCPJSON string
 
 // cursorMCPJSON registers pysar serve for Cursor (haft CL1 path shape:
 // .cursor/mcp.json + ${workspaceFolder}; dec-20260808-f3001106).
+// Command uses ${userHome}/.local/bin/pysar so Dock-launched Cursor can spawn
+// without shell PATH (dec-20260809-cursor-cold-path-phased-v1v5-then-v2-de2fc11a).
 //
 //go:embed assets/cursor/mcp.json
 var cursorMCPJSON string

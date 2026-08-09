@@ -1,0 +1,18 @@
+{
+  "name": "pysar",
+  "displayName": "Pysar",
+  "version": "0.1.0",
+  "description": "Author-directed editorial engine for Cursor — ps-* writing skills and the pysar MCP server.",
+  "author": {
+    "name": "Serhii Malyshev"
+  },
+  "homepage": "https://getpysar.com",
+  "repository": "https://github.com/malyshev/pysar",
+  "license": "MIT",
+  "keywords": ["writing", "editorial", "mcp", "skills", "pysar"],
+  "category": "productivity",
+  "tags": ["writing", "editorial", "mcp", "skills"],
+  "logo": "assets/pysar-logo-mark-512.png",
+  "skills": "./skills/",
+  "mcpServers": "./mcp.json"
+}

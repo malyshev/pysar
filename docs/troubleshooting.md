@@ -24,10 +24,13 @@ in `$(go env GOPATH)/bin`. Whichever directory appears first on `PATH` wins.
 
 ## MCP server not connecting
 
-1. Confirm `pysar` is on `PATH` inside the host (same binary the terminal uses).
+1. Confirm the `pysar` binary exists where the host config points
+   (Cursor: `${userHome}/.local/bin/pysar`; Claude/Codex: `pysar` on `PATH`).
 2. Claude: check project `.mcp.json` and that Claude Code loaded the server.
-3. Cursor: check `.cursor/mcp.json`, enable the `pysar` server if prompted, and
-   confirm `PYSAR_PROJECT_ROOT` is `${workspaceFolder}`.
+3. Cursor: re-run `pysar init --cursor` (registers `~/.cursor/mcp.json`), then
+   reload MCP / restart Cursor. Confirm Customize → MCPs shows `pysar`, and
+   project `.cursor/mcp.json` uses `${userHome}/.local/bin/pysar` with
+   `PYSAR_PROJECT_ROOT=${workspaceFolder}`.
 4. Codex: check `.codex/config.toml` for `[mcp_servers.pysar]`,
    `PYSAR_PROJECT_ROOT = "."`, and `default_tools_approval_mode = "approve"`.
 5. From the project directory, you can smoke-test the binary with
@@ -59,8 +62,9 @@ pysar init --cursor --force
 pysar init --codex --force
 ```
 
-Restart the host agent after skill install so it rediscovers `~/.claude/skills`,
-`~/.cursor/skills`, or `~/.agents/skills` (Codex).
+Restart the host agent after skill install so it rediscovers skills
+(`~/.claude/skills`, Cursor plugin under Customize / `~/.cursor/plugins/local`,
+or `~/.agents/skills` for Codex).
 
 ## Cursor keeps asking to approve MCP tools
 
