@@ -103,6 +103,7 @@ func New(name, version, baseDir, homeDir string, in io.Reader, out io.Writer) *S
 	s.registerCheckOnboardingStatus()
 	s.registerReadAuthorDefaults()
 	s.registerSaveIntakeBundle()
+	s.registerRequirePieceStages()
 	s.registerSaveResearchBundle()
 	s.registerSaveDraftBundle()
 	s.registerSaveStaffEditBundle()

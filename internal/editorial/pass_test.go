@@ -29,6 +29,25 @@ func TestDraftProceedsWithBrief(t *testing.T) {
 	}
 }
 
+func TestDraftBlockedWhenResearchRequiredAndMissing(t *testing.T) {
+	s := NewState(SurfaceBlog, ArtifactStake, ArtifactBrief).WithRequired("research")
+	_, err := Run(draftPass{}, s)
+	var pe *PreconditionError
+	if !errors.As(err, &pe) {
+		t.Fatalf("expected *PreconditionError, got %v", err)
+	}
+	if len(pe.Missing) != 1 || pe.Missing[0] != ArtifactSourcesFull {
+		t.Fatalf("expected missing=[sources_full], got %v", pe.Missing)
+	}
+}
+
+func TestDraftProceedsWhenResearchRequiredAndPresent(t *testing.T) {
+	s := NewState(SurfaceBlog, ArtifactStake, ArtifactBrief, ArtifactSourcesFull).WithRequired("research")
+	if _, err := Run(draftPass{}, s); err != nil {
+		t.Fatalf("expected draft to proceed with full research, got %v", err)
+	}
+}
+
 func TestStaffEditBlockedWithoutDraft(t *testing.T) {
 	s := NewState(SurfaceBlog, ArtifactStake, ArtifactBrief)
 	_, err := Run(staffEditPass{}, s)
@@ -109,6 +128,25 @@ func TestHumanizeProceedsWithDraftAlone(t *testing.T) {
 	}
 	if !ns.Has(ArtifactHumanize) {
 		t.Fatal("expected ArtifactHumanize to be produced")
+	}
+}
+
+func TestHumanizeBlockedWhenSEORequiredAndMissing(t *testing.T) {
+	s := NewState(SurfaceBlog, ArtifactStake, ArtifactBrief, ArtifactDraft).WithRequired("seo")
+	_, err := Run(humanizePass{}, s)
+	var pe *PreconditionError
+	if !errors.As(err, &pe) {
+		t.Fatalf("expected *PreconditionError, got %v", err)
+	}
+	if len(pe.Missing) != 1 || pe.Missing[0] != ArtifactDiscoverability {
+		t.Fatalf("expected missing=[discoverability], got %v", pe.Missing)
+	}
+}
+
+func TestHumanizeProceedsWhenSEORequiredAndPresent(t *testing.T) {
+	s := NewState(SurfaceBlog, ArtifactStake, ArtifactBrief, ArtifactDraft, ArtifactDiscoverability).WithRequired("seo")
+	if _, err := Run(humanizePass{}, s); err != nil {
+		t.Fatalf("expected humanize to proceed with seo.md, got %v", err)
 	}
 }
 

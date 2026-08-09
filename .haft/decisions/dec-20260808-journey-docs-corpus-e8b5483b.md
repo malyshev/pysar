@@ -1,14 +1,14 @@
 ---
 id: dec-20260808-journey-docs-corpus-e8b5483b
 kind: DecisionRecord
-version: 15
+version: 17
 status: active
 title: Journey-first docs/ tree with SSG-ready frontmatter
 context: docs
 mode: standard
 valid_until: 2026-11-08T00:00:00Z
 created_at: 2026-08-08T11:37:16Z
-updated_at: 2026-08-09T09:56:28Z
+updated_at: 2026-08-09T17:23:07Z
 links:
   - ref: prob-20260808-39f48c3d
     type: based_on
@@ -233,3 +233,18 @@ Six journey pages + index still present; out/docs builds. Wording drift incident
 
 **Measurements:**
 - claim-001/002/003: docs tree + built routes
+
+## Impact Measurement (2026-08-09)
+
+**Verdict:** accepted
+
+**Findings:**
+docs/pipeline.md and mcp-and-skills.md updated to document shipped --research/--seo hard gates — matches 'document shipped behavior only'. Journey IA unchanged.
+
+**Criteria met:**
+- [x] Single user-docs corpus
+- [x] Shipped behavior only
+
+**Measurements:**
+- docs/pipeline.md documents --research and --seo fail-closed
+- no parallel website-only docs tree created

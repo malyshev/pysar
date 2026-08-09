@@ -175,7 +175,11 @@ single line too — an edit pass that logs nothing isn't a completed pass.
 `mode` is optional and informational (`"delta"` or `"rewrite"`).
 
 On tool error: fix exactly what it names. If it's a missing `draft.md`,
-tell the operator to run `/ps-draft` first.
+tell the operator to run `/ps-draft` first. If the piece's brief lists
+`seo` in `required_stages` (set by `require_piece_stages` / `/ps --seo`)
+and `seo.md` is missing, `save_humanize_bundle` refuses — run `/ps-seo`
+first; do not skip it (dec-20260809-701b59d3). That is a precondition
+gate only; this pass still does not rewrite SEO content.
 
 ## Step 4 — summary (short, plain language for the author)
 

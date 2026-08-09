@@ -1,30 +1,28 @@
 ---
 name: ps
 description: |
-  Runs the full pipeline -- /ps-intake -> /ps-draft -> /ps-staff-edit ->
-  /ps-sharpen -> /ps-humanize -- back to back on one piece, then exports
-  the result to the project root. Autopilot by default: no stopping
-  between stages. Pass --review to stop after each stage and wait for the
-  operator's explicit go-ahead before continuing. Pass --seo to insert
-  /ps-seo between /ps-sharpen and /ps-humanize, opt-in discoverability
-  packaging for a piece headed to a blog/web surface (dec-20260804-
-  e3234e50) -- never after /ps-humanize, that ordering is fixed. Resumes
-  correctly from an existing piece at whatever stage it already reached --
-  it does not restart a piece from intake just because /ps is what's
-  invoked. Research is deliberately not in this chain (it's optional and
-  ps-intake/ps-draft already invoke it where each needs it); this command
-  exists only to remove the "stop and manually invoke the next skill"
-  friction between the stages above, nothing more. When run with
-  genuinely nothing -- no idea text, no piece path -- shows a short,
-  plain-language orientation instead of guessing at an idea, for a
-  non-technical author's first contact with the tool.
+  Runs the full pipeline -- /ps-intake -> [/ps-research if --research] ->
+  /ps-draft -> /ps-staff-edit -> /ps-sharpen -> [/ps-seo if --seo] ->
+  /ps-humanize -- back to back on one piece, then exports the result to
+  the project root. Autopilot by default: no stopping between stages.
+  Pass --review to stop after each stage and wait for the operator's
+  explicit go-ahead before continuing. Pass --research to require full
+  /ps-research after intake and before draft (hard-gated via
+  require_piece_stages + save_draft_bundle; dec-20260809-701b59d3).
+  Pass --seo to insert /ps-seo between /ps-sharpen and /ps-humanize
+  (hard-gated via require_piece_stages + save_humanize_bundle;
+  dec-20260804-e3234e50 ordering — never after /ps-humanize). Without
+  those flags, research and SEO stay out of the chain. Resumes correctly
+  from an existing piece at whatever stage it already reached. When run
+  with genuinely nothing -- no idea text, no piece path -- shows a short,
+  plain-language orientation instead of guessing at an idea.
 when_to_use: |
   Operator types /ps with a new idea or an existing piece path, wanting
   the whole pipeline run without babysitting each stage themselves. Typing
   /ps with nothing at all shows plain-language orientation instead of
   guessing at an idea.
-argument-hint: "[idea text | @path/to/piece] [--review] [--seo]"
-allowed-tools: Skill mcp__pysar__read_author_defaults mcp__pysar__check_onboarding_status mcp__pysar__save_intake_bundle mcp__pysar__save_draft_bundle mcp__pysar__save_staff_edit_bundle mcp__pysar__save_sharpen_bundle mcp__pysar__save_seo_bundle mcp__pysar__save_humanize_bundle mcp__pysar__export_piece_to_root Read WebSearch WebFetch
+argument-hint: "[idea text | @path/to/piece] [--review] [--research] [--seo]"
+allowed-tools: Skill mcp__pysar__read_author_defaults mcp__pysar__check_onboarding_status mcp__pysar__save_intake_bundle mcp__pysar__require_piece_stages mcp__pysar__save_draft_bundle mcp__pysar__save_staff_edit_bundle mcp__pysar__save_sharpen_bundle mcp__pysar__save_seo_bundle mcp__pysar__save_humanize_bundle mcp__pysar__export_piece_to_root Read WebSearch WebFetch
 ---
 
 # /ps — full pipeline, autopilot by default
@@ -42,6 +40,12 @@ follows exactly as written, same pattern `/ps-onboard` already established.
 pre-approved by `pysar init`'s shipped `settings.json`; a raw `Read` on a
 skill file's absolute path is not.
 
+**Do not discover skills via the filesystem.** Never `Bash`/`ls`/`find`/
+`grep` on `~/.claude/skills`, `~/.cursor/skills`, or any skills directory,
+and never ask the operator for permission to do so. The stage names are
+already in this file's chain — invoke them with `Skill(...)`. If a Skill
+call fails, say that; do not inventory the disk.
+
 ## Step 0 — nothing to work with: show orientation, don't guess
 
 If the operator ran `/ps` with genuinely nothing to work with — no idea
@@ -49,10 +53,10 @@ text, no `@path/to/piece`, nothing but flags or literally nothing at
 all — do not hand an empty string to `ps-intake` and do not guess at an
 idea. Show orientation instead, then stop.
 
-Any `--review` or `--seo` flag given on this invocation still applies
-once the operator's next message supplies the idea or path — this is
-one continuous exchange, not two separate invocations. Don't ask them
-to repeat a flag they already gave.
+Any `--review`, `--research`, or `--seo` flag given on this invocation
+still applies once the operator's next message supplies the idea or path
+— this is one continuous exchange, not two separate invocations. Don't
+ask them to repeat a flag they already gave.
 
 1. Call `check_onboarding_status` once, silently — no need to narrate
    the check itself. **On tool error:** skip straight to the orientation
@@ -113,7 +117,9 @@ already use for "which file to revise from":
    else `ps-humanize`.
 4. `staff-edit.md` exists → next stage is `ps-sharpen`.
 5. `draft.md` exists → next stage is `ps-staff-edit`.
-6. `brief.md` exists (none of the above) → next stage is `ps-draft`.
+6. `brief.md` exists (none of the above) → if `--research` was given and
+   brief frontmatter does **not** show `research_mode: full`, next stage
+   is `ps-research`; otherwise next stage is `ps-draft`.
 7. None exist:
    - **The operator gave actual idea text or `--from-draft=`** (not a
      piece path): treat like a new idea; start at `ps-intake` with the
@@ -129,13 +135,24 @@ already use for "which file to revise from":
 Do not guess or infer from the operator's phrasing which stage to start
 at — check the files.
 
+## Step 1b — persist opt-in stage preconditions (hard gates)
+
+Once a piece path exists (after intake on a new idea, or when an existing
+piece path was given), if this invocation has `--research` and/or `--seo`,
+call `require_piece_stages` with that piece path and the matching stage
+names (`research` and/or `seo`) **before** invoking draft or humanize.
+Do this even on resume — the tool merges idempotently. This is what arms
+the MCP fail-closed gates (dec-20260809-701b59d3). Without the flags, do
+not call it and do not clear stages already on the piece.
+
 ## Step 2 — run the chain, in order, starting from Step 1's answer
 
-The fixed order is: `ps-intake` → `ps-draft` → `ps-staff-edit` →
-`ps-sharpen` → [`ps-seo` if `--seo`] → `ps-humanize`. `ps-seo` is never
-inserted after `ps-humanize` — that ordering is fixed regardless of when
-`--seo` was noticed (dec-20260804-e3234e50). For each stage from the
-determined starting point onward:
+The fixed order is: `ps-intake` → [`ps-research` if `--research`] →
+`ps-draft` → `ps-staff-edit` → `ps-sharpen` → [`ps-seo` if `--seo`] →
+`ps-humanize`. `ps-seo` is never inserted after `ps-humanize` — that
+ordering is fixed regardless of when `--seo` was noticed
+(dec-20260804-e3234e50). For each stage from the determined starting
+point onward:
 
 1. Invoke that stage via the Skill tool, passing it the piece path (once
    intake has produced one) exactly as that stage's own `argument-hint`
@@ -216,9 +233,18 @@ already gave their own summaries as they ran. Stop.
   for this run has actually ended.
 - Do not `Read` a stage's `SKILL.md` file directly — always go through the
   Skill tool.
-- Do not invoke `/ps-research` as part of this chain — it is deliberately
-  excluded; `ps-intake` and `ps-draft` already reach for grounding via
-  `ps-factcheck`/research where each needs it, on their own terms.
+- Do not `Bash`/`ls`/`find`/`grep` skill install directories (including
+  `~/.claude/skills` and `~/.cursor/skills`) to "see what's installed" —
+  that is not part of this pipeline and must not trigger a permission
+  prompt. Call `Skill(ps-…)` by the names in Step 2.
+- Do not skip `ps-research` when `--research` was given (unless
+  `research_mode: full` already), and do not invoke it when `--research`
+  was not given.
+- Do not stop the chain to ask the operator how to "handle" `--research`
+  (skip vs broaden vs invent) — `ps-research` already owns the default
+  non-fabrication path; invoke it and continue.
+- Do not skip calling `require_piece_stages` when `--research` or `--seo`
+  was given once a piece path exists — that call arms the hard gates.
 - Do not invoke `ps-seo` after `ps-humanize`, ever, even if `--seo` is
   given late or the operator asks for it in that order mid-run — the
   ordering is fixed (dec-20260804-e3234e50); explain why if asked, don't

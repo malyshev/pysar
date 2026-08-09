@@ -1,14 +1,14 @@
 ---
 id: dec-20260809-degenerate-unicode-i18n-5008f0e6
 kind: DecisionRecord
-version: 9
+version: 11
 status: active
 title: Unicode letters + Unicode word split (not only Fields)
 context: intake
 mode: standard
 valid_until: 2026-11-09
 created_at: 2026-08-09T08:20:27Z
-updated_at: 2026-08-09T14:38:11Z
+updated_at: 2026-08-09T17:23:09Z
 links:
   - ref: prob-20260809-976cff71
     type: based_on
@@ -171,3 +171,16 @@ Drift on internal/intake/bundle.go is package-doc comment scrub only. Degenerate
 **Measurements:**
 - claim-001: Degenerate Unicode fixtures still covered by passing intake tests
 - claim-002: Validate/save path still PASS; no new degenerate false positives from comment edit
+
+## Impact Measurement (2026-08-09)
+
+**Verdict:** accepted
+
+**Findings:**
+Incidental mcpserver stagereq adds; Degenerate unicode behavior not in diff. go test ./internal/intake PASS.
+
+**Criteria met:**
+- [x] Unicode letter/word-split Degenerate unchanged by this drift
+
+**Measurements:**
+- go test ./internal/intake PASS

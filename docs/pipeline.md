@@ -29,7 +29,8 @@ Optional flags on `/ps`:
 
 | Flag | Effect |
 |------|--------|
-| `--seo` | Insert `/ps-seo` between sharpen and humanize (discoverability packaging for web/blog). Ordering is fixed: SEO never runs after humanize. |
+| `--research` | Run `/ps-research` after intake and before draft. Persists a piece precondition so draft save fails closed until research is full. |
+| `--seo` | Insert `/ps-seo` between sharpen and humanize (discoverability packaging for web/blog). Ordering is fixed: SEO never runs after humanize. Persists a piece precondition so humanize save fails closed until `seo.md` exists. |
 | `--review` | Stop after each stage and wait for your go-ahead |
 
 With no idea and no piece path, `/ps` prints a short plain-language
@@ -56,7 +57,7 @@ You can run stages one at a time:
 | `/ps-sharpen` | Sharpen |
 | `/ps-seo` | Optional SEO packaging |
 | `/ps-humanize` | Humanize |
-| `/ps-research` | Optional research (also invoked where intake/draft need it) |
+| `/ps-research` | Optional research; required in-chain when `/ps --research` |
 | `/ps-factcheck` | Optional fact-check |
 | `/ps-voice` / `/ps-style` | Voice and style helpers used with onboarding |
 

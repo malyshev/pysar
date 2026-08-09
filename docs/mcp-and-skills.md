@@ -67,9 +67,10 @@ pysar init --codex --force
 ## Persistence rule
 
 Author content under `.pysar/**` is written through MCP tools
-(for example `save_intake_bundle`, `save_draft_bundle`, …,
-`export_piece_to_root`). Skills are written to call those tools — do not
-bypass them with raw file writes into `.pysar/pieces/`.
+(for example `save_intake_bundle`, `require_piece_stages`,
+`save_draft_bundle`, …, `export_piece_to_root`). Skills are written to
+call those tools — do not bypass them with raw file writes into
+`.pysar/pieces/`.
 
 ## Related skills
 

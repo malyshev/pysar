@@ -1,14 +1,14 @@
 ---
 id: dec-20260809-cursor-marketplace-v1-dual-discovery-8b748a7a
 kind: DecisionRecord
-version: 6
+version: 8
 status: active
 title: In-monorepo Cursor Plugin package (skills+MCP), binary preinstalled
 context: cursor-marketplace
 mode: standard
 valid_until: 2026-11-09T00:00:00Z
 created_at: 2026-08-09T09:20:30Z
-updated_at: 2026-08-09T14:40:00Z
+updated_at: 2026-08-09T17:23:01Z
 links:
   - ref: prob-20260809-d4ae8601
     type: based_on
@@ -180,3 +180,17 @@ site.ts drift incidental. claim-001 closed by note-20260809-839bb4dd local dogfo
 - claim-001: local plugin dogfood succeeded (note-20260809-839bb4dd)
 - claim-002: single package path plugins/pysar
 - claim-003: site cursorPlugin.name=pysar
+
+## Impact Measurement (2026-08-09)
+
+**Verdict:** accepted
+
+**Findings:**
+Only incidental docs/mcp-and-skills.md Persistence-rule edit. Plugin package invariants untouched.
+
+**Criteria met:**
+- [x] Single Cursor plugin package shape
+- [x] Skill corpus not forked by this drift
+
+**Measurements:**
+- docs/mcp-and-skills.md +4/-3 require_piece_stages mention only

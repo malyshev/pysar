@@ -173,10 +173,15 @@ on the piece's eventual target channel, so they stay your judgment call
 enforce. A redraft replaces `draft.md` wholesale — expected behavior, since
 a draft isn't an accumulating list the way `sources.md` is.
 
+If the piece's brief lists `research` in `required_stages` (set by
+`require_piece_stages` / `/ps --research`), `save_draft_bundle` refuses
+until `research_mode: full` — run `/ps-research` first; do not invent a
+workaround (dec-20260809-701b59d3).
+
 On tool error: fix exactly what it names (an unmatched citation, a raw
-URL). Never relabel or drop a citation just to make validation pass —
-either fix the shortname or fetch the source via
-`/ps-research`.
+URL, or a missing required research stage). Never relabel or drop a
+citation just to make validation pass — either fix the shortname or fetch
+the source via `/ps-research`.
 
 ## Step 7 — summary (short)
 

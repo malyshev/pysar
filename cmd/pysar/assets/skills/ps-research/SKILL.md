@@ -65,14 +65,38 @@ mean?". Show this, then stop and wait:
 > - `/ps-research zero-trust service mesh adoption` — learn broadly
 >   before writing anything
 >
-> Research is optional — most pieces don't need it. If this is part of
-> a longer run, `/ps` doesn't include this stage automatically;
-> `/ps-intake` and `/ps-draft` reach for it on their own terms.
+> Research is optional unless the operator already opted in (`/ps
+> --research`, or they typed `/ps-research` themselves).
 
 If the operator gives *some* input but it's ambiguous between the two
 modes, ask once which they mean instead of showing the full help block —
 the one genuine fork with no sensible default, unlike a broad idea
 (which always has one).
+
+## Already invoked = do the pass (no scope quiz)
+
+You are running because the operator (or `/ps --research`) already chose
+research. That choice is settled. **Do not ask** whether to skip, drop
+`--research`, "handle the research pass," broaden vs invent, or anything
+shaped like a research-scope menu. Do not offer "skip research, proceed
+to draft" as an option — ever.
+
+If the brief is about a product/internal pipeline with thin public coverage
+of the product itself: still complete a real `save_research_bundle`.
+Default path (no question):
+
+1. Fetch any **public** product docs that actually exist (e.g. the
+   product's own published docs site) for claims those pages really
+   support — never invent pages or stretch a URL past what it says.
+2. Add **adjacent, verifiable** external sources (editorial pipelines,
+   citation hygiene, SEO ordering, similar craft practice) that back
+   general angles — say in `notes`/`key_claims` that they support general
+   practice, not private internals.
+3. Leave thesis / killer sections / counterintuitive untouched. Internal
+   product specifics stay the author's / local-brief grounding; do not
+   fake-fit unrelated URLs onto them.
+
+No fabrication. No skip. Persist and hand off.
 
 ## Step 1 — load context
 
@@ -175,6 +199,11 @@ No phase jargon. No permission theater. Stop.
 - Call a piece path a "slug"
 - Ask which mode (piece-anchored vs standalone) when a path or topic was
   already given — only ask when genuinely neither was
+- Ask whether to skip research, drop `--research`, or choose a "research
+  scope" when this skill was already invoked — run the default path above
+  and say nothing about the fork you did not offer (Pysar output
+  discipline / CLAUDE.md)
+- Offer "skip research, proceed to draft" (or equivalent) as a choice
 - Skip the authority floor or relabel a source's tier to satisfy it
 - Delete or reword any of the operator's own existing angles when
   appending new ones

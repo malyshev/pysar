@@ -6,6 +6,7 @@ import (
 
 	"pysar/internal/editorial"
 	"pysar/internal/research"
+	"pysar/internal/stagereq"
 )
 
 // resolveAnchoredPass is the common "is this piece-anchored MCP call
@@ -38,6 +39,12 @@ func (s *Server) resolveAnchoredPass(passName, piecePath string) (pieceDir strin
 		// draft.md/staff-edit.md/sharpen.md/humanize.md there would pick up
 		// an unrelated file at the project root instead of correctly
 		// reporting no real piece was found.
+		if stages, err := stagereq.Load(pieceDir); err == nil && len(stages) > 0 {
+			state = state.WithRequired(stages...)
+		}
+		if full, err := stagereq.ResearchComplete(pieceDir); err == nil && full {
+			state = state.WithProduced(editorial.ArtifactSourcesFull)
+		}
 		if fileExists(filepath.Join(pieceDir, "draft.md")) {
 			state = state.WithProduced(editorial.ArtifactDraft)
 		}

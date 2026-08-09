@@ -31,6 +31,7 @@ func (s *Server) registerSaveHumanizeBundle() {
 			Name: "save_humanize_bundle",
 			Description: "Validate and persist a /ps-humanize pass: writes the revision to humanize.md and appends humanize-changelog.md. Neither draft.md, staff-edit.md, nor sharpen.md is touched -- each stage keeps its own file. " +
 				"Reuses draft.ValidateContent for citation integrity (humanize.md's content is still, mechanically, a piece of draft prose) -- no raw URL in prose, every [^shortname] resolved against the piece's actual research output, never accepted on trust. Requires >=1 recorded check -- an edit pass that logged nothing isn't a completed pass. " +
+				"When the piece's required_stages includes seo (set via require_piece_stages / /ps --seo), refuses until seo.md exists (dec-20260809-701b59d3) -- precondition only, not SEO rewriting. " +
 				"This tool has no way to detect or enforce 'sounds human' -- that's the skill's own judgment; it only enforces the same mechanical citation/structure floor every other save_*_bundle tool does. " +
 				"A re-run replaces humanize.md wholesale, same as the earlier passes' own writes -- expected, not data loss. Never touches brief.md, outline.md, angles.md, or sources.md. Prefer this over Write/Bash so no extra filesystem permissions are needed.",
 			InputSchema: saveHumanizeBundleSchema,
