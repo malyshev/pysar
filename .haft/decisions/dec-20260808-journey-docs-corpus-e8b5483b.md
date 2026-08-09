@@ -1,14 +1,14 @@
 ---
 id: dec-20260808-journey-docs-corpus-e8b5483b
 kind: DecisionRecord
-version: 13
+version: 15
 status: active
 title: Journey-first docs/ tree with SSG-ready frontmatter
 context: docs
 mode: standard
 valid_until: 2026-11-08T00:00:00Z
 created_at: 2026-08-08T11:37:16Z
-updated_at: 2026-08-08T17:40:25Z
+updated_at: 2026-08-09T09:56:28Z
 links:
   - ref: prob-20260808-39f48c3d
     type: based_on
@@ -220,3 +220,16 @@ All three predictions hold. install.md inspectable path is same-corpus content i
 - fm 7/7
 - live /docs /docs/install 200
 - install.md adds download-then-bash
+
+## Impact Measurement (2026-08-09)
+
+**Verdict:** accepted
+
+**Findings:**
+Six journey pages + index still present; out/docs builds. Wording drift incidental.
+
+**Criteria met:**
+- [x] journey docs corpus
+
+**Measurements:**
+- claim-001/002/003: docs tree + built routes

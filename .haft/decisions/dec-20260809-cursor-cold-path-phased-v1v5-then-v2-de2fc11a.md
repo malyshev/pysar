@@ -1,13 +1,13 @@
 ---
 id: dec-20260809-cursor-cold-path-phased-v1v5-then-v2-de2fc11a
 kind: DecisionRecord
-version: 1
+version: 4
 status: active
 title: Init rewrites Cursor mcp.json with a Cursor-visible binary path
 mode: standard
 valid_until: 2026-11-09
 created_at: 2026-08-09T08:55:45Z
-updated_at: 2026-08-09T08:55:45Z
+updated_at: 2026-08-09T09:56:29Z
 links:
   - ref: prob-20260809-5a4334ac
     type: based_on
@@ -106,3 +106,22 @@ Blast radius: cmd/pysar Cursor host scaffold + init UX copy + Cursor journey doc
 - Phase A smoke fails twice on clean machines
 
 **Affected files:** cmd/pysar/assets/cursor/mcp.json, cmd/pysar/host.go, cmd/pysar/init_test.go, docs/init.md, docs/troubleshooting.md, docs/mcp-and-skills.md, site/engineering/human-setup.md
+
+## Impact Measurement (2026-08-09)
+
+**Verdict:** partial
+
+**Findings:**
+claim-002 goldens PASS (no bare pysar). claim-003 Phase B WIP present (plugin package + marketplace DRR). claim-001 live Dock /ps smoke not re-run this batch — blocks full accept. Also fixed unexpected re-init MCP deeplink open.
+
+**Criteria met:**
+- [x] Phase A goldens
+- [x] Phase B WIP
+
+**Criteria NOT met:**
+- [ ] fresh Dock live /ps → brief.md this session
+
+**Measurements:**
+- claim-002: cursor mcp.json ${userHome} path + tests PASS
+- claim-003: plugins/pysar + marketplace.json exist
+- claim-001: no fresh live smoke

@@ -1,14 +1,14 @@
 ---
 id: dec-20260809-degenerate-unicode-i18n-5008f0e6
 kind: DecisionRecord
-version: 5
+version: 7
 status: active
 title: Unicode letters + Unicode word split (not only Fields)
 context: intake
 mode: standard
 valid_until: 2026-11-09
 created_at: 2026-08-09T08:20:27Z
-updated_at: 2026-08-09T08:22:49Z
+updated_at: 2026-08-09T09:53:26Z
 links:
   - ref: prob-20260809-976cff71
     type: based_on
@@ -141,3 +141,18 @@ V4 shipped in intake.Degenerate: unicode.IsLetter + ideaUnits (alphabetic runs +
 - TestIdeaUnitsScriptioContinua PASS
 - TestValidateUkrainianIdeaNotDegenerateError PASS
 - go test ./internal/mcpserver ok
+
+## Impact Measurement (2026-08-09)
+
+**Verdict:** accepted
+
+**Findings:**
+Drift on bundle_test.go is incidental test additions from slug/und work. claim-001/002 still PASS (TestDegenerate, TestValidateUkrainianIdeaNotDegenerateError).
+
+**Criteria met:**
+- [x] Ukrainian/Japanese not Degenerate
+- [x] Validate path no degenerate for UA fixture
+
+**Measurements:**
+- claim-001: TestDegenerate PASS
+- claim-002: TestValidateUkrainianIdeaNotDegenerateError PASS

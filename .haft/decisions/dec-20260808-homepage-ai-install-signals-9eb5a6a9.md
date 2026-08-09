@@ -1,14 +1,14 @@
 ---
 id: dec-20260808-homepage-ai-install-signals-9eb5a6a9
 kind: DecisionRecord
-version: 5
+version: 7
 status: active
 title: Homepage / HTML-first signals (meta, visible AI block, JSON-LD)
 context: site
 mode: standard
 valid_until: 2026-11-08T00:00:00Z
 created_at: 2026-08-08T16:50:09Z
-updated_at: 2026-08-08T17:40:22Z
+updated_at: 2026-08-09T09:56:28Z
 links:
   - ref: prob-20260808-cabd5795
     type: based_on
@@ -138,3 +138,16 @@ Bundle /h-verify: pred2 holds on live getpysar.com (secondary #for-ai-agents + m
 - live for-ai-agents+meta+HowTo after H1
 - host smokes 0/3
 - prod /llms.txt 404; site/out/llms.txt + vitest ok locally
+
+## Impact Measurement (2026-08-09)
+
+**Verdict:** accepted
+
+**Findings:**
+Install.sh AI instruction still in site.ts; vitest green. Live multi-host paste smoke not re-run; structural claim surface intact after plugin-note drift.
+
+**Criteria met:**
+- [x] homepage AI install signals present
+
+**Measurements:**
+- claim-001/002: site.ts install path + vitest 7/7

@@ -1,14 +1,14 @@
 ---
 id: dec-20260809-cursor-marketplace-v1-dual-discovery-8b748a7a
 kind: DecisionRecord
-version: 1
+version: 3
 status: active
 title: In-monorepo Cursor Plugin package (skills+MCP), binary preinstalled
 context: cursor-marketplace
 mode: standard
 valid_until: 2026-11-09T00:00:00Z
 created_at: 2026-08-09T09:20:30Z
-updated_at: 2026-08-09T09:20:30Z
+updated_at: 2026-08-09T09:56:30Z
 links:
   - ref: prob-20260809-d4ae8601
     type: based_on
@@ -122,3 +122,21 @@ Blast radius: plugins/ (or chosen plugin dir), site Cursor install CTA, docs Cur
 - Dual discovery channels diverge in package contents
 
 **Affected files:** plugins/pysar/.cursor-plugin/plugin.json, plugins/pysar/mcp.json, plugins/pysar/skills, plugins/pysar/README.md, plugins/pysar/assets/logo.svg, .cursor-plugin/marketplace.json, cmd/pysar/host.go, cmd/pysar/assets/cursor/mcp.json, cmd/pysar/assets/skills, docs/init.md, docs/mcp-and-skills.md, site/src/components/home-integrations.tsx, site/src/lib/site.ts
+
+## Impact Measurement (2026-08-09)
+
+**Verdict:** partial
+
+**Findings:**
+claim-002 single V1 package + plugin tests PASS. claim-003 site CTA identity points at plugins/pysar. claim-001 live local plugin /ps smoke not re-run — blocks full accept.
+
+**Criteria met:**
+- [x] single package path
+- [x] site discovery identity
+
+**Criteria NOT met:**
+- [ ] fresh local plugin Connected /ps smoke
+
+**Measurements:**
+- claim-002/003: package + site CURSOR_PLUGIN identity
+- claim-001: no fresh live plugin smoke

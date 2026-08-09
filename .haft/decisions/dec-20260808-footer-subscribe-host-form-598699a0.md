@@ -1,14 +1,14 @@
 ---
 id: dec-20260808-footer-subscribe-host-form-598699a0
 kind: DecisionRecord
-version: 11
+version: 13
 status: active
 title: Newsletter host form POST (Buttondown / ConvertKit)
 context: site
 mode: standard
 valid_until: 2026-11-08
 created_at: 2026-08-08T15:36:27Z
-updated_at: 2026-08-08T17:40:22Z
+updated_at: 2026-08-09T09:56:27Z
 links:
   - ref: prob-20260808-c0712044
     type: based_on
@@ -184,3 +184,16 @@ Both predictions hold. Live Buttondown form + static Pages path intact. Drift fr
 **Measurements:**
 - live embed-subscribe/malyshev
 - output:export + wrangler pages deploy
+
+## Impact Measurement (2026-08-09)
+
+**Verdict:** accepted
+
+**Findings:**
+claim-002 static export path intact. site.ts drift incidental. claim-001 prod E2E not re-run; form wiring unchanged.
+
+**Criteria met:**
+- [x] static export subscribe
+
+**Measurements:**
+- claim-002: output export + Buttondown form present

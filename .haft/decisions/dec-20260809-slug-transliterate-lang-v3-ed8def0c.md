@@ -1,13 +1,13 @@
 ---
 id: dec-20260809-slug-transliterate-lang-v3-ed8def0c
 kind: DecisionRecord
-version: 4
+version: 6
 status: active
 title: Separate Transliterate(lang) API; Slug calls it when script ≠ Latin
 mode: standard
 valid_until: 2026-11-09
 created_at: 2026-08-09T09:21:59Z
-updated_at: 2026-08-09T09:25:24Z
+updated_at: 2026-08-09T09:53:28Z
 links:
   - ref: prob-20260809-59175eae
     type: based_on
@@ -124,3 +124,20 @@ All three declared predictions hold under CL3 unit tests run 2026-08-09. claim-0
 - claim-001: TestAllocateUniqueNameUkrainianPrefixNotTemplate PASS — prefix napyshy-stattiu-pro-zvychku-deploity-shchodnia (not template)
 - claim-002: TestSlugNormalizesArbitraryNames + TestSlugNeverProducesLeadingOrTrailingDash PASS — ASCII goldens intact
 - claim-003: schemes map + SupportedTransliterationLangs includes uk; Slug(name string) signature unchanged; TestSupportedTransliterationLangsIncludesUK PASS
+
+## Impact Measurement (2026-08-09)
+
+**Verdict:** accepted
+
+**Findings:**
+Drift from und fallback wiring (SlugLang + tests) is compatible extension: uk official path unchanged; claim-001/002/003 still hold under re-run tests. Und is labeled non-official and does not replace the Transliterate registry contract.
+
+**Criteria met:**
+- [x] UA Latin piece prefix
+- [x] ASCII unchanged
+- [x] Registry extensible without Slug(name) omit-lang break
+
+**Measurements:**
+- claim-001: TestAllocateUniqueNameUkrainianPrefixNotTemplate PASS
+- claim-002: ASCII Slug goldens PASS
+- claim-003: schemes seam still present (uk + und)

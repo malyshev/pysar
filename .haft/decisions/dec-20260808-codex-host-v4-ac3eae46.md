@@ -1,13 +1,13 @@
 ---
 id: dec-20260808-codex-host-v4-ac3eae46
 kind: DecisionRecord
-version: 13
+version: 15
 status: active
 title: Full Codex dialect including openai.yaml / invocation policy
 mode: standard
 valid_until: 2026-11-08T00:00:00Z
 created_at: 2026-08-08T13:28:55Z
-updated_at: 2026-08-08T17:40:26Z
+updated_at: 2026-08-09T09:56:22Z
 links:
   - ref: prob-20260808-7ba11dda
     type: based_on
@@ -215,3 +215,16 @@ Both predictions hold. Drift is undeployed site/llms.txt only — incidental.
 **Measurements:**
 - scratch init --codex exit 0
 - approve in config.toml
+
+## Impact Measurement (2026-08-09)
+
+**Verdict:** accepted
+
+**Findings:**
+claim-001 Codex init goldens PASS. Shared-file drift incidental. claim-002 live Codex intake smoke not due until 2026-09-08 and not re-run; prior support left standing.
+
+**Criteria met:**
+- [x] Codex scaffold goldens
+
+**Measurements:**
+- claim-001: TestInitCodex* PASS

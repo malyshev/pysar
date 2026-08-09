@@ -1,13 +1,13 @@
 ---
 id: dec-20260808-codex-mcp-approve-dial-cd11a72c
 kind: DecisionRecord
-version: 6
+version: 8
 status: active
 title: Ship default_tools_approval_mode = approve
 mode: standard
 valid_until: 2026-11-08
 created_at: 2026-08-08T14:19:55Z
-updated_at: 2026-08-08T14:33:05Z
+updated_at: 2026-08-09T09:56:23Z
 links:
   - ref: prob-20260808-2edd57d2
     type: based_on
@@ -154,3 +154,16 @@ Packaging (approve dial) + trusted live Codex smoke both hold. Operator confirme
 - go test ./cmd/pysar -run TestInitCodex|TestCodex: ok
 - codex mcp get pysar: approve
 - operator smoke: no MCP allow prompts; testing-what-matters-ed5e514799b0.md exported
+
+## Impact Measurement (2026-08-09)
+
+**Verdict:** accepted
+
+**Findings:**
+claim-001 approve dial still in asset+tests. claim-002 live trusted session not re-run; dial contract unchanged by drift.
+
+**Criteria met:**
+- [x] approve dial shipped
+
+**Measurements:**
+- claim-001: config.toml approve + init_test assert
