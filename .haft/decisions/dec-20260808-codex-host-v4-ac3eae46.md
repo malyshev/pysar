@@ -1,13 +1,13 @@
 ---
 id: dec-20260808-codex-host-v4-ac3eae46
 kind: DecisionRecord
-version: 17
+version: 19
 status: active
 title: Full Codex dialect including openai.yaml / invocation policy
 mode: standard
 valid_until: 2026-11-08T00:00:00Z
 created_at: 2026-08-08T13:28:55Z
-updated_at: 2026-08-09T17:23:05Z
+updated_at: 2026-08-10T16:08:19Z
 links:
   - ref: prob-20260808-7ba11dda
     type: based_on
@@ -243,3 +243,17 @@ Incidental docs + false-positive stagereq file adds under broad baseline. Codex 
 **Measurements:**
 - docs/mcp-and-skills.md Persistence rule only for Codex-relevant surface
 - no Codex scaffold file changes in drift set
+
+## Impact Measurement (2026-08-10)
+
+**Verdict:** accepted
+
+**Findings:**
+Incidental docs/site drift; Codex dialect unchanged.
+
+**Criteria met:**
+- [x] Flag mutual exclusivity
+- [x] MCP piece I/O
+
+**Measurements:**
+- approve dial still in assets/codex/config.toml

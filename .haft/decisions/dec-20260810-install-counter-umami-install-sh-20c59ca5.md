@@ -1,14 +1,14 @@
 ---
 id: dec-20260810-install-counter-umami-install-sh-20c59ca5
 kind: DecisionRecord
-version: 1
+version: 4
 status: active
 title: Umami custom event / pixel from install.sh
 context: site
 mode: standard
 valid_until: 2026-11-10T00:00:00Z
 created_at: 2026-08-10T15:30:59Z
-updated_at: 2026-08-10T15:30:59Z
+updated_at: 2026-08-10T16:08:16Z
 links:
   - ref: prob-20260810-5af07d47
     type: based_on
@@ -102,3 +102,42 @@ Blast radius: install.sh; Umami event schema/dashboard; optional site copy; no G
 - Spam/abuse of the public collect endpoint
 
 **Affected files:** install.sh, docs/install.md, site/src/lib/site.ts, site/engineering
+
+## Impact Measurement (2026-08-10)
+
+**Verdict:** partial
+
+**Findings:**
+Operator confirmed Umami Visitors=1 on the dedicated install pixel after release. Happy-path collect works. Fail-open when Umami unreachable and OS/arch property visibility in dashboard not separately confirmed this session.
+
+**Criteria met:**
+- [x] Successful install.sh can produce a countable Umami hit operators can read
+
+**Criteria NOT met:**
+- [ ] Sink-down fail-open smoke not re-run in this confirmation
+- [ ] Explicit OS/arch field visibility in Umami UI not separately asserted
+
+**Measurements:**
+- Umami install pixel Visitors: 1 (operator-confirmed 2026-08-10)
+
+## Impact Measurement (2026-08-10)
+
+**Verdict:** partial
+
+**Findings:**
+Happy-path Umami hit previously operator-confirmed; code has fail-open || true and os_arch in UA/query; synthetic dead sink keeps exit 0. Still missing: --max-time on curl (hang risk) and dashboard assertion of OS/arch fields. Drift files match shipped contract — re-baseline after this measure.
+
+**Criteria met:**
+- [x] Ping failure must not fail install.sh (exit path)
+- [x] OS/arch sent in UA/query
+- [x] Documented privacy-light + PYSAR_NO_TELEMETRY
+
+**Criteria NOT met:**
+- [ ] curl --max-time bound against hang
+- [ ] Umami UI field visibility for os_arch re-asserted
+
+**Measurements:**
+- UMAMI_INSTALL_PIXEL present in install.sh
+- curl … || true fail-open pattern
+- synthetic unreachable sink: FAIL_OPEN_OK
+- prior Umami Visitors=1

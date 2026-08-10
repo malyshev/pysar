@@ -1,13 +1,13 @@
 ---
 id: dec-20260809-cursor-cold-path-phased-v1v5-then-v2-de2fc11a
 kind: DecisionRecord
-version: 6
+version: 8
 status: active
 title: Init rewrites Cursor mcp.json with a Cursor-visible binary path
 mode: standard
 valid_until: 2026-11-09
 created_at: 2026-08-09T08:55:45Z
-updated_at: 2026-08-09T17:23:02Z
+updated_at: 2026-08-10T16:08:19Z
 links:
   - ref: prob-20260809-5a4334ac
     type: based_on
@@ -139,3 +139,17 @@ Incidental docs-only drift; Cursor path-rewrite Phase A code not in this diff se
 
 **Measurements:**
 - docs/mcp-and-skills.md Persistence rule only
+
+## Impact Measurement (2026-08-10)
+
+**Verdict:** accepted
+
+**Findings:**
+Docs drift only; Cursor init tests green.
+
+**Criteria met:**
+- [x] MCP persistence
+- [x] Phase A docs still document path rewrite
+
+**Measurements:**
+- go test ./cmd/pysar Cursor PASS

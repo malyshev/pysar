@@ -1,14 +1,14 @@
 ---
 id: dec-20260810-export-resolve-citations-6afd8c31
 kind: DecisionRecord
-version: 1
+version: 5
 status: active
 title: Mechanical resolve-at-export from sources.md
 context: pipeline
 mode: standard
 valid_until: 2026-11-10
 created_at: 2026-08-10T08:18:17Z
-updated_at: 2026-08-10T08:18:17Z
+updated_at: 2026-08-10T16:08:14Z
 links:
   - ref: prob-20260810-70678bfc
     type: based_on
@@ -111,3 +111,44 @@ Blast radius: internal/export (+ shared resolve helper if extracted), export MCP
 - sources.md schema change for shortname→URL
 
 **Affected files:** internal/export/bundle.go, internal/export/write.go, internal/mcpserver/tools_export.go, internal/draft/bundle.go, internal/research/write.go, docs/pipeline.md, docs/export.md
+
+## Impact Measurement (2026-08-10)
+
+**Verdict:** failed
+
+**Findings:**
+Decision recorded but not implemented. Export remains copy-as-is; no Go tests for the three predicted behaviors; public docs correctly describe the gap rather than claiming resolve. Predictions do not hold.
+
+**Criteria met:**
+- [x] Docs/skills do not falsely claim resolve-at-export is shipped (honest gap text in docs/export.md)
+
+**Criteria NOT met:**
+- [ ] Exported root .md zero [^shortname] after resolve from sources.md
+- [ ] Fail-closed on unknown shortname with named error
+- [ ] Go tests for success / fail-closed / no-op paths
+- [ ] export_piece_to_root / WriteToRoot performs resolve before write
+
+**Measurements:**
+- WriteToRoot: ReadFile + WriteFile only (no resolve)
+- go test ./internal/export/...: no test files
+- docs/export.md: states copy-as-is until resolve ships
+
+## Impact Measurement (2026-08-10)
+
+**Verdict:** failed
+
+**Findings:**
+Decision bound but not implemented. Export still copy-as-is; docs honestly document the gap. All three predictions unmet. Next: implement resolve in internal/export then re-verify — do not treat docs-only drift as progress.
+
+**Criteria met:**
+- [x] Docs do not instruct SEO as required cleanup for research carriers
+
+**Criteria NOT met:**
+- [ ] Export resolves markers from sources.md
+- [ ] Fail-closed on unknown shortname
+- [ ] Go tests for resolve success/fail/no-op
+
+**Measurements:**
+- internal/export: no ResolveCitation/FindCitationMarkers
+- docs/export.md: documents leftover [^shortname] until resolve ships
+- go test ./internal/export: no test files

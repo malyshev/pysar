@@ -1,14 +1,14 @@
 ---
 id: dec-20260808-homepage-ai-install-signals-9eb5a6a9
 kind: DecisionRecord
-version: 9
+version: 11
 status: active
 title: Homepage / HTML-first signals (meta, visible AI block, JSON-LD)
 context: site
 mode: standard
 valid_until: 2026-11-08T00:00:00Z
 created_at: 2026-08-08T16:50:09Z
-updated_at: 2026-08-09T14:39:58Z
+updated_at: 2026-08-10T16:08:25Z
 links:
   - ref: prob-20260808-cabd5795
     type: based_on
@@ -169,3 +169,17 @@ site.ts drift incidental (Cursor plugin CTA on shared file). claim-002 holds —
 **Measurements:**
 - claim-002: home-hero brand-first; install in metaSummary
 - claim-001: host smokes not re-run (threshold unmet)
+
+## Impact Measurement (2026-08-10)
+
+**Verdict:** accepted
+
+**Findings:**
+Incidental site.ts/github-stars; install.sh recipe intact.
+
+**Criteria met:**
+- [x] Install recipe match
+- [x] static Pages
+
+**Measurements:**
+- install.sh still canonical install path

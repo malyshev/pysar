@@ -1,14 +1,14 @@
 ---
 id: dec-20260808-footer-subscribe-host-form-598699a0
 kind: DecisionRecord
-version: 15
+version: 17
 status: active
 title: Newsletter host form POST (Buttondown / ConvertKit)
 context: site
 mode: standard
 valid_until: 2026-11-08
 created_at: 2026-08-08T15:36:27Z
-updated_at: 2026-08-09T14:39:59Z
+updated_at: 2026-08-10T16:08:25Z
 links:
   - ref: prob-20260808-c0712044
     type: based_on
@@ -212,3 +212,17 @@ site.ts drift incidental (shared file with plugin CTA). Subscribe POST + static 
 **Measurements:**
 - claim-002: output:export + wrangler pages deploy out
 - claim-001: FooterSubscribe → Buttondown embed-subscribe still wired
+
+## Impact Measurement (2026-08-10)
+
+**Verdict:** accepted
+
+**Findings:**
+Incidental site drift; no subscribe API routes.
+
+**Criteria met:**
+- [x] Host form POST shape
+- [x] no private tokens required by this drift
+
+**Measurements:**
+- output:export unchanged

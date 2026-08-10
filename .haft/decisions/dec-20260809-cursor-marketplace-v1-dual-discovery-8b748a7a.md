@@ -1,14 +1,14 @@
 ---
 id: dec-20260809-cursor-marketplace-v1-dual-discovery-8b748a7a
 kind: DecisionRecord
-version: 8
+version: 10
 status: active
 title: In-monorepo Cursor Plugin package (skills+MCP), binary preinstalled
 context: cursor-marketplace
 mode: standard
 valid_until: 2026-11-09T00:00:00Z
 created_at: 2026-08-09T09:20:30Z
-updated_at: 2026-08-09T17:23:01Z
+updated_at: 2026-08-10T16:08:18Z
 links:
   - ref: prob-20260809-d4ae8601
     type: based_on
@@ -194,3 +194,17 @@ Only incidental docs/mcp-and-skills.md Persistence-rule edit. Plugin package inv
 
 **Measurements:**
 - docs/mcp-and-skills.md +4/-3 require_piece_stages mention only
+
+## Impact Measurement (2026-08-10)
+
+**Verdict:** accepted
+
+**Findings:**
+Incidental docs/site drift; plugin package shape intact.
+
+**Criteria met:**
+- [x] Single plugin package
+- [x] MCP tools for persistence
+
+**Measurements:**
+- plugins/pysar remains canonical

@@ -1,13 +1,13 @@
 ---
 id: dec-20260808-codex-mcp-approve-dial-cd11a72c
 kind: DecisionRecord
-version: 10
+version: 12
 status: active
 title: Ship default_tools_approval_mode = approve
 mode: standard
 valid_until: 2026-11-08
 created_at: 2026-08-08T14:19:55Z
-updated_at: 2026-08-09T17:23:03Z
+updated_at: 2026-08-10T16:08:23Z
 links:
   - ref: prob-20260808-2edd57d2
     type: based_on
@@ -180,3 +180,16 @@ assets/codex/config.toml still approve; docs drift incidental.
 
 **Measurements:**
 - assets/codex/config.toml: default_tools_approval_mode = "approve"
+
+## Impact Measurement (2026-08-10)
+
+**Verdict:** accepted
+
+**Findings:**
+Docs drift only; approve dial still shipped.
+
+**Criteria met:**
+- [x] Shipped Codex config uses approve
+
+**Measurements:**
+- assets/codex/config.toml: approve
