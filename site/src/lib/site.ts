@@ -4,6 +4,8 @@ export const siteConfig = {
   description:
     "Real editorial help, without the overhead — Pysar helps shape the work, not take it over.",
   github: "https://github.com/malyshev/pysar",
+  /** owner/repo for GitHub REST (stars on nav/footer links). */
+  githubRepo: "malyshev/pysar",
   linkedin: "https://www.linkedin.com/in/serhiimalyshev/",
   x: "https://x.com/s_malyshev",
 } as const;

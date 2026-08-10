@@ -4,8 +4,8 @@ import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { CornerTicks } from "@/components/corner-ticks";
+import { GitHubLink } from "@/components/github-link";
 import { SiteLogo } from "@/components/site-logo";
-import { siteConfig } from "@/lib/site";
 
 /**
  * Port of Boxsi Navbar.tsx — same paddings, borders, stripe fill, CTA cell.
@@ -36,13 +36,7 @@ export function SiteHeader() {
           >
             Docs
           </Link>
-          <a
-            href={siteConfig.github}
-            className="px-4 py-2 uppercase text-zinc-950 transition-colors duration-300 hover:text-primary"
-            rel="noopener noreferrer"
-          >
-            GitHub
-          </a>
+          <GitHubLink className="px-4 py-2 uppercase text-zinc-950 transition-colors duration-300 hover:text-primary" />
         </nav>
 
         <div className="grow self-center border-x-2 border-zinc-100">
@@ -98,14 +92,10 @@ export function SiteHeader() {
             >
               Docs
             </Link>
-            <a
-              href={siteConfig.github}
+            <GitHubLink
               className="flex items-center py-4 text-2xl/none font-medium text-zinc-900 transition-all hover:text-primary"
-              rel="noopener noreferrer"
               onClick={() => setMenuOpen(false)}
-            >
-              GitHub
-            </a>
+            />
             <Link
               href="/docs/install"
               className="flex items-center py-4 text-2xl/none font-medium text-zinc-900 transition-all hover:text-primary"

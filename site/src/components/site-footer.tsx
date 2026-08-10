@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CornerTicks } from "@/components/corner-ticks";
 import { FooterSubscribe } from "@/components/footer-subscribe";
+import { GitHubLink } from "@/components/github-link";
 import { SiteLogo } from "@/components/site-logo";
 import { siteConfig, united24Url } from "@/lib/site";
 
@@ -43,13 +44,7 @@ export function SiteFooter() {
             >
               Install
             </Link>
-            <a
-              href={siteConfig.github}
-              className="text-xs text-white uppercase transition-colors duration-300 hover:text-primary"
-              rel="noopener noreferrer"
-            >
-              GitHub
-            </a>
+            <GitHubLink className="text-xs text-white uppercase transition-colors duration-300 hover:text-primary" />
           </nav>
 
           <FooterSubscribe />
@@ -85,13 +80,7 @@ export function SiteFooter() {
           </div>
 
           <div className="mx-auto flex h-full flex-wrap items-center justify-center self-center divide-x-2 divide-zinc-800 border-e-2 border-s-2 border-zinc-800 md:border-e-0">
-            <a
-              href={siteConfig.github}
-              className="p-5 text-xs text-white uppercase transition-colors duration-300 hover:bg-zinc-800 md:p-7.5"
-              rel="noopener noreferrer"
-            >
-              GitHub
-            </a>
+            <GitHubLink className="p-5 text-xs text-white uppercase transition-colors duration-300 hover:bg-zinc-800 md:p-7.5" />
             <a
               href={siteConfig.linkedin}
               className="p-5 text-xs text-white uppercase transition-colors duration-300 hover:bg-zinc-800 md:p-7.5"
