@@ -101,6 +101,13 @@ export const cursorPlugin = {
 /** Umami Cloud 1×1 pageview pixel (GIF). */
 export const umamiPixelSrc = "https://cloud.umami.is/p/4IWutlpOL";
 
+/**
+ * Umami Cloud pixel for successful install.sh only
+ * (dec-20260810-install-counter-umami-install-sh-20c59ca5). Keep in sync with
+ * UMAMI_INSTALL_PIXEL in repo-root install.sh.
+ */
+export const umamiInstallPixelSrc = "https://cloud.umami.is/p/NDhIZ7E6F";
+
 /** Official UNITED24 fundraising platform (President of Ukraine initiative). */
 export const united24Url = "https://u24.gov.ua/";
 

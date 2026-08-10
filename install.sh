@@ -19,6 +19,9 @@ CYAN='\033[36m'
 REPO="malyshev/pysar"
 BIN_NAME="pysar"
 BIN_DIRS=("$HOME/.local/bin" "/usr/local/bin")
+# Umami Cloud pixel — successful install.sh only (dec-20260810-install-counter-umami-install-sh-20c59ca5).
+# Not a pageview; distinct from the site homepage pixel. Failures must never fail install.
+UMAMI_INSTALL_PIXEL="https://cloud.umami.is/p/NDhIZ7E6F"
 
 get_os_arch() {
     local os arch
@@ -93,6 +96,15 @@ main() {
 
     install -m 0755 "$tmp_dir/$BIN_NAME" "$bin_dir/$BIN_NAME"
     printf "  ${GREEN}✓${RESET} Installed to ${BOLD}%s/%s${RESET}\n\n" "$bin_dir" "$BIN_NAME"
+
+    # Best-effort install count (OS/arch in User-Agent + url query). Opt out: PYSAR_NO_TELEMETRY=1
+    if [[ "${PYSAR_NO_TELEMETRY:-}" != "1" ]]; then
+        curl -fsSL \
+            -A "Mozilla/5.0 (pysar-install; ${os_arch})" \
+            -o /dev/null \
+            "${UMAMI_INSTALL_PIXEL}?url=https%3A%2F%2Fgetpysar.com%2Finstall.sh%3Fos_arch%3D${os_arch}" \
+            2>/dev/null || true
+    fi
 
     if ! command -v "$BIN_NAME" >/dev/null 2>&1; then
         printf "${DIM}%s is not on your PATH yet. Add this to your shell profile:${RESET}\n" "$bin_dir"

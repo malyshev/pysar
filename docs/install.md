@@ -34,6 +34,15 @@ and installs to the first writable directory among:
 If the chosen directory is not on your `PATH`, the script prints the
 `export PATH=...` line to add to your shell profile.
 
+After a successful install, the script sends a best-effort anonymous hit to an
+[Umami](https://umami.is/) tracking pixel (platform string only — no hostname
+or account data). This counts **install-script successes**, not `go install` or
+Windows zip. It never fails the install if the pixel is unreachable. Opt out:
+
+```bash
+PYSAR_NO_TELEMETRY=1 bash install.sh
+```
+
 Confirm:
 
 ```bash

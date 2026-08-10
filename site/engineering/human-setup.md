@@ -132,11 +132,18 @@ Submit leaves getpysar.com and lands on Buttondown’s confirm / double-opt-in p
 
 ## Step 8 — Analytics (Umami Cloud)
 
-Root layout loads a 1×1 Umami pixel:
+Root layout loads a 1×1 Umami **pageview** pixel:
 
 `https://cloud.umami.is/p/4IWutlpOL`
 
-- [ ] Confirm hits appear in the Umami dashboard after a production visit
+Repo-root `install.sh` loads a separate 1×1 Umami **install** pixel after a
+successful binary install (not a pageview):
+
+`https://cloud.umami.is/p/NDhIZ7E6F`
+
+- [ ] Confirm pageview hits appear after a production visit
+- [ ] Confirm install pixel hits appear after a real `install.sh` run (opt-out:
+      `PYSAR_NO_TELEMETRY=1`)
 
 ---
 
