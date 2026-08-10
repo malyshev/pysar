@@ -49,7 +49,7 @@ How each host receives them differs:
 | Host | Skills carrier |
 |------|----------------|
 | Claude Code | `pysar init` → `~/.claude/skills/ps-*` |
-| Cursor | **Pysar Cursor plugin** (`plugins/pysar`) via Marketplace, getpysar.com Install in Cursor, or `~/.cursor/plugins/local/pysar` — not `~/.cursor/skills` |
+| Cursor | **Pysar Cursor plugin** (`plugins/pysar`) via Marketplace or a local copy under `~/.cursor/plugins/local/pysar` — not `~/.cursor/skills`. Site **Install in Cursor** is MCP-only (see [Init](./init.md)). |
 | Codex CLI / App | `pysar init --codex` → `~/.agents/skills/ps-*` (Codex packaging: `$ps-*` + `agents/openai.yaml`) |
 
 Claude installs corpus bytes as-is. Cursor loads the same bytes from the
@@ -71,6 +71,10 @@ Author content under `.pysar/**` is written through MCP tools
 `save_draft_bundle`, …, `export_piece_to_root`). Skills are written to
 call those tools — do not bypass them with raw file writes into
 `.pysar/pieces/`.
+
+When `/ps --research` or `/ps --seo` is set, the orchestrator arms
+`require_piece_stages` so later saves fail closed until that stage file exists
+(see [Pipeline](./pipeline.md)).
 
 ## Related skills
 

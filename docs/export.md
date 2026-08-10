@@ -31,11 +31,20 @@ Export picks the newest revision that exists for the piece, in this priority:
 A draft is required. Earlier stage files are not deleted or rewritten by
 export. Re-running export overwrites the previous root file for that piece.
 
-## Where to look
+Export currently copies that revision **as-is**. Research citation markers like
+`[^shortname]` may still appear in the root file until mechanical resolve-at-
+export ships. Do **not** treat `/ps --seo` as the required cleanup for those
+markers — SEO packaging is a separate opt-in stage.
+
+## Piece IDs and filenames
 
 - Working files: `.pysar/pieces/<piece-id>/`
 - Exported file: `<project-root>/<piece-id>.md` (same basename as the piece
   directory; the MCP tool response reports the path and word count)
+
+`<piece-id>` is a machine-made **Latin** slug from the piece title. Non-Latin
+titles (for example Ukrainian, Japanese, Arabic) are transliterated so you do
+not get a bare `template-*` id. Authors do not invent the Latin slug by hand.
 
 ## Next
 

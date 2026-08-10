@@ -61,6 +61,9 @@ You can run stages one at a time:
 | `/ps-factcheck` | Optional fact-check |
 | `/ps-voice` / `/ps-style` | Voice and style helpers used with onboarding |
 
-Piece files live under `.pysar/pieces/<piece-id>/`. Skills persist through
-Pysar MCP tools — not by hand-editing those paths. Details:
-[MCP and skills](./mcp-and-skills.md).
+Piece files live under `.pysar/pieces/<piece-id>/` (Latin slug from the title;
+non-Latin titles are transliterated). Skills persist through Pysar MCP tools —
+not by hand-editing those paths. Details: [MCP and skills](./mcp-and-skills.md).
+
+Export copies the latest revision as-is today. Leftover research `[^shortname]`
+markers are not fixed by adding `--seo`; see [Export](./export.md).

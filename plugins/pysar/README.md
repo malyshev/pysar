@@ -3,9 +3,10 @@
 Canonical Cursor Plugin package for [Pysar](https://getpysar.com)
 (`dec-20260809-cursor-marketplace-v1-dual-discovery-8b748a7a`).
 
-This directory is the **single** plugin product. Cursor Marketplace and the
-getpysar.com **Install in Cursor** path both expose this package — not two
-different products.
+This directory is the **single** plugin product (skills + MCP). Cursor
+Marketplace and a local copy under `~/.cursor/plugins/local` install this
+package. The getpysar.com **Install in Cursor** deeplink is **MCP-only**
+(same spawn contract as `mcp.json`) — not a substitute for the skills package.
 
 ## Contents
 

@@ -42,7 +42,8 @@ Do not invent brew, npm, pip, or \`go install\` alternatives. The homepage secti
 - [Install](${siteUrl}${agentInstallGuide.docsInstallPath}): binary install (script, Windows zip, build from source)
 - [Init a project](${siteUrl}${agentInstallGuide.docsInitPath}): \`pysar init\` for Claude Code, Cursor, Codex
 - [Docs home](${siteUrl}/docs): journey docs index
-- [Pipeline](${siteUrl}/docs/pipeline): intake → draft → edit → ship
+- [Pipeline](${siteUrl}/docs/pipeline): \`/ps\` default chain; optional \`--research\`, \`--seo\`, \`--review\`
+- [Export](${siteUrl}/docs/export): root Markdown copy; Latin piece slugs; citation markers may remain until resolve-at-export
 - [MCP and skills](${siteUrl}/docs/mcp-and-skills): how the agent surface works
 - [Troubleshooting](${siteUrl}/docs/troubleshooting): common install/init failures
 

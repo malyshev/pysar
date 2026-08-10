@@ -20,7 +20,10 @@ describe("buildLlmsTxt", () => {
       expect(body).toContain(host.initCommand);
     }
     expect(body).toContain("https://getpysar.com/docs/install");
+    expect(body).toContain("https://getpysar.com/docs/export");
+    expect(body).toContain("--research");
     expect(body).toContain("https://getpysar.com/#for-ai-agents");
+    expect(body).toContain("MCP-only");
     expect(body).not.toContain("brew install");
   });
 });

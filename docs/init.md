@@ -39,10 +39,8 @@ Open the folder in Claude Code. MCP is pre-approved by the scaffolded settings.
 
 ## Cursor
 
-Install the Pysar binary first (`~/.local/bin/pysar`), then install the
-**Pysar Cursor plugin** (skills + MCP). Marketplace and getpysar.com
-**Install in Cursor** are two discovery paths onto the same package
-(`plugins/pysar` in the repo) — not two products.
+Install the Pysar binary first (`~/.local/bin/pysar`), then scaffold a project
+and load the **Pysar Cursor plugin** for `/ps` skills.
 
 ```bash
 mkdir my-piece && cd my-piece
@@ -56,13 +54,32 @@ Typical layout after init:
 | `.pysar/project` | Project manifest |
 | `.cursor/mcp.json` | MCP server (`command` = `${userHome}/.local/bin/pysar`, `PYSAR_PROJECT_ROOT=${workspaceFolder}`) — same spawn contract as the plugin |
 
-`/ps` skills come from the Cursor plugin, not from `~/.cursor/skills`.
+`/ps` skills come from the Cursor plugin package (`plugins/pysar` in the repo),
+not from `~/.cursor/skills`.
+
+**Two different installs (do not conflate them)**
+
+| Path | What you get |
+|------|----------------|
+| **Marketplace** or **local plugin copy** | Full package: `/ps` skills **and** plugin MCP |
+| getpysar.com **Install in Cursor** deeplink | **MCP only** (stdio server spawn). Skills still need Marketplace or a local plugin copy |
 
 **Plugin install options**
 
-1. **Marketplace** — Customize → search **pysar** (after the listing is live), or submit via [cursor.com/marketplace/publish](https://cursor.com/marketplace/publish).
-2. **Install in Cursor** — use the deeplink on [getpysar.com](https://getpysar.com) (MCP config matches `plugins/pysar/mcp.json`).
-3. **Local dogfood** — from a clone: `ln -sfn "$(pwd)/plugins/pysar" ~/.cursor/plugins/local/pysar`, then reload Cursor.
+1. **Marketplace** — Customize → search **pysar** (after the listing is live).
+2. **Local dogfood** — from a **pysar monorepo** clone (not the writing project):
+
+   ```bash
+   mkdir -p ~/.cursor/plugins/local
+   rsync -a --delete "$(pwd)/plugins/pysar/" ~/.cursor/plugins/local/pysar/
+   ```
+
+   Then **Developer: Reload Window**. Cursor rejects symlinks whose target is
+   outside `~/.cursor/plugins/local` — use a real copy and re-`rsync` after skill
+   sync.
+3. **MCP deeplink** — [getpysar.com](https://getpysar.com) **Install in Cursor**
+   (and the link printed by `pysar init --cursor`) enables the server in
+   Customize → MCPs. That is not a substitute for the plugin skills package.
 
 `pysar init --cursor` also registers user-scope MCP (`~/.cursor/mcp.json`) for
 Customize → Connected while the plugin path settles. Reload MCP or restart

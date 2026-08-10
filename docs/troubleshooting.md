@@ -78,15 +78,25 @@ permissions for the project.
 - Skills must use MCP save tools — not manual writes into `.pysar/`.
 - Check the agent’s tool errors for `save_*_bundle` / path anchoring failures.
 
+## Draft or humanize save fails after `/ps --research` or `--seo`
+
+Those flags persist piece preconditions. Draft save fails closed until research
+is full when `--research` was set; humanize save fails closed until `seo.md`
+exists when `--seo` was set. Finish the missing stage (or start a new piece
+without that flag) — do not skip past the gate.
+
 ## Export missing or stale
 
 - Export needs at least a draft for the piece.
 - `/ps` exports at the end of a successful run; a stopped `--review` run may
   not have reached export yet.
 - Re-run export (or finish `/ps`); re-export overwrites the previous root file.
+- Research `[^shortname]` markers in the root file are expected until
+  resolve-at-export ships; see [Export](./export.md). `/ps --seo` is not the
+  cleanup for those markers.
 
 ## Still stuck
 
 Open an issue at [github.com/malyshev/pysar](https://github.com/malyshev/pysar)
-with `pysar --version`, host (Claude or Cursor), and the exact command or
-skill you ran.
+with `pysar --version`, host (Claude Code, Cursor, or Codex), and the exact
+command or skill you ran.
