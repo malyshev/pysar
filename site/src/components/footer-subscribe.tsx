@@ -27,7 +27,7 @@ export function FooterSubscribe() {
           autoComplete="email"
           required
           placeholder="Enter your email"
-          className="inline-flex h-full w-full items-center justify-center border-0 bg-transparent px-3 py-2.5 text-sm font-medium text-white uppercase transition-all duration-500 placeholder:text-zinc-500 focus:outline-none"
+          className="inline-flex h-full w-full items-center justify-center border-0 bg-transparent px-3 py-2.5 text-sm font-medium text-white transition-all duration-500 placeholder:text-zinc-500 focus:outline-none"
         />
         <input type="hidden" name="embed" value="1" />
         <input type="hidden" name="tag" value="getpysar" />
