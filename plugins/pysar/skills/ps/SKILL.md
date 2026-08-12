@@ -4,7 +4,8 @@ description: |
   Runs the full pipeline -- /ps-intake -> [/ps-research if --research] ->
   /ps-draft -> /ps-staff-edit -> /ps-sharpen -> [/ps-seo if --seo] ->
   /ps-humanize -- back to back on one piece, then exports the result to
-  the project root. Autopilot by default: no stopping between stages.
+  the configured export directory (project root by default). Autopilot by
+  default: no stopping between stages.
   Pass --review to stop after each stage and wait for the operator's
   explicit go-ahead before continuing. Pass --research to require full
   /ps-research after intake and before draft (hard-gated via
@@ -190,15 +191,21 @@ below.
 Once `ps-humanize` completes (or Step 1 found `humanize.md` already
 present), the chain is done. Move to Step 4.
 
-## Step 4 — export to project root
+## Step 4 — export
 
-Call `export_piece_to_root` with the piece's path. This is the one step
-that writes outside `.pysar/pieces/<piece>/` — it copies whichever file is
-currently the piece's most-refined revision to `<project root>/<piece
-name>.md`. Call it whenever this run's chain ends, whether that's after a
-full autopilot run, or wherever the operator stopped in `--review` mode —
-`export_piece_to_root` works on a draft alone if that's as far as the
-piece got; it does not require every stage to have run.
+Call `export_piece_to_root` with the piece's path only — do **not** pass
+`export_dir` unless the author explicitly asked for a one-off landing path
+for this export. Omitting `export_dir` uses `.pysar/project`'s `export_dir`
+when set, otherwise the project root. The tool result reports the resolved
+destination path; cite that path in Step 5.
+
+This is the one step that writes outside `.pysar/pieces/<piece>/` — it
+copies whichever file is currently the piece's most-refined revision to
+`<export_dir>/<piece name>.md`. Call it whenever this run's chain ends,
+whether that's after a full autopilot run, or wherever the operator stopped
+in `--review` mode — `export_piece_to_root` works on a draft alone if
+that's as far as the piece got; it does not require every stage to have
+run.
 
 Do not call `export_piece_to_root` more than once per run of `/ps`, and do
 not call it mid-chain — only once Step 2/3 has genuinely finished (either

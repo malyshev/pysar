@@ -90,8 +90,11 @@ without that flag) — do not skip past the gate.
 - Export needs at least a draft for the piece.
 - `/ps` exports at the end of a successful run; a stopped `--review` run may
   not have reached export yet.
-- Re-run export (or finish `/ps`); re-export overwrites the previous root file.
-- Research `[^shortname]` markers in the root file are expected until
+- Look under `export_dir` from `.pysar/project` (or the project root when
+  unset); re-export overwrites the previous file for that piece at the same
+  destination. Change the landing folder with `pysar init --export-dir PATH`
+  or by editing `export_dir` — see [Export](./export.md).
+- Research `[^shortname]` markers in the exported file are expected until
   resolve-at-export ships; see [Export](./export.md). `/ps --seo` is not the
   cleanup for those markers.
 

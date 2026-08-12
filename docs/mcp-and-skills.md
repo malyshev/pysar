@@ -70,7 +70,10 @@ Author content under `.pysar/**` is written through MCP tools
 (for example `save_intake_bundle`, `require_piece_stages`,
 `save_draft_bundle`, …, `export_piece_to_root`). Skills are written to
 call those tools — do not bypass them with raw file writes into
-`.pysar/pieces/`.
+`.pysar/pieces/`. Finished-piece export lands under `export_dir` from
+`.pysar/project` (or the project root when unset); `export_piece_to_root`
+accepts an optional `export_dir` override for one call and returns the
+resolved path (see [Export](./export.md)).
 
 When `/ps --research` or `/ps --seo` is set, the orchestrator arms
 `require_piece_stages` so later saves fail closed until that stage file exists

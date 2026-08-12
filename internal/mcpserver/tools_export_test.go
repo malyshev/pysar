@@ -184,3 +184,111 @@ func TestSaveExportBundleRerunOverwritesRootFile(t *testing.T) {
 		t.Fatalf("expected re-export to overwrite the root file wholesale, got:\n%s", got)
 	}
 }
+
+func TestSaveExportBundleUsesProjectExportDir(t *testing.T) {
+	dir := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(dir, ".pysar"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, ".pysar", "project"), []byte(`{"schema_version":1,"host":"claude","export_dir":"published"}`+"\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	s := New("pysar", "test", dir, t.TempDir(), nil, &bytes.Buffer{})
+	piecePath := createTestPiece(t, s)
+	runLines(t, s, toolCallLine(t, 2, "save_draft_bundle", map[string]interface{}{
+		"piece_path": piecePath,
+		"draft_md":   "# Configured Dest\n\n*Subtitle.*\n\nbody\n",
+	}))
+	exportResp := runLines(t, s, toolCallLine(t, 3, "export_piece_to_root", map[string]interface{}{
+		"piece_path": piecePath,
+	}))
+	exportResult := toolResultMap(t, exportResp[2])
+	if exportResult["isError"] == true {
+		t.Fatalf("export error: %v", exportResult)
+	}
+	text := toolText(t, exportResult)
+	slug := filepath.Base(filepath.Join(dir, filepath.FromSlash(piecePath)))
+	wantRel := filepath.Join("published", slug+".md")
+	if !strings.Contains(text, wantRel) && !strings.Contains(text, filepath.Join(dir, wantRel)) {
+		t.Fatalf("expected result to cite published destination, got %s", text)
+	}
+	got, err := os.ReadFile(filepath.Join(dir, "published", slug+".md"))
+	if err != nil {
+		t.Fatalf("expected file under published/: %v", err)
+	}
+	if !strings.Contains(string(got), "Configured Dest") {
+		t.Fatalf("unexpected content: %s", got)
+	}
+	if _, err := os.Stat(filepath.Join(dir, slug+".md")); !os.IsNotExist(err) {
+		t.Fatalf("should not also write project-root export when export_dir is set")
+	}
+}
+
+func TestSaveExportBundleOverrideBeatsProjectDefault(t *testing.T) {
+	dir := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(dir, ".pysar"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, ".pysar", "project"), []byte(`{"schema_version":1,"host":"claude","export_dir":"published"}`+"\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	s := New("pysar", "test", dir, t.TempDir(), nil, &bytes.Buffer{})
+	piecePath := createTestPiece(t, s)
+	runLines(t, s, toolCallLine(t, 2, "save_draft_bundle", map[string]interface{}{
+		"piece_path": piecePath,
+		"draft_md":   "# Override Dest\n\n*Subtitle.*\n\nbody\n",
+	}))
+	exportResp := runLines(t, s, toolCallLine(t, 3, "export_piece_to_root", map[string]interface{}{
+		"piece_path": piecePath,
+		"export_dir": "outbox",
+	}))
+	exportResult := toolResultMap(t, exportResp[2])
+	if exportResult["isError"] == true {
+		t.Fatalf("export error: %v", exportResult)
+	}
+	slug := filepath.Base(filepath.Join(dir, filepath.FromSlash(piecePath)))
+	got, err := os.ReadFile(filepath.Join(dir, "outbox", slug+".md"))
+	if err != nil {
+		t.Fatalf("expected override dest: %v", err)
+	}
+	if !strings.Contains(string(got), "Override Dest") {
+		t.Fatalf("unexpected content: %s", got)
+	}
+	if _, err := os.Stat(filepath.Join(dir, "published", slug+".md")); !os.IsNotExist(err) {
+		t.Fatal("override must not also write the project default dir")
+	}
+
+	// Next call without override returns to project default.
+	runLines(t, s, toolCallLine(t, 4, "save_draft_bundle", map[string]interface{}{
+		"piece_path": piecePath,
+		"draft_md":   "# Back To Default\n\n*Subtitle.*\n\nbody\n",
+	}))
+	runLines(t, s, toolCallLine(t, 5, "export_piece_to_root", map[string]interface{}{
+		"piece_path": piecePath,
+	}))
+	got, err = os.ReadFile(filepath.Join(dir, "published", slug+".md"))
+	if err != nil {
+		t.Fatalf("expected project default after omit: %v", err)
+	}
+	if !strings.Contains(string(got), "Back To Default") {
+		t.Fatalf("unexpected content: %s", got)
+	}
+}
+
+func TestSaveExportBundleRejectsEscapingExportDir(t *testing.T) {
+	dir := t.TempDir()
+	s := New("pysar", "test", dir, t.TempDir(), nil, &bytes.Buffer{})
+	piecePath := createTestPiece(t, s)
+	runLines(t, s, toolCallLine(t, 2, "save_draft_bundle", map[string]interface{}{
+		"piece_path": piecePath,
+		"draft_md":   "# Escape\n\n*Subtitle.*\n\nbody\n",
+	}))
+	resp := runLines(t, s, toolCallLine(t, 3, "export_piece_to_root", map[string]interface{}{
+		"piece_path": piecePath,
+		"export_dir": "..",
+	}))
+	result := toolResultMap(t, resp[2])
+	if result["isError"] != true {
+		t.Fatalf("expected escape error, got %v", result)
+	}
+}

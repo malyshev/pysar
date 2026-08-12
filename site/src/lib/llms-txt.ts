@@ -43,7 +43,7 @@ Do not invent brew, npm, pip, or \`go install\` alternatives. The homepage secti
 - [Init a project](${siteUrl}${agentInstallGuide.docsInitPath}): \`pysar init\` for Claude Code, Cursor, Codex
 - [Docs home](${siteUrl}/docs): journey docs index
 - [Pipeline](${siteUrl}/docs/pipeline): \`/ps\` default chain; optional \`--research\`, \`--seo\`, \`--review\`
-- [Export](${siteUrl}/docs/export): root Markdown copy; Latin piece slugs; citation markers may remain until resolve-at-export
+- [Export](${siteUrl}/docs/export): finished Markdown under project \`export_dir\` (root by default); Latin piece slugs; citation markers may remain until resolve-at-export
 - [MCP and skills](${siteUrl}/docs/mcp-and-skills): how the agent surface works
 - [Troubleshooting](${siteUrl}/docs/troubleshooting): common install/init failures
 

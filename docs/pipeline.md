@@ -23,7 +23,7 @@ Default stage order:
 3. `/ps-staff-edit` — structural edit
 4. `/ps-sharpen` — tighten claims and language
 5. `/ps-humanize` — final voice pass
-6. Export to the project root (see [Export](./export.md))
+6. Export to the configured export directory — project root by default (see [Export](./export.md))
 
 Optional flags on `/ps`:
 

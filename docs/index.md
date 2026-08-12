@@ -20,7 +20,7 @@ The binary is a small CLI. The writing workflow runs inside a host agent
 2. [Init a project](./init.md) — scaffold Claude Code, Cursor, or Codex
 3. [Run the pipeline](./pipeline.md) — `/ps` from idea to finished piece
 4. [MCP and skills](./mcp-and-skills.md) — how the agent talks to Pysar
-5. [Export](./export.md) — finished Markdown in your project root
+5. [Export](./export.md) — finished Markdown (project root by default, or `export_dir`)
 6. [Troubleshooting](./troubleshooting.md) — common failures
 
 ## What you need

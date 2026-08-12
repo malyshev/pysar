@@ -9,9 +9,11 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/spf13/cobra"
 
+	"pysar/internal/export"
 	"pysar/internal/mcpserver"
 	"pysar/internal/onboarding"
 )
@@ -84,7 +86,14 @@ var templateAssets embed.FS
 type projectManifest struct {
 	SchemaVersion int    `json:"schema_version"`
 	Host          string `json:"host"`
+	// ExportDir is the project-relative directory for finished piece Markdown
+	// (dec-20260812-export-dir-v4-default-plus-override-60d432e0). Empty/omitted = project root.
+	ExportDir string `json:"export_dir,omitempty"`
 }
+
+// initExportDir is set by newInitCmd for one Scaffold call so host adapters
+// need not grow a new Scaffold parameter (commission scope keeps host.go closed).
+var initExportDir string
 
 func main() {
 	if err := newRootCmd().Execute(); err != nil {
@@ -108,6 +117,7 @@ separate host-agent surface when installed; they are not invoked by typing pysar
   pysar init --claude ./my-piece
   pysar init --cursor ./my-piece
   pysar init --codex ./my-piece
+  pysar init --export-dir published
   pysar --version`,
 		Version:      version,
 		SilenceUsage: true,
@@ -120,6 +130,7 @@ separate host-agent surface when installed; they are not invoked by typing pysar
 
 func newInitCmd() *cobra.Command {
 	var claude, cursor, codex, force bool
+	var exportDir string
 
 	cmd := &cobra.Command{
 		Use:   "init [dir]",
@@ -134,6 +145,13 @@ func newInitCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			initExportDir = strings.TrimSpace(exportDir)
+			defer func() { initExportDir = "" }()
+			if initExportDir != "" {
+				if err := export.ValidateRelativeExportDir(initExportDir); err != nil {
+					return fmt.Errorf("pysar init: %w", err)
+				}
+			}
 			return host.Scaffold(dir, force)
 		},
 	}
@@ -142,6 +160,7 @@ func newInitCmd() *cobra.Command {
 	cmd.Flags().BoolVar(&cursor, "cursor", false, "scaffold for Cursor")
 	cmd.Flags().BoolVar(&codex, "codex", false, "scaffold for Codex CLI / App")
 	cmd.Flags().BoolVar(&force, "force", false, "refresh host project files, agentic skills, and permission/MCP config to the current shipped version, even if already installed -- never touches .pysar/ project data")
+	cmd.Flags().StringVar(&exportDir, "export-dir", "", "project-relative directory for finished piece Markdown (default: project root; also stored in .pysar/project)")
 	cmd.MarkFlagsMutuallyExclusive("claude", "cursor", "codex")
 
 	return cmd
@@ -427,8 +446,10 @@ func writeStyleTemplates(home string, force bool) (installed, autoRefreshed, ref
 }
 
 // writeProjectManifest writes .pysar/project if it doesn't already exist.
-// It never overwrites an existing manifest (dec-20260718-fe926229 invariant),
-// but an already-initialized project is a normal, successful outcome for the
+// It never overwrites host/schema on an existing manifest
+// (dec-20260718-fe926229 invariant), but when initExportDir is set it may
+// patch only the export_dir field (dec-20260812-export-dir-v4-default-plus-override-60d432e0).
+// An already-initialized project is a normal, successful outcome for the
 // author, not a failure -- the returned bool tells the caller which greeting
 // applies. It is never an error on its own; callers must not treat it as one
 // or stop the rest of scaffolding because of it (a project initialized
@@ -442,12 +463,21 @@ func writeProjectManifest(dir, host string) (alreadyExists bool, err error) {
 
 	manifestPath := filepath.Join(pysarDir, "project")
 	if _, statErr := os.Stat(manifestPath); statErr == nil {
+		if initExportDir != "" {
+			if err := patchProjectExportDir(manifestPath, initExportDir); err != nil {
+				return true, err
+			}
+		}
 		return true, nil
 	} else if !os.IsNotExist(statErr) {
 		return false, statErr
 	}
 
-	data, err := json.MarshalIndent(projectManifest{SchemaVersion: schemaVersion, Host: host}, "", "  ")
+	m := projectManifest{SchemaVersion: schemaVersion, Host: host}
+	if initExportDir != "" {
+		m.ExportDir = initExportDir
+	}
+	data, err := json.MarshalIndent(m, "", "  ")
 	if err != nil {
 		return false, err
 	}
@@ -455,6 +485,26 @@ func writeProjectManifest(dir, host string) (alreadyExists bool, err error) {
 		return false, err
 	}
 	return false, nil
+}
+
+func patchProjectExportDir(manifestPath, exportDir string) error {
+	data, err := os.ReadFile(manifestPath)
+	if err != nil {
+		return err
+	}
+	var m projectManifest
+	if err := json.Unmarshal(data, &m); err != nil {
+		return fmt.Errorf("parse %s: %w", manifestPath, err)
+	}
+	if m.ExportDir == exportDir {
+		return nil
+	}
+	m.ExportDir = exportDir
+	out, err := json.MarshalIndent(m, "", "  ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(manifestPath, append(out, '\n'), 0o644)
 }
 
 // writeIfAbsent writes content to path if it doesn't already exist. If it

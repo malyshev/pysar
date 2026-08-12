@@ -184,6 +184,66 @@ func TestInitOnAlreadySetUpProjectSucceeds(t *testing.T) {
 	}
 }
 
+func TestInitExportDirWritesManifestField(t *testing.T) {
+	withFakeHome(t)
+	dir := t.TempDir()
+	cmd := newRootCmd()
+	cmd.SetArgs([]string{"init", "--export-dir", "published", dir})
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("init --export-dir: %v", err)
+	}
+	data, err := os.ReadFile(filepath.Join(dir, ".pysar", "project"))
+	if err != nil {
+		t.Fatalf("read manifest: %v", err)
+	}
+	var m projectManifest
+	if err := json.Unmarshal(data, &m); err != nil {
+		t.Fatalf("parse manifest: %v", err)
+	}
+	if m.ExportDir != "published" {
+		t.Fatalf("export_dir: got %q, want published", m.ExportDir)
+	}
+}
+
+func TestInitExportDirPatchesExistingManifest(t *testing.T) {
+	withFakeHome(t)
+	dir := t.TempDir()
+	first := newRootCmd()
+	first.SetArgs([]string{"init", dir})
+	if err := first.Execute(); err != nil {
+		t.Fatalf("first init: %v", err)
+	}
+	second := newRootCmd()
+	second.SetArgs([]string{"init", "--export-dir", "outbox", dir})
+	if err := second.Execute(); err != nil {
+		t.Fatalf("second init --export-dir: %v", err)
+	}
+	data, err := os.ReadFile(filepath.Join(dir, ".pysar", "project"))
+	if err != nil {
+		t.Fatalf("read manifest: %v", err)
+	}
+	var m projectManifest
+	if err := json.Unmarshal(data, &m); err != nil {
+		t.Fatalf("parse: %v", err)
+	}
+	if m.ExportDir != "outbox" {
+		t.Fatalf("export_dir: got %q, want outbox", m.ExportDir)
+	}
+	if m.Host != "claude" || m.SchemaVersion != schemaVersion {
+		t.Fatalf("host/schema should be preserved: %+v", m)
+	}
+}
+
+func TestInitExportDirRejectsEscape(t *testing.T) {
+	withFakeHome(t)
+	dir := t.TempDir()
+	cmd := newRootCmd()
+	cmd.SetArgs([]string{"init", "--export-dir", "..", dir})
+	if err := cmd.Execute(); err == nil {
+		t.Fatal("expected error for escaping export-dir")
+	}
+}
+
 // TestInitDefaultArgNeverPrintsRawDot is the exact regression the operator
 // hit: bare `pysar init` (no argument) resolves dir to ".", and printing
 // that literally reads as broken output ("is already set up") rather than

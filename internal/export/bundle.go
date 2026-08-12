@@ -1,7 +1,9 @@
 // Package export copies a piece's most-refined revision out of
-// .pysar/pieces/<slug>/ to a single Markdown file at the project root --
-// the one step in the pipeline that produces something outside the piece's
-// own directory. Deliberately named "export", not "publish": this package
+// .pysar/pieces/<slug>/ to a single Markdown file under the configured
+// export directory (project root by default; see
+// dec-20260812-export-dir-v4-default-plus-override-60d432e0) -- the one
+// step in the pipeline that produces something outside the piece's own
+// directory. Deliberately named "export", not "publish": this package
 // still excludes a Status-enum/publish.md ceremony (dec-20260718-20a08f83)
 // -- it is a plain file copy with no side effects on the piece itself, and
 // it never touches internal/seo's own seo-checklist.md (opt-in
@@ -26,6 +28,10 @@ type Bundle struct {
 	// root -- resolved via research.ResolvePieceDir, same as every other
 	// piece-anchored tool.
 	PiecePath string `json:"piece_path"`
+	// ExportDir is an optional project-relative override for this call.
+	// Empty means use .pysar/project export_dir, or the project root when
+	// that field is also empty (dec-20260812-export-dir-v4-default-plus-override-60d432e0).
+	ExportDir string `json:"export_dir,omitempty"`
 }
 
 // Validate checks only that piece_path was given -- there's no prose

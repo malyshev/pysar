@@ -29,7 +29,7 @@ Typical layout:
 
 | Path | Role |
 |------|------|
-| `.pysar/project` | Project manifest (host + project identity) |
+| `.pysar/project` | Project manifest (host + optional `export_dir` for finished Markdown) |
 | `CLAUDE.md` | Project instructions for the agent |
 | `.claude/settings.json` | Permission allowlist for `mcp__pysar__*` tools |
 | `.mcp.json` | MCP server entry that runs `pysar serve` |
@@ -115,6 +115,7 @@ when Codex treats the project as **trusted**. If you still see per-tool
 | `--claude` | Scaffold for Claude Code (default if no host flag) |
 | `--cursor` | Scaffold for Cursor |
 | `--codex` | Scaffold for Codex CLI / App |
+| `--export-dir PATH` | Project-relative directory for finished piece Markdown (stored as `export_dir` in `.pysar/project`; default = project root). Change later by editing that field. |
 | `--force` | Refresh host project files, skills, and MCP/settings to the shipped version — **never** overwrites `.pysar/` piece data |
 
 Host flags are mutually exclusive.
